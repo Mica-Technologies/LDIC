@@ -137,7 +137,7 @@ final class ThemeScreenDriver {
             }
         }
         for (UiNode n : allNodes()) {
-            String wrap = n.def.statik("wrap", null);
+            String wrap = n.def.wrappedButton();
             GuiButton b = wrap == null ? null : findForeign(wrap);
             if (b != null) {
                 b.visible = false;
@@ -446,7 +446,7 @@ final class ThemeScreenDriver {
         } else if (d.type.equals("button")) {
             Actions.playSound("minecraft:ui.button.click", 1, 1);
         }
-        String wrap = d.statik("wrap", null);
+        String wrap = d.wrappedButton();
         if (wrap != null) {
             GuiButton b = findForeign(wrap);
             if (b == null) {

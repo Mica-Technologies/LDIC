@@ -105,7 +105,15 @@ public final class ElementDef {
 
     /** Whether the element reacts to the pointer: it has an action, a tooltip or wraps a button. */
     public boolean isInteractive() {
-        return action != null || tooltip != null || statics.containsKey("wrap") || type.equals("slider");
+        return action != null || tooltip != null || wrappedButton() != null || type.equals("slider");
+    }
+
+    /**
+     * The other mod's button this button stands in for, or null. Only buttons wrap: on a text
+     * element {@code wrap} means word wrapping.
+     */
+    public String wrappedButton() {
+        return type.equals("button") ? statics.get("wrap") : null;
     }
 
     @Override
