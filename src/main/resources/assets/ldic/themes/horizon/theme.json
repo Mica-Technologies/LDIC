@@ -70,9 +70,9 @@
         ] },
 
         { "id": "clock", "type": "text", "font": "ui_bold", "size": 28, "shadow": false, "colour": "#FFFFFF", "align": "right",
-          "text": "{date('HH:mm')}", "anchor": "bottom_right", "x": -32, "y": -60, "opacity": "enter(3)" },
+          "text": "{clock()}", "anchor": "bottom_right", "x": -32, "y": -60, "opacity": "enter(3)" },
         { "id": "date", "type": "text", "font": "ui", "size": 11, "shadow": false, "colour": "#B0FFFFFF", "align": "right",
-          "text": "{date('EEEE, d MMMM')}", "anchor": "bottom_right", "x": -32, "y": -44, "opacity": "enter(4)" },
+          "text": "{long_date()}", "anchor": "bottom_right", "x": -32, "y": -44, "opacity": "enter(4)" },
         { "id": "branding", "type": "text", "font": "ui", "size": 8, "shadow": false, "colour": "#80FFFFFF",
           "text": "{branding()}", "anchor": "bottom_left", "x": 8, "y": -6 },
 

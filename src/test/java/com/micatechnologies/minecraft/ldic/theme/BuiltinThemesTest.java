@@ -38,6 +38,8 @@ class BuiltinThemesTest {
         s.define(Function.str("splash", false, a -> "splash"));
         s.define(Function.str("branding", false, a -> "Minecraft 1.12.2"));
         s.define(Function.str("date", false, a -> "2026-01-01", Type.STRING));
+        s.define(Function.str("clock", false, a -> "10:04 AM"));
+        s.define(Function.str("long_date", false, a -> "Thursday, October 29, 2026"));
         s.define(Function.num("month", false, a -> 1));
         s.define(Function.num("day", false, a -> 1));
         s.define(Function.num("hour", false, a -> 12));

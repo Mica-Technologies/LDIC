@@ -58,6 +58,19 @@ class ThemeTest {
     }
 
     @Test
+    void idsReachNestedElements() {
+        JsonObject parent = Json.parse("{elements:[{id:'menu', type:'group', children:[{id:'title', type:'text', text:'A'}, {id:'clock', type:'text'}]}]}").getAsJsonObject();
+        JsonObject child = Json.parse("{elements:[{id:'title', text:'B'}], remove:['clock']}").getAsJsonObject();
+        JsonObject m = JsonMerge.merge(parent, child);
+        assertEquals(1, m.getAsJsonArray("elements").size());
+        JsonObject menu = m.getAsJsonArray("elements").get(0).getAsJsonObject();
+        assertEquals(1, menu.getAsJsonArray("children").size());
+        JsonObject title = menu.getAsJsonArray("children").get(0).getAsJsonObject();
+        assertEquals("B", title.get("text").getAsString());
+        assertEquals("text", title.get("type").getAsString());
+    }
+
+    @Test
     void extendsChainRewritesAssetsPerFile() {
         MapSource src = new MapSource();
         src.files.put("builtin:base", "{ldic:1, elements:[{id:'logo', type:'image', image:'logo.png'}]}");

@@ -14,10 +14,11 @@ import java.util.Set;
  * <ul>
  *   <li>Objects merge key by key, recursively. A {@code null} value in the child deletes the key.</li>
  *   <li>Arrays whose entries are all objects with an {@code "id"} merge by id: a child entry
- *       with a parent's id deep-merges into it in place, a new id is appended. Any other array
- *       in the child replaces the parent's.</li>
- *   <li>An object may list ids in {@code "remove": [...]}: entries with those ids are dropped
- *       from every id-keyed array directly inside that object.</li>
+ *       with a parent's id deep-merges into it in place, even when that element is nested in a
+ *       group's {@code children} or a factory's {@code template}; a new id is appended. Any
+ *       other array in the child replaces the parent's.</li>
+ *   <li>An object may list ids in {@code "remove": [...]}: elements with those ids are dropped
+ *       from the arrays inside that object, at any depth of {@code children}.</li>
  * </ul>
  */
 public final class JsonMerge {
@@ -86,7 +87,22 @@ public final class JsonMerge {
             JsonObject o = e.getAsJsonObject();
             String id = o.get("id").getAsString();
             JsonObject existing = byId.get(id);
-            byId.put(id, existing == null ? Json.copy(o) : merge(existing, o));
+            if (existing != null) {
+                byId.put(id, merge(existing, o));
+                continue;
+            }
+            // Not at this level: an id names an element anywhere in the tree, so look inside
+            // groups and factory templates before treating it as a new element.
+            boolean merged = false;
+            for (JsonObject candidate : byId.values()) {
+                if (mergeNested(candidate, id, o)) {
+                    merged = true;
+                    break;
+                }
+            }
+            if (!merged) {
+                byId.put(id, Json.copy(o));
+            }
         }
         JsonArray out = new JsonArray();
         for (JsonObject o : byId.values()) {
@@ -95,12 +111,52 @@ public final class JsonMerge {
         return out;
     }
 
+    /** Merges {@code child} into the element with {@code id} under {@code node}; false if there is none. */
+    private static boolean mergeNested(JsonObject node, String id, JsonObject child) {
+        JsonElement children = node.get("children");
+        if (children != null && children.isJsonArray()) {
+            JsonArray a = children.getAsJsonArray();
+            for (int i = 0; i < a.size(); i++) {
+                if (!a.get(i).isJsonObject()) {
+                    continue;
+                }
+                JsonObject c = a.get(i).getAsJsonObject();
+                if (c.has("id") && c.get("id").getAsString().equals(id)) {
+                    a.set(i, merge(c, child));
+                    return true;
+                }
+                if (mergeNested(c, id, child)) {
+                    return true;
+                }
+            }
+        }
+        JsonElement template = node.get("template");
+        if (template != null && template.isJsonObject()) {
+            JsonObject t = template.getAsJsonObject();
+            if (t.has("id") && t.get("id").getAsString().equals(id)) {
+                node.add("template", merge(t, child));
+                return true;
+            }
+            return mergeNested(t, id, child);
+        }
+        return false;
+    }
+
+    /** Removes elements with these ids from the array and, recursively, from their children. */
     private static void removeIds(JsonArray array, Set<String> ids) {
         for (int i = array.size() - 1; i >= 0; i--) {
             JsonElement e = array.get(i);
-            if (e.isJsonObject() && e.getAsJsonObject().has("id")
-                    && ids.contains(e.getAsJsonObject().get("id").getAsString())) {
+            if (!e.isJsonObject()) {
+                continue;
+            }
+            JsonObject o = e.getAsJsonObject();
+            if (o.has("id") && ids.contains(o.get("id").getAsString())) {
                 array.remove(i);
+                continue;
+            }
+            JsonElement children = o.get("children");
+            if (children != null && children.isJsonArray()) {
+                removeIds(children.getAsJsonArray(), ids);
             }
         }
     }

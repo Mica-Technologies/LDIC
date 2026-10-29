@@ -7,7 +7,9 @@ import static com.micatechnologies.minecraft.ldic.expr.Type.STRING;
 import com.micatechnologies.minecraft.ldic.expr.Function;
 import com.micatechnologies.minecraft.ldic.expr.Scope;
 import com.micatechnologies.minecraft.ldic.expr.Slot;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -81,6 +83,11 @@ public final class HostBindings {
             }
             return f.format(new Date());
         }, STRING));
+        // The time in the system's own regional style (12-hour with AM/PM where that is the norm).
+        DateFormat clock = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
+        scope.define(Function.str("clock", false, a -> clock.format(new Date())));
+        DateFormat longDate = DateFormat.getDateInstance(DateFormat.FULL, Locale.getDefault());
+        scope.define(Function.str("long_date", false, a -> longDate.format(new Date())));
         scope.define(Function.num("month", false, a -> Calendar.getInstance().get(Calendar.MONTH) + 1));
         scope.define(Function.num("day", false, a -> Calendar.getInstance().get(Calendar.DAY_OF_MONTH)));
         scope.define(Function.num("hour", false, a -> Calendar.getInstance().get(Calendar.HOUR_OF_DAY)));
