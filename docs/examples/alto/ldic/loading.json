@@ -1,0 +1,25 @@
+{
+  "_comment": "City of Alto loading screen (LDIC). Cinematic city scenes with captions behind letterbox bars, after a short title card. Scenes and captions are listed in the same order.",
+  "ldic": 1,
+  "extends": "builtin:cinematic",
+  "name": "Alto",
+  "constants": {
+    "captions": "'Cape Alto Conservatory at sunset|Cape Alto Medical Center|The Palm Court, Cape Alto Conservatory|Forge Avenue, Terminal City|The Conservatory terraces|Tribute Mall, Round1|Cape Alto Medical Center|Cape Alto at dusk'"
+  },
+  "screens": {
+    "main": {
+      "elements": [
+        { "id": "scenes", "shuffle": false, "images": [
+          "scenes/conservatory-sunset.jpg",
+          "scenes/medical-center-night.jpg",
+          "scenes/conservatory-palm-court.jpg",
+          "scenes/terminal-city-night.jpg",
+          "scenes/conservatory-terraces.jpg",
+          "scenes/tribute-mall.jpg",
+          "scenes/medical-center-golden.jpg",
+          "scenes/conservatory-dusk.jpg"
+        ] }
+      ]
+    }
+  }
+}

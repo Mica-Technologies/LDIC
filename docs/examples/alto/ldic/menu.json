@@ -1,0 +1,56 @@
+{
+  "_comment": "City of Alto main menu (LDIC). Built on the horizon theme: the same city scenes as the loading screen pan behind a left-aligned menu with Alto's own buttons and the live player count.",
+  "ldic": 1,
+  "extends": "builtin:horizon",
+  "name": "Alto",
+  "constants": {
+    "alto": "'alto.tacomano.micatechnologies.com:8585'",
+    "scene_seconds": 11,
+    "captions": "'Cape Alto Conservatory at sunset|Cape Alto Medical Center|The Palm Court, Cape Alto Conservatory|Forge Avenue, Terminal City|The Conservatory terraces|Tribute Mall, Round1|Cape Alto Medical Center|Cape Alto at dusk'"
+  },
+  "screens": {
+    "main": {
+      "remove": ["mods", "small_packs"],
+      "elements": [
+        { "id": "panorama", "type": "image", "fit": "cover", "duration": "scene_seconds", "fade": 2.5,
+          "ken_burns": "reduced_motion ? 0 : 0.1",
+          "images": [
+            "scenes/conservatory-sunset.jpg",
+            "scenes/medical-center-night.jpg",
+            "scenes/conservatory-palm-court.jpg",
+            "scenes/terminal-city-night.jpg",
+            "scenes/conservatory-terraces.jpg",
+            "scenes/tribute-mall.jpg",
+            "scenes/medical-center-golden.jpg",
+            "scenes/conservatory-dusk.jpg"
+          ] },
+
+        { "id": "caption", "type": "text", "font": "ui", "size": 10, "shadow": false, "colour": "#C0FFFFFF", "align": "right",
+          "anchor": "top_right", "x": -32, "y": 26,
+          "text": "{pick(captions, floor(time / scene_seconds))}",
+          "opacity": "min(1, triangle(time, scene_seconds) * 4)" },
+        { "id": "caption_rule", "type": "rect", "anchor": "top_right", "x": -32, "y": 40, "width": 40, "height": 1, "colour": "accent",
+          "opacity": "min(1, triangle(time, scene_seconds) * 4)" },
+
+        { "id": "subtitle",
+          "text": "{server_online(alto) ? server_players(alto) + (server_players(alto) == 1 ? ' player' : ' players') + ' in the city now' : 'United Islands of Alto'}" },
+        { "id": "play", "text": "Play on Alto",
+          "action": { "type": "connect", "address": "{alto}", "name": "City of Alto" } },
+        { "id": "multiplayer", "text": "City Map",
+          "action": { "type": "open_link", "url": "https://micatechnologies.com/projects/alto/webmap" } },
+
+        { "id": "menu", "children": [
+          { "id": "website", "type": "button", "style": "none", "font": "ui_bold", "size": 15, "text_align": "left", "padding": 14,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "accent", "shadow": false,
+            "text": "Website", "x": "menu_x + slide(4) + 6 * hover_t", "y": "menu_y + row * 2", "width": 220, "height": 26,
+            "opacity": "enter(4)", "action": { "type": "open_link", "url": "https://micatechnologies.com/projects/alto" },
+            "children": [ { "id": "website_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] },
+          { "id": "small_singleplayer", "type": "button", "style": "flat", "radius": 3, "colour": "#40FFFFFF", "hover_colour": "#80FFFFFF",
+            "font": "ui", "size": 10, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate('menu.singleplayer')}", "x": "menu_x + 104", "y": "menu_y + row * 5 + 26", "width": 116, "height": 20,
+            "opacity": "enter(8)", "action": { "type": "open", "screen": "singleplayer" } }
+        ] }
+      ]
+    }
+  }
+}

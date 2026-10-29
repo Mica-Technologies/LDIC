@@ -1,0 +1,6 @@
+# City of Alto loading tips (LDIC): one per line, lines starting with # are skipped.
+The city map at micatechnologies.com/projects/alto/webmap shows every street, rail line and station.
+The Cape Alto Conservatory has eighteen terraced floors of gardens under its glass crown.
+Tribute Mall in Round1 has bowling lanes and an arcade on its upper floor.
+Terminal City's avenues run on a coordinated street grid with working traffic signals.
+Open the Mods list from the main menu to see everything this pack includes.

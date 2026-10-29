@@ -74,5 +74,6 @@ the top bar and the menu is a single row in the bottom bar. Override the `scenes
 
 The repository has complete themes in
 [`docs/examples`](https://github.com/Mica-Technologies/LDIC/tree/main/docs/examples), including
-the City of Alto menu converted one-to-one from Custom Main Menu (`alto/menu-classic.json`) and a
-modern version built on `horizon` with live server status (`alto/menu.json`).
+the City of Alto menu converted one-to-one from Custom Main Menu (`alto/menu-classic.json`), a
+modern version built on `horizon` with live server status (`alto/menu.json`), and the loading screen
+and menu the pack actually ships (`alto/ldic/`, see the [showcase](../loading/index.md#showcase-city-of-alto)).

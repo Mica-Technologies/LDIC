@@ -111,3 +111,20 @@ Loading may be over in seconds on a fast machine. With `"debug": true` in
 
 - `loading.hold_seconds` keeps the loading screen up that long after loading ends;
 - LDIC saves `screenshots/ldic-loading-NNs.png` every 2 seconds.
+
+## Showcase: City of Alto
+
+The City of Alto pack uses `cinematic` with eight screenshots of its own city and a caption for
+each, and the matching main menu built on `horizon` uses the same scenes. Their files are in
+[`docs/examples/alto/ldic`](https://github.com/Mica-Technologies/LDIC/tree/main/docs/examples/alto/ldic).
+
+![City of Alto loading screen](../assets/screenshots/loading-alto.png){ .shot }
+![City of Alto main menu](../assets/screenshots/menu-alto.png){ .shot }
+
+Tips for your own scene screenshots:
+
+- Hide the HUD (F1) and shoot in 16:9 or wider; `fit: cover` crops the rest.
+- Servers only send chunks near the player, so very high aerial shots show the unloaded edge of
+  the world. Street-level and mid-height shots, where buildings fill the frame, look best.
+- Mix golden hour, night and interiors, and give each scene a caption in the same order.
+- Save them as JPEG at about 1920 pixels wide: a few hundred KB each.

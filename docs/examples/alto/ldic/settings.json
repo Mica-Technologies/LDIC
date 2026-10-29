@@ -1,0 +1,7 @@
+{
+  "menu": { "enabled": true, "fade_in": 0.8 },
+  "loading": { "enabled": true, "fps": 60, "hold_seconds": 0 },
+  "photosensitivity_notice": { "enabled": false, "always": false, "seconds": 7 },
+  "pack": { "name": "Alto", "version": "Experimental" },
+  "debug": false
+}
