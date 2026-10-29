@@ -16,8 +16,8 @@ import java.util.Objects;
  * drawing in the same pass matters: factory instances share one template definition, so a
  * node's expressions are only valid while its own values are in the slots.</p>
  *
- * <p>Hover is resolved against the previous frame's layout, so it lags by one frame. Nobody can
- * see that, and it keeps the pass single.</p>
+ * <p>Hover uses this frame's pointer against the previous frame's layout (layout rarely moves,
+ * the pointer does), which keeps the pass single without lagging the mouse.</p>
  */
 public final class UiTree {
 
@@ -73,20 +73,15 @@ public final class UiTree {
         this.mouseY = my;
         this.now = time;
         this.delta = Math.max(0, seconds);
+        // Hover for this frame: this frame's pointer against last frame's layout. The pointer
+        // moves every frame, layout rarely does, so this keeps hover in step with the mouse.
+        hot = mx >= 0 ? pick(mx, my) : null;
         interactive.clear();
         for (UiNode n : roots) {
             visit(n, renderer, 0, 0, width, height, clamp01(opacity), 1, 0, 0);
         }
-        // Topmost interactive node under the pointer, for the next frame's hover state.
-        UiNode top = null;
-        for (int i = interactive.size() - 1; i >= 0; i--) {
-            UiNode n = interactive.get(i);
-            if (n.enabled && mx >= 0 && n.contains(mx, my)) {
-                top = n;
-                break;
-            }
-        }
-        hot = top;
+        // Again against the fresh layout, for clicks and tooltips that arrive between frames.
+        hot = mx >= 0 ? pick(mx, my) : null;
         if (focused != null && !interactive.contains(focused)) {
             focused = null;
         }
