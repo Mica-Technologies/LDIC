@@ -24,13 +24,17 @@ Arguments marked *text* accept `{expression}` parts.
 | `option` | `name` *text* | Cycles a toggle or choice game option (`VIEW_BOBBING`, `GUI_SCALE`, ...) and saves it |
 | `difficulty` | | Cycles the world difficulty (only the singleplayer host, while it is not locked) |
 | `classic_options` | | Opens vanilla's own options screen instead of the themed one |
+| `resume` | | Closes the [pause menu](pause.md) and returns to the game |
+| `disconnect` | | Saves and quits to the title screen (singleplayer), or disconnects from the server |
+| `classic_pause` | | Opens vanilla's own pause menu instead of the themed one |
 | `quit` | | Quits the game |
 
 ## Built-in screens for `open`
 
 `singleplayer`, `create_world`, `multiplayer`, `video`, `controls`, `sounds`, `skin`, `chat`,
 `language`, `resource_packs`, `mods`, `snooper`, `credits`, `realms`, and `options` (the
-[themed options screen](options.md) if the theme has one, else vanilla's), plus `main` (this
+[themed options screen](options.md) if the theme has one, else vanilla's). In a world also
+`advancements`, `statistics`, `lan` (singleplayer only) and `mod_options`. Plus `main` (this
 theme's title screen) and any screen your theme defines. A theme screen with the same name as a
 built-in one wins, except `options`, which always opens as the options screen.
 

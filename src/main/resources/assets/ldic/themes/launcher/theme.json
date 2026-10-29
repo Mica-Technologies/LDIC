@@ -186,6 +186,52 @@
           ] }
         ] }
       ]
+    },
+
+    "pause": {
+      "elements": [
+        { "id": "pause_dim", "type": "rect", "colour": "#900B0D12" },
+
+        { "id": "pause_bar", "type": "rect", "height": 34, "colour": "#E0080A0F", "children": [
+          { "id": "pause_mark", "type": "rect", "anchor": "left", "x": 16, "width": 4, "height": 16, "colour": "accent" },
+          { "id": "pause_title", "type": "text", "anchor": "left", "x": 26, "font": "ui_bold", "size": 13, "shadow": false,
+            "text": "{upper(is_empty(pack_name) ? translate('menu.game') : pack_name)}" },
+          { "id": "pause_clock", "type": "text", "anchor": "right", "align": "right", "x": -16, "font": "ui", "size": 10, "colour": "#B0FFFFFF", "shadow": false,
+            "text": "{clock()}" }
+        ] },
+
+        { "id": "pause_card", "type": "rect", "anchor": "center", "y": 17, "width": 300, "height": 254, "radius": 6,
+          "colour": "#D0101319", "border_colour": "#18FFFFFF", "opacity": "enter(1)", "children": [
+          { "id": "resume", "type": "button", "style": "flat", "radius": 4, "colour": "accent", "hover_colour": "brighten(accent, 0.2)",
+            "font": "ui_bold", "size": 14, "shadow": false, "text_colour": "#FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{upper(translate('menu.returnToGame'))}", "x": 16, "y": 16, "width": "pw - 32", "height": 40, "action": "resume" },
+          { "id": "pause_options", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+            "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate('menu.options')}", "x": 16, "y": 66, "width": "(pw - 40) / 2", "height": 30, "action": { "type": "open", "screen": "options" } },
+          { "id": "mod_options", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+            "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate('fml.menu.modoptions')}", "x": "24 + (pw - 40) / 2", "y": 66, "width": "(pw - 40) / 2", "height": 30, "action": { "type": "open", "screen": "mod_options" } },
+          { "id": "advancements", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+            "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate('gui.advancements')}", "x": 16, "y": 102, "width": "(pw - 40) / 2", "height": 30, "action": { "type": "open", "screen": "advancements" } },
+          { "id": "statistics", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+            "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate('gui.stats')}", "x": "24 + (pw - 40) / 2", "y": 102, "width": "(pw - 40) / 2", "height": 30, "action": { "type": "open", "screen": "statistics" } },
+          { "id": "lan", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+            "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_colour": "#08FFFFFF", "disabled_text_colour": "#60FFFFFF",
+            "text": "{lan_open ? 'LAN world open' : translate('menu.shareToLan')}", "x": 16, "y": 138, "width": "pw - 32", "height": 30,
+            "enabled": "singleplayer && !lan_open", "action": { "type": "open", "screen": "lan" } },
+          { "id": "leave", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "#C0E53935",
+            "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF8A80", "hover_text_colour": "#FFFFFF",
+            "text": "{translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect')}", "x": 16, "y": 182, "width": "pw - 32", "height": 30,
+            "action": "disconnect" },
+          { "id": "pause_hint", "type": "text", "anchor": "bottom", "align": "center", "y": -12, "font": "ui", "size": 8, "colour": "#60FFFFFF", "shadow": false,
+            "text": "{in_world && singleplayer ? 'Game paused' : ''}" }
+        ] },
+
+        { "id": "pause_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end",
+          "anchor": "top_right", "x": -16, "y": 46, "width": 200, "height": 120 }
+      ]
     }
   }
 }

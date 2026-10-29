@@ -183,6 +183,61 @@
             "x": 16, "y": 214, "width": "pw - 32", "height": 80 }
         ] }
       ]
+    },
+
+    "pause": {
+      "elements": [
+        { "id": "pause_dim", "type": "rect", "colour": "#60060A10" },
+        { "id": "pause_shade", "type": "include", "screen": "main", "ids": ["shade_left"] },
+        { "id": "pause_clock", "type": "include", "screen": "main", "ids": ["clock", "date"] },
+
+        { "id": "pause_menu", "type": "group", "anchor": "left", "width": 300, "height": 280, "children": [
+          { "id": "pause_title", "type": "text", "font": "ui_bold", "size": 30, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('menu.game')}", "x": "menu_x + slide(0)", "y": 0, "opacity": "enter(0)" },
+          { "id": "pause_subtitle", "type": "text", "font": "ui", "size": 11, "colour": "#B0FFFFFF", "shadow": false,
+            "text": "{is_empty(pack_name) ? 'Minecraft ' + mc_version : pack_name}{lan_open ? '  /  LAN' : ''}", "x": "menu_x + slide(1)", "y": 36, "opacity": "enter(1)" },
+          { "id": "pause_rule", "type": "rect", "colour": "accent", "x": "menu_x", "y": 54, "height": 2, "width": "60 * enter(1)" },
+
+          { "id": "resume", "type": "button", "style": "none", "font": "ui_bold", "size": 13, "text_align": "left", "padding": 12,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "accent", "shadow": false,
+            "text": "{translate('menu.returnToGame')}", "x": "menu_x + slide(2) + 6 * hover_t", "y": 70, "width": 220, "height": 22,
+            "opacity": "enter(2)", "action": "resume",
+            "children": [ { "id": "resume_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] },
+          { "id": "pause_options", "type": "button", "style": "none", "font": "ui_bold", "size": 13, "text_align": "left", "padding": 12,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "accent", "shadow": false,
+            "text": "{translate('menu.options')}", "x": "menu_x + slide(2) + 6 * hover_t", "y": 96, "width": 220, "height": 22,
+            "opacity": "enter(2)", "action": { "type": "open", "screen": "options" },
+            "children": [ { "id": "pause_options_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] },
+          { "id": "advancements", "type": "button", "style": "none", "font": "ui_bold", "size": 13, "text_align": "left", "padding": 12,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "accent", "shadow": false,
+            "text": "{translate('gui.advancements')}", "x": "menu_x + slide(3) + 6 * hover_t", "y": 122, "width": 220, "height": 22,
+            "opacity": "enter(3)", "action": { "type": "open", "screen": "advancements" },
+            "children": [ { "id": "advancements_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] },
+          { "id": "statistics", "type": "button", "style": "none", "font": "ui_bold", "size": 13, "text_align": "left", "padding": 12,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "accent", "shadow": false,
+            "text": "{translate('gui.stats')}", "x": "menu_x + slide(3) + 6 * hover_t", "y": 148, "width": 220, "height": 22,
+            "opacity": "enter(3)", "action": { "type": "open", "screen": "statistics" },
+            "children": [ { "id": "statistics_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] },
+          { "id": "mod_options", "type": "button", "style": "none", "font": "ui_bold", "size": 13, "text_align": "left", "padding": 12,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "accent", "shadow": false,
+            "text": "{translate('fml.menu.modoptions')}", "x": "menu_x + slide(4) + 6 * hover_t", "y": 174, "width": 220, "height": 22,
+            "opacity": "enter(4)", "action": { "type": "open", "screen": "mod_options" },
+            "children": [ { "id": "mod_options_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] },
+          { "id": "lan", "type": "button", "style": "none", "font": "ui_bold", "size": 13, "text_align": "left", "padding": 12,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "accent", "shadow": false,
+            "text": "{translate('menu.shareToLan')}", "x": "menu_x + slide(4) + 6 * hover_t", "y": 200, "width": 220, "height": 22,
+            "opacity": "enter(4)", "visible": "singleplayer && !lan_open", "action": { "type": "open", "screen": "lan" },
+            "children": [ { "id": "lan_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] },
+
+          { "id": "leave", "type": "button", "style": "flat", "radius": 3, "colour": "#40FFFFFF", "hover_colour": "#C0E53935",
+            "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect')}", "x": "menu_x", "y": 246, "width": 220, "height": 24,
+            "opacity": "enter(5)", "action": "disconnect" }
+        ] },
+
+        { "id": "pause_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end",
+          "anchor": "top_right", "x": -16, "y": 16, "width": 200, "height": 140 }
+      ]
     }
   }
 }

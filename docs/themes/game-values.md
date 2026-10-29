@@ -30,6 +30,8 @@ Names LDIC provides to every menu theme, on top of the [built-in functions](expr
 | `reduced_motion` | bool | The player asked for less motion (`reduced_motion` in [`player.json`](../help/settings.md#playerjson)) |
 | `in_world` | bool | The screen was opened from the pause menu (a world is loaded) |
 | `foreign_buttons` | number | How many of other mods' buttons are showing on this screen |
+| `singleplayer` | bool | The world is a singleplayer world |
+| `lan_open` | bool | The singleplayer world is open to LAN |
 
 ## Functions
 

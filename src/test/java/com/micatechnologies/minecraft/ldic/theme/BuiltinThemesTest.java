@@ -33,6 +33,8 @@ class BuiltinThemesTest {
         }
         s.declare("is_demo", Type.BOOL);
         s.declare("in_world", Type.BOOL);
+        s.declare("singleplayer", Type.BOOL);
+        s.declare("lan_open", Type.BOOL);
         s.define(Function.num("option_value", false, a -> 0.5, Type.STRING));
         s.define(Function.str("option_text", false, a -> "FOV: 70", Type.STRING));
         s.define(Function.bool("option_on", false, a -> true, Type.STRING));

@@ -12,17 +12,22 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiControls;
 import net.minecraft.client.gui.GuiCreateWorld;
 import net.minecraft.client.gui.GuiCustomizeSkin;
+import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.GuiLanguage;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiOptions;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.GuiScreenOptionsSounds;
 import net.minecraft.client.gui.GuiScreenResourcePacks;
+import net.minecraft.client.gui.GuiShareToLan;
 import net.minecraft.client.gui.GuiSnooper;
 import net.minecraft.client.gui.GuiVideoSettings;
 import net.minecraft.client.gui.GuiWinGame;
 import net.minecraft.client.gui.GuiWorldSelection;
+import net.minecraft.client.gui.achievement.GuiStats;
+import net.minecraft.client.gui.advancements.GuiScreenAdvancements;
 import net.minecraft.client.gui.ScreenChatOptions;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.renderer.OpenGlHelper;
@@ -79,6 +84,18 @@ final class Actions {
                     break;
                 case "classic_options":
                     manager.openClassicOptions(driver.host() instanceof LdicOptionsScreen ? ((LdicOptionsScreen) driver.host()).parent() : screen);
+                    break;
+                case "classic_pause":
+                    if (mc.world != null) {
+                        manager.openClassicPause();
+                    }
+                    break;
+                case "resume":
+                    mc.displayGuiScreen(null);
+                    mc.setIngameFocus();
+                    break;
+                case "disconnect":
+                    disconnect();
                     break;
                 case "connect": {
                     String address = a.str("address", "");
@@ -194,11 +211,61 @@ final class Actions {
             case "realms":
                 new RealmsBridge().switchToRealms(screen);
                 return;
+            case "advancements":
+                if (mc.player == null) {
+                    return;
+                }
+                next = new GuiScreenAdvancements(mc.player.connection.getAdvancementManager());
+                break;
+            case "statistics":
+            case "stats":
+                if (mc.player == null) {
+                    return;
+                }
+                next = new GuiStats(screen, mc.player.getStatFileWriter());
+                break;
+            case "lan":
+                if (!mc.isSingleplayer()) {
+                    return;
+                }
+                next = new GuiShareToLan(screen);
+                break;
+            case "mod_options":
+                if (mc.world != null) {
+                    FMLClientHandler.instance().showInGameModOptions(screen instanceof GuiIngameMenu ? (GuiIngameMenu) screen : new GuiIngameMenu());
+                } else {
+                    next = new GuiModList(screen);
+                    break;
+                }
+                return;
             default:
                 Ldic.LOGGER.warn("LDIC: '{}' is neither a screen in this theme nor a built-in screen ({})", id, a.path);
                 return;
         }
         mc.displayGuiScreen(next);
+    }
+
+    /**
+     * Leaves the world the way vanilla's "Save and Quit to Title" / "Disconnect" does: to the
+     * title screen from singleplayer, to Realms from a Realms server, else to the server list.
+     */
+    private static void disconnect() {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (mc.world == null) {
+            // Already leaving: a second click must not disconnect twice.
+            return;
+        }
+        boolean integrated = mc.isIntegratedServerRunning();
+        boolean realms = mc.isConnectedToRealms();
+        mc.world.sendQuittingDisconnectingPacket();
+        mc.loadWorld(null);
+        if (integrated) {
+            mc.displayGuiScreen(new GuiMainMenu());
+        } else if (realms) {
+            new RealmsBridge().switchToRealms(new GuiMainMenu());
+        } else {
+            mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
+        }
     }
 
     private static void loadWorld(String folder, GuiScreen screen) throws Exception {

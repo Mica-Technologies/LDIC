@@ -52,6 +52,8 @@ public final class HostBindings {
     private final Slot screenId = scope.declare("screen", STRING);
     private final Slot inWorld = scope.declare("in_world", BOOL);
     private final Slot foreignButtons = scope.declare("foreign_buttons", NUMBER);
+    private final Slot singleplayer = scope.declare("singleplayer", BOOL);
+    private final Slot lanOpen = scope.declare("lan_open", BOOL);
 
     private final Map<String, SimpleDateFormat> dateFormats = new HashMap<>();
     private String splash = "";
@@ -141,6 +143,9 @@ public final class HostBindings {
         mouseX.set(mx);
         mouseY.set(my);
         inWorld.set(GameOptions.inWorld());
+        Minecraft mcNow = Minecraft.getMinecraft();
+        singleplayer.set(mcNow.isSingleplayer());
+        lanOpen.set(mcNow.isSingleplayer() && mcNow.getIntegratedServer() != null && mcNow.getIntegratedServer().getPublic());
         Runtime rt = Runtime.getRuntime();
         double mib = 1024.0 * 1024.0;
         memTotal.set(Math.round(rt.totalMemory() / mib));

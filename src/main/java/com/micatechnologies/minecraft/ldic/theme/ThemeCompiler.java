@@ -62,6 +62,9 @@ public final class ThemeCompiler {
         action("option", "name", Kind.TEXT);
         action("difficulty");
         action("classic_options");
+        action("classic_pause");
+        action("resume");
+        action("disconnect");
     }
 
     private static void action(String type, Object... argKinds) {

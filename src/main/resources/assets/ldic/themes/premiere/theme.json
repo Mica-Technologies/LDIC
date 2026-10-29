@@ -144,6 +144,56 @@
           ] }
         ] }
       ]
+    },
+
+    "pause": {
+      "elements": [
+        { "id": "pause_dim", "type": "rect", "colour": "#50000000" },
+
+        { "id": "pause_bar_top", "type": "rect", "anchor": "top", "height": "bar_h", "colour": "#000000", "children": [
+          { "id": "pause_title", "type": "text", "anchor": "center", "align": "center", "font": "ui_bold", "size": 16, "colour": "#FFFFFF", "shadow": false,
+            "text": "{upper(is_empty(pack_name) ? translate('menu.game') : pack_name)}", "opacity": "reveal(0)" },
+          { "id": "pause_clock", "type": "text", "anchor": "right", "align": "right", "x": -20, "font": "ui", "size": 9, "colour": "#80FFFFFF", "shadow": false,
+            "text": "{clock()}" },
+          { "id": "lan", "type": "button", "style": "none", "anchor": "left", "x": 12, "width": 110, "height": 24,
+            "font": "ui_bold", "size": 9, "shadow": false, "text_colour": "#B0FFFFFF", "hover_text_colour": "accent",
+            "text": "{upper(translate('menu.shareToLan'))}", "visible": "singleplayer && !lan_open", "action": { "type": "open", "screen": "lan" },
+            "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] }
+        ] },
+
+        { "id": "pause_bar_bottom", "type": "rect", "anchor": "bottom", "height": "bar_h", "colour": "#000000", "children": [
+          { "id": "pause_row", "type": "group", "anchor": "center", "width": "item_w * 6", "height": 24, "children": [
+            { "id": "resume", "type": "button", "style": "none", "x": "item_w * 0", "width": "item_w", "height": 24,
+              "font": "ui_bold", "size": 9, "shadow": false, "text_colour": "#FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('menu.returnToGame'))}", "opacity": "reveal(1)", "action": "resume",
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "pause_options", "type": "button", "style": "none", "x": "item_w * 1", "width": "item_w", "height": 24,
+              "font": "ui_bold", "size": 9, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('menu.options'))}", "opacity": "reveal(2)", "action": { "type": "open", "screen": "options" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "advancements", "type": "button", "style": "none", "x": "item_w * 2", "width": "item_w", "height": 24,
+              "font": "ui_bold", "size": 9, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('gui.advancements'))}", "opacity": "reveal(3)", "action": { "type": "open", "screen": "advancements" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "statistics", "type": "button", "style": "none", "x": "item_w * 3", "width": "item_w", "height": 24,
+              "font": "ui_bold", "size": 9, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('gui.stats'))}", "opacity": "reveal(4)", "action": { "type": "open", "screen": "statistics" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "mod_options", "type": "button", "style": "none", "x": "item_w * 4", "width": "item_w", "height": 24,
+              "font": "ui_bold", "size": 9, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('fml.menu.modoptions'))}", "opacity": "reveal(5)", "action": { "type": "open", "screen": "mod_options" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "leave", "type": "button", "style": "none", "x": "item_w * 5", "width": "item_w", "height": 24,
+              "font": "ui_bold", "size": 9, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "#FF8A80",
+              "text": "{upper(translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect'))}", "opacity": "reveal(6)", "action": "disconnect",
+              "tooltip": "{translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect')}",
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "#FF8A80" } ] }
+          ] }
+        ] },
+
+        { "id": "pause_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "start",
+          "anchor": "top_right", "x": -12, "y": "bar_h + 12", "width": 200, "height": 140 }
+      ]
     }
   }
 }

@@ -96,3 +96,8 @@ vanilla's. See [Options screen](options.md).
 ![premiere options](../assets/screenshots/options-premiere.png){ .shot }
 
 *premiere: the categories run along the bottom bar.*
+
+## Pause menus
+
+The same three themes restyle the pause menu, with the world showing behind it. See
+[Pause menu](pause.md).

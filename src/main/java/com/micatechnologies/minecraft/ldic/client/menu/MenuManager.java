@@ -128,11 +128,18 @@ public final class MenuManager {
     }
 
     private boolean classicOptionsOnce;
+    private boolean classicPauseOnce;
 
     /** Opens vanilla's options screen, skipping the themed one this one time. */
     void openClassicOptions(GuiScreen parent) {
         classicOptionsOnce = true;
         Minecraft.getMinecraft().displayGuiScreen(new GuiOptions(parent, Minecraft.getMinecraft().gameSettings));
+    }
+
+    /** Opens vanilla's pause menu, skipping the themed one this one time. */
+    void openClassicPause() {
+        classicPauseOnce = true;
+        Minecraft.getMinecraft().displayGuiScreen(new net.minecraft.client.gui.GuiIngameMenu());
     }
 
     boolean hasScreen(String id) {
@@ -157,6 +164,16 @@ public final class MenuManager {
             }
             return;
         }
+        if (event.getGui() instanceof net.minecraft.client.gui.GuiIngameMenu && !(event.getGui() instanceof LdicPauseScreen)) {
+            if (classicPauseOnce) {
+                classicPauseOnce = false;
+                return;
+            }
+            if (settings.pauseEnabled && theme != null && theme.screen("pause") != null) {
+                event.setGui(new LdicPauseScreen(this, theme));
+            }
+            return;
+        }
         if (event.getGui() instanceof GuiMainMenu && !(event.getGui() instanceof LdicMenuScreen)) {
             if (!loadAttempted) {
                 load();
@@ -176,7 +193,8 @@ public final class MenuManager {
      */
     @SubscribeEvent
     public void onInitGui(net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post event) {
-        if (settings.debug && (event.getGui() instanceof LdicOptionsScreen || event.getGui() instanceof LdicMenuScreen)) {
+        if (settings.debug && (event.getGui() instanceof LdicOptionsScreen || event.getGui() instanceof LdicMenuScreen
+                || event.getGui() instanceof LdicPauseScreen)) {
             event.getButtonList().add(new net.minecraft.client.gui.GuiButton(0x4C4400, 0, 0, 150, 20, "Sample mod button"));
         }
     }

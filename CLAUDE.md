@@ -52,10 +52,11 @@ Minecraft-facing (`client`):
   type for both screens.
 - `menu`: `MenuManager` (theme load, GuiOpenEvent swaps, music, server ticks).
   `ThemeScreenDriver` runs a theme screen (drawing, input, slider drags, other mods' buttons,
-  links) inside a vanilla screen class: `LdicMenuScreen` extends `GuiMainMenu` and
+  links) inside a vanilla screen class: `LdicMenuScreen` extends `GuiMainMenu`, `LdicPauseScreen`
+  extends `GuiIngameMenu` and
   `LdicOptionsScreen` extends `GuiOptions`, on purpose, so other mods' `instanceof` button hooks
   keep working. Theme elements never enter `buttonList`; other mods' buttons are never hidden on
-  the options screen. `Actions` runs theme actions; `GameOptions` maps option names to
+  the options or pause screens. `Actions` runs theme actions; `GameOptions` maps option names to
   `GameSettings`.
 - `loading.LoadingScreen`: wraps Forge's splash runnable (via `MixinSplashProgress`), keeps
   Forge's lock/mutex/pause protocol, falls back to Forge's runnable on any failure.
