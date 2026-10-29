@@ -6,20 +6,20 @@
   "description": "Scrolling, fading loading log over a panorama, with a memory readout.",
   "constants": {
     "bar_colour": "#1144CC",
-    "line_h": 12,
-    "lines": 28
+    "line_h": 12
   },
   "variables": {
-    "log_line": "is_empty(sub_status) ? status : status + ' - ' + ellipsize(sub_status, 40)"
+    "log_line": "is_empty(sub_status) ? status : status + ' - ' + ellipsize(sub_status, 40)",
+    "visible_lines": "max(1, floor((screen_height - 110) / line_h))"
   },
   "elements": [
     { "id": "panorama", "type": "panorama", "speed": 4 },
 
     { "id": "log", "type": "factory", "trigger": "log_line", "max": 40,
       "keep": { "line": "log_line" },
-      "destroy_when": "index >= lines || 20 + index * line_h > screen_height * 0.75",
+      "destroy_when": "index >= visible_lines",
       "template": { "id": "log_entry", "type": "text", "anchor": "bottom_left", "x": 35, "y": "-20 - index * line_h",
-        "text": "{line}", "colour": "rgb(max(0x20, 255 - 255 * index / lines), max(0x20, 255 - 255 * index / lines), max(0x20, 255 - 255 * index / lines))" } },
+        "text": "{line}", "colour": "hsv(0, 0, 1 - 0.85 * index / visible_lines)", "shadow": "index < visible_lines / 2" } },
 
     { "id": "percent", "type": "text", "anchor": "bottom_left", "x": 5, "y": -20, "text": "{floor(progress * 100)}%" },
     { "id": "bar_track", "type": "rect", "anchor": "bottom", "height": 5, "colour": "#000000", "children": [

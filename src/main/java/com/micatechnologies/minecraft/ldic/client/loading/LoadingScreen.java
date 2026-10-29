@@ -7,6 +7,7 @@ import com.micatechnologies.minecraft.ldic.client.AssetResolver;
 import com.micatechnologies.minecraft.ldic.client.ClientThemeSource;
 import com.micatechnologies.minecraft.ldic.client.LdicSettings;
 import com.micatechnologies.minecraft.ldic.client.WebCache;
+import com.micatechnologies.minecraft.ldic.client.audio.MusicPlayer;
 import com.micatechnologies.minecraft.ldic.client.render.BitmapFont;
 import com.micatechnologies.minecraft.ldic.client.render.Fonts;
 import com.micatechnologies.minecraft.ldic.client.render.Gfx;
@@ -32,6 +33,7 @@ import java.util.List;
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.locks.Lock;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.SoundCategory;
 import net.minecraftforge.fml.client.SplashProgress;
 import net.minecraftforge.fml.common.ProgressManager;
 import org.lwjgl.opengl.Display;
@@ -126,15 +128,58 @@ public final class LoadingScreen {
             return null;
         }
         Ldic.LOGGER.info("LDIC: loading theme '{}' with {} problem(s)", theme.name, problems.size());
-        return new LoadingScreen(settings, theme, bindings, configDir);
+
+        ThemeDef notice = null;
+        Seen seen = Seen.load(configDir);
+        if (settings.photosensitivityNotice && (settings.photosensitivityAlways || !seen.has(NOTICE_KEY))) {
+            Problems np = new Problems();
+            File custom = new File(configDir, NOTICE_FILE);
+            notice = compile(source, custom.isFile() ? source.openConfigFile(NOTICE_FILE) : source.open(NOTICE_THEME), bindings, np, NOTICE_SCREEN);
+            for (Problems.Problem p : np.all()) {
+                Ldic.LOGGER.warn("LDIC notice theme {}", p);
+            }
+        } else if (theme.flashing && !settings.photosensitivityNotice) {
+            Ldic.LOGGER.warn("LDIC: loading theme '{}' declares flashing content but the photosensitivity notice is off "
+                    + "(photosensitivity_notice.enabled in config/ldic/settings.json)", theme.name);
+        }
+
+        LoadingScreen screen = new LoadingScreen(settings, theme, bindings, configDir);
+        screen.notice = notice;
+        screen.seen = seen;
+        if (theme.music != null) {
+            Minecraft mc = Minecraft.getMinecraft();
+            MusicPlayer.play(theme.music, new AssetResolver(configDir, true), settings.musicVolume,
+                    () -> mc.gameSettings.getSoundLevel(SoundCategory.MASTER) * mc.gameSettings.getSoundLevel(SoundCategory.MUSIC));
+        }
+        return screen;
     }
 
+    private static final String NOTICE_FILE = "notices.json";
+    private static final String NOTICE_THEME = "builtin:notices";
+    private static final String NOTICE_SCREEN = "photosensitivity";
+    private static final String NOTICE_KEY = "notice:photosensitivity";
+
+    private ThemeDef notice;
+    private Seen seen;
+
     private static ThemeDef compile(ThemeSource source, ThemeSource.Document doc, LoadingBindings bindings, Problems problems) {
+        return compile(source, doc, bindings, problems, "main");
+    }
+
+    private static ThemeDef compile(ThemeSource source, ThemeSource.Document doc, LoadingBindings bindings, Problems problems,
+                                    String requiredScreen) {
         ThemeLoader.Result r = ThemeLoader.load(source, doc, problems);
         if (r == null) {
             return null;
         }
         ThemeDef t = ThemeCompiler.compile(r.json, bindings.scope, problems);
+        if (!requiredScreen.equals("main")) {
+            if (t.screen(requiredScreen) == null) {
+                problems.error("screens", doc.name + " has no \"" + requiredScreen + "\" screen");
+                return null;
+            }
+            return t;
+        }
         if (t.screen("main") == null) {
             problems.error("screens", doc.name + " has no \"main\" screen (or top-level \"elements\")");
             return null;
@@ -217,7 +262,7 @@ public final class LoadingScreen {
             fonts = new Fonts(assets, minecraftFont);
             fonts.setAliases(theme.fonts);
             renderer = new ThemeRenderer(textures, fonts, n -> { });
-            UiTree tree = new UiTree(theme.screen("main"));
+            List<Segment> segments = buildSegments();
             List<ProgressModel.Bar> bars = new ArrayList<>();
 
             long start = System.nanoTime();
@@ -225,7 +270,21 @@ public final class LoadingScreen {
             long updateNanos = 0;
             int frames = 0;
             boolean vsyncForced = false;
-            while (!isDone()) {
+            // The photosensitivity notice is shown in full even if loading finishes first: that is
+            // its whole point. finish() simply waits for it. With debug on, hold_seconds keeps the
+            // screen up after loading ends, so authors can preview a theme on a fast machine.
+            double doneAt = -1;
+            while (true) {
+                double t = (System.nanoTime() - start) / 1e9;
+                if (isDone()) {
+                    if (doneAt < 0) {
+                        doneAt = t;
+                    }
+                    double hold = settings.debug ? settings.loadingHoldSeconds : 0;
+                    if (t >= doneAt + hold && !noticeShowing(segments, t)) {
+                        break;
+                    }
+                }
                 long now = System.nanoTime();
                 double seconds = (now - start) / 1e9;
                 double dt = Math.min(0.25, (now - last) / 1e9);
@@ -238,9 +297,9 @@ public final class LoadingScreen {
                     bars.add(new ProgressModel.Bar(b.getTitle(), b.getMessage(), b.getStep(), b.getSteps()));
                 }
                 model.update(bars, seconds, dt);
-                drawFrame(renderer, textures, fonts, tree, model, bars, seconds, dt);
+                drawFrame(renderer, textures, fonts, segments, model, bars, seconds, dt);
                 if (settings.debug) {
-                    debugShots.maybeCapture(model.progress());
+                    debugShots.maybeCapture(seconds);
                 }
 
                 mutex.acquireUninterruptibly();
@@ -274,6 +333,10 @@ public final class LoadingScreen {
             if (model.complete()) {
                 Timings.save(configDir, model.stageSeconds());
             }
+            markSeen(segments, Double.MAX_VALUE);
+            if (theme.music != null && !theme.music.continueIntoMenu) {
+                MusicPlayer.stopCurrent();
+            }
             return true;
         } catch (Throwable t) {
             boolean finished = isDone();
@@ -302,14 +365,79 @@ public final class LoadingScreen {
         }
     }
 
-    private void drawFrame(ThemeRenderer renderer, Textures textures, Fonts fonts, UiTree tree, ProgressModel model,
+    /** One screen in the loading sequence: the notice, an intro, or main (which never ends). */
+    private static final class Segment {
+        final ThemeDef theme;
+        final UiTree tree;
+        final double start;
+        final double end;
+        final String seenKey;
+        final boolean notice;
+
+        Segment(ThemeDef theme, String screen, double start, double end, String seenKey, boolean notice) {
+            this.theme = theme;
+            this.tree = new UiTree(theme.screen(screen));
+            this.start = start;
+            this.end = end;
+            this.seenKey = seenKey;
+            this.notice = notice;
+        }
+    }
+
+    /**
+     * Lays the sequence out on the clock. Each segment starts {@code crossfade} seconds before
+     * the previous one ends and fades in over it; main starts last and runs until loading is done.
+     */
+    private List<Segment> buildSegments() {
+        List<Segment> out = new ArrayList<>();
+        double cf = theme.crossfade;
+        double t = 0;
+        if (notice != null) {
+            double len = settings.photosensitivitySeconds;
+            out.add(new Segment(notice, NOTICE_SCREEN, t, t + len, NOTICE_KEY, true));
+            t += len - cf;
+        }
+        for (ThemeDef.Step step : theme.sequence) {
+            String key = "once:" + theme.name + ":" + step.screen;
+            if (step.once && seen.has(key)) {
+                continue;
+            }
+            out.add(new Segment(theme, step.screen, t, t + step.seconds, step.once ? key : null, false));
+            t += step.seconds - cf;
+        }
+        out.add(new Segment(theme, "main", Math.max(0, t), Double.MAX_VALUE, null, false));
+        return out;
+    }
+
+    private static boolean noticeShowing(List<Segment> segments, double t) {
+        for (Segment s : segments) {
+            if (s.notice && t < s.end) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void markSeen(List<Segment> segments, double t) {
+        boolean changed = false;
+        for (Segment s : segments) {
+            if (s.seenKey != null && s.end != Double.MAX_VALUE && t >= s.end && !seen.has(s.seenKey)) {
+                seen.add(s.seenKey);
+                changed = true;
+            }
+        }
+        if (changed) {
+            seen.save(configDir);
+        }
+    }
+
+    private void drawFrame(ThemeRenderer renderer, Textures textures, Fonts fonts, List<Segment> segments, ProgressModel model,
                            List<ProgressModel.Bar> bars, double seconds, double dt) {
         int w = Display.getWidth();
         int h = Display.getHeight();
         int scale = guiScale(w, h);
         double gw = w / (double) scale;
         double gh = h / (double) scale;
-        double ui = theme.uiScale(gw, gh);
 
         GL11.glViewport(0, 0, w, h);
         GL11.glMatrixMode(GL11.GL_PROJECTION);
@@ -321,19 +449,31 @@ public final class LoadingScreen {
         GL11.glClear(GL11.GL_COLOR_BUFFER_BIT);
 
         textures.tick();
-        fonts.setPixelScale(ui * scale);
-        bindings.update(seconds, dt, gw / ui, gh / ui, gw, gh, scale, ui, model, bars);
-        theme.updateVariables();
         renderer.now = seconds;
-        renderer.uiScale = ui;
         renderer.guiScale = scale;
-
         Gfx.beginUi();
-        GL11.glPushMatrix();
-        GL11.glScaled(ui, ui, 1);
-        tree.frame(renderer, gw / ui, gh / ui, -1, -1, seconds, dt);
-        GL11.glPopMatrix();
+        for (Segment s : segments) {
+            if (seconds < s.start || seconds >= s.end) {
+                continue;
+            }
+            // A segment fades in over the one before it; that one stays opaque underneath until
+            // it ends, so the crossfade never dips through black.
+            double cf = theme.crossfade;
+            double opacity = s.start <= 0 || cf <= 0 ? 1 : Math.min(1, (seconds - s.start) / cf);
+            double ui = s.theme.uiScale(gw, gh);
+            fonts.setAliases(s.theme.fonts);
+            fonts.setPixelScale(ui * scale);
+            bindings.update(seconds, dt, gw / ui, gh / ui, gw, gh, scale, ui, model, bars);
+            bindings.setScreenTime(seconds - s.start);
+            s.theme.updateVariables();
+            renderer.uiScale = ui;
+            GL11.glPushMatrix();
+            GL11.glScaled(ui, ui, 1);
+            s.tree.frame(renderer, gw / ui, gh / ui, -1, -1, seconds - s.start, dt, opacity);
+            GL11.glPopMatrix();
+        }
         Gfx.endUi();
+        markSeen(segments, seconds);
     }
 
     /** Vanilla's GUI scale rule: the largest scale that keeps at least 320x240 GUI pixels. */
@@ -388,18 +528,19 @@ public final class LoadingScreen {
 
     /**
      * With {@code "debug": true} in settings.json, saves {@code screenshots/ldic-loading-NN.png}
-     * as progress passes 10%, 50% and 85%, so a loading theme can be checked (and documented)
+     * every 2 seconds (up to 12), so a loading theme can be checked (and documented)
      * without a screen recorder: nothing else can screenshot the game this early.
      */
     private static final class DebugShots {
-        private static final double[] AT = {0.10, 0.50, 0.85};
+        private static final double EVERY = 2;
+        private static final int MAX = 12;
         private int next;
 
-        void maybeCapture(double progress) {
-            if (next >= AT.length || progress < AT[next]) {
+        void maybeCapture(double seconds) {
+            if (next >= MAX || seconds < EVERY * (next + 1)) {
                 return;
             }
-            int pct = (int) Math.round(AT[next] * 100);
+            int at = (int) Math.round(EVERY * (next + 1));
             next++;
             int w = Display.getWidth();
             int h = Display.getHeight();
@@ -415,10 +556,56 @@ public final class LoadingScreen {
             File dir = new File(Minecraft.getMinecraft().gameDir, "screenshots");
             try {
                 if (dir.isDirectory() || dir.mkdirs()) {
-                    javax.imageio.ImageIO.write(img, "png", new File(dir, String.format("ldic-loading-%02d.png", pct)));
+                    javax.imageio.ImageIO.write(img, "png", new File(dir, String.format("ldic-loading-%02ds.png", at)));
                 }
             } catch (IOException e) {
                 Ldic.LOGGER.warn("LDIC: could not save a loading screenshot", e);
+            }
+        }
+    }
+
+    /** {@code config/ldic/cache/seen.json}: notices and once-only intros this player has seen. */
+    static final class Seen {
+        private final java.util.Set<String> keys = new java.util.HashSet<>();
+
+        boolean has(String key) {
+            return keys.contains(key);
+        }
+
+        void add(String key) {
+            keys.add(key);
+        }
+
+        static Seen load(File configDir) {
+            Seen s = new Seen();
+            File f = new File(configDir, "cache/seen.json");
+            if (f.isFile()) {
+                try {
+                    for (com.google.gson.JsonElement e : Json.parse(new String(Files.readAllBytes(f.toPath()), StandardCharsets.UTF_8))
+                            .getAsJsonObject().getAsJsonArray("seen")) {
+                        s.keys.add(e.getAsString());
+                    }
+                } catch (Exception e) {
+                    Ldic.LOGGER.warn("LDIC: could not read {}", f);
+                }
+            }
+            return s;
+        }
+
+        void save(File configDir) {
+            File dir = new File(configDir, "cache");
+            JsonObject o = new JsonObject();
+            JsonArray a = new JsonArray();
+            for (String k : keys) {
+                a.add(k);
+            }
+            o.add("seen", a);
+            try {
+                if (dir.isDirectory() || dir.mkdirs()) {
+                    Files.write(new File(dir, "seen.json").toPath(), o.toString().getBytes(StandardCharsets.UTF_8));
+                }
+            } catch (IOException e) {
+                Ldic.LOGGER.warn("LDIC: could not save {}", dir, e);
             }
         }
     }

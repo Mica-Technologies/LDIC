@@ -212,21 +212,34 @@ public final class ThemeRenderer implements NodeRenderer {
         int count = s.order.length;
         int cur = s.order[(int) (step % count)];
         int next = s.order[(int) ((step + 1) % count)];
+        double kb = Math.max(0, d.num("ken_burns", 0));
+        // Each slide lives from when it starts fading in to when the next one has replaced it,
+        // and its own pan and zoom run over exactly that span, so nothing jumps at a change.
+        double life = duration + fade;
         Textures.Texture a = textures.get(images.get(cur).asString(), linear);
         if (a != null) {
-            drawTexture(n, a, tint, n.opacity);
+            drawTexture(n, a, tint, n.opacity, kb, step, (phase + fade) / life);
         }
         if (count > 1 && fade > 0 && phase > duration - fade) {
             double t = (phase - (duration - fade)) / fade;
             Textures.Texture b = textures.get(images.get(next).asString(), linear);
             if (b != null) {
-                drawTexture(n, b, tint, n.opacity * t);
+                drawTexture(n, b, tint, n.opacity * t, kb, step + 1, (phase - (duration - fade)) / life);
             }
         }
     }
 
-    /** Draws a texture into the node's box honouring fit, uv and animation frames. */
     private void drawTexture(UiNode n, Textures.Texture t, long tint, double opacity) {
+        drawTexture(n, t, tint, opacity, 0, 0, 0);
+    }
+
+    /**
+     * Draws a texture into the node's box honouring fit, uv and animation frames. With
+     * {@code kenBurns} above 0 the visible region is zoomed by up to that fraction and panned
+     * as {@code life} goes from 0 to 1; even slides zoom in, odd ones out, and the pan
+     * direction varies with {@code slide}.
+     */
+    private void drawTexture(UiNode n, Textures.Texture t, long tint, double opacity, double kenBurns, long slide, double life) {
         ElementDef d = n.def;
         double u0 = d.num("uv0", 0);
         double v0 = d.num("uv1", 0);
@@ -280,6 +293,25 @@ public final class ThemeRenderer implements NodeRenderer {
                 break;
             default:
                 break;
+        }
+        if (kenBurns > 0) {
+            double l = Math.max(0, Math.min(1, life));
+            double ease = l * l * (3 - 2 * l);
+            double zoom = 1 + kenBurns * (slide % 2 == 0 ? ease : 1 - ease);
+            // Pan directions cycle through a few diagonals and straights, never standing still.
+            double[][] dirs = {{1, 0.4}, {-1, -0.3}, {0.6, -1}, {-0.5, 1}, {1, -0.8}};
+            double[] dir = dirs[(int) Math.floorMod(slide, (long) dirs.length)];
+            double w = u1 - u0;
+            double h = v1 - v0;
+            double cw = w / zoom;
+            double ch = h / zoom;
+            double travel = (ease - 0.5);
+            double cu = u0 + w / 2 + dir[0] * travel * (w - cw);
+            double cv = v0 + h / 2 + dir[1] * travel * (h - ch);
+            u0 = cu - cw / 2;
+            u1 = cu + cw / 2;
+            v0 = cv - ch / 2;
+            v1 = cv + ch / 2;
         }
         Gfx.gl().enableTexture();
         t.bind();

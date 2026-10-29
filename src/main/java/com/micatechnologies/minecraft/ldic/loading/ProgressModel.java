@@ -42,7 +42,7 @@ public final class ProgressModel {
     private static final String[] STAGE_NAMES = {
         "Constructing mods",
         "Pre-initialization",
-        "Loading textures and models",
+        "Starting the game engine",
         "Initialization",
         "Post-initialization",
         "Finishing up",
@@ -96,7 +96,13 @@ public final class ProgressModel {
                 break;
             }
         }
-        if (top == null) {
+        if (top == null && stage > 0) {
+            // Forge's main bar has been popped: loading is over.
+            raw = 1;
+            status = "Ready";
+            subStatus = "";
+            task = "";
+        } else if (top == null) {
             raw = 0;
             status = bars.isEmpty() ? "Starting" : bars.get(0).title;
             subStatus = bars.isEmpty() ? "" : bars.get(bars.size() - 1).message;

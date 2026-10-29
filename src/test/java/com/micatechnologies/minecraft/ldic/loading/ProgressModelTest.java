@@ -60,6 +60,15 @@ class ProgressModelTest {
     }
 
     @Test
+    void afterTheMainBarIsGoneItIsDone() {
+        ProgressModel m = new ProgressModel(null);
+        m.update(Collections.singletonList(loading(7)), 1, 0);
+        m.update(Collections.emptyList(), 2, 0);
+        assertEquals(1, m.rawProgress());
+        assertEquals("Ready", m.status());
+    }
+
+    @Test
     void fractionHandlesDeepStacks() {
         // Outer: 2 of 4 begun = 1 done, plus the inner bar's fraction (2 of 4 begun = 1/4) = 1.25 / 4.
         assertEquals(0.3125, ProgressModel.fraction(Arrays.asList(new Bar("a", "", 2, 4), new Bar("b", "", 2, 4), new Bar("c", "", 0, 0)), 0), 1e-9);

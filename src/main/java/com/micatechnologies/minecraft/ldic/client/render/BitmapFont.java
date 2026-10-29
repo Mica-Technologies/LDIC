@@ -105,9 +105,13 @@ public final class BitmapFont implements LdicFont {
             }
             int g = index(c);
             if (g != ' ') {
+                // Inset half a texel so nearest sampling at fractional scales never picks up the
+                // neighbouring glyph's edge (a dotted line under the text otherwise).
+                double inset = 0.5 / texture.width;
                 double u0 = (g % 16) / 16.0;
                 double v0 = (g / 16) / 16.0;
-                Gfx.texturedQuad(pen, y, pen + 8 * s, y + 8 * s, u0, v0, u0 + 1 / 16.0, v0 + 1 / 16.0, colour, opacity);
+                Gfx.texturedQuad(pen, y, pen + 8 * s, y + 8 * s, u0 + inset, v0 + inset,
+                        u0 + 1 / 16.0 - inset, v0 + 1 / 16.0 - inset, colour, opacity);
             }
             pen += widths[g] * s;
         }

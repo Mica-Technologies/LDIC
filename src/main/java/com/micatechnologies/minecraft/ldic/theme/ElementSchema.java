@@ -61,7 +61,7 @@ public final class ElementSchema {
 
     /** Keys whose string values are asset paths, resolved relative to the declaring theme file. */
     public static final Set<String> ASSET_KEYS = new HashSet<>(Arrays.asList(
-            "image", "hover_image", "images", "icon", "font"));
+            "image", "hover_image", "images", "icon", "font", "tracks"));
 
     private static final Map<String, Map<String, Prop>> TYPES = new LinkedHashMap<>();
     private static final Map<String, String> ALIASES = new HashMap<>();
@@ -90,7 +90,8 @@ public final class ElementSchema {
                 new Prop("filter", Kind.ENUM, "linear", "linear", "nearest"),
                 new Prop("duration", Kind.NUMBER, 6),
                 new Prop("fade", Kind.NUMBER, 1),
-                new Prop("shuffle", Kind.FLAG, false));
+                new Prop("shuffle", Kind.FLAG, false),
+                new Prop("ken_burns", Kind.NUMBER, 0));
 
         type("text",
                 new Prop("text", Kind.TEXT, ""),

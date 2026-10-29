@@ -41,7 +41,7 @@ public final class ThemeCompiler {
     private static final Set<String> TOP_LEVEL = new HashSet<>(Arrays.asList(
             "ldic", "name", "author", "description", "flashing", "extends", "design", "anchors",
             "fonts", "constants", "state", "functions", "variables", "screens", "elements",
-            "foreign_buttons", "remove"));
+            "foreign_buttons", "remove", "sequence", "crossfade", "music"));
 
     private static final Map<String, Map<String, Kind>> ACTION_ARGS = new HashMap<>();
 
@@ -128,7 +128,76 @@ public final class ThemeCompiler {
         functions(root, scope);
         variables(root, scope);
         screens(root, scope);
+        sequence(root);
+        music(root);
         return def;
+    }
+
+    private void sequence(JsonObject root) {
+        def.crossfade = Math.max(0, number(root, "crossfade", 0.6));
+        JsonArray seq = array(root, "sequence", "sequence");
+        if (seq == null) {
+            return;
+        }
+        for (int i = 0; i < seq.size(); i++) {
+            String p = "sequence[" + i + "]";
+            if (!seq.get(i).isJsonObject()) {
+                problems.warn(p, "must be {\"screen\": name, \"seconds\": n}");
+                continue;
+            }
+            JsonObject o = seq.get(i).getAsJsonObject();
+            String screen = string(o, "screen", null);
+            if (screen == null || !def.screens.containsKey(screen)) {
+                problems.error(p + ".screen", "'" + screen + "' is not a screen of this theme");
+                continue;
+            }
+            double seconds = number(o, "seconds", 3);
+            if (seconds <= 0) {
+                problems.warn(p + ".seconds", "must be positive");
+                continue;
+            }
+            def.sequence.add(new ThemeDef.Step(screen, seconds, bool(o, "once", false)));
+        }
+    }
+
+    private void music(JsonObject root) {
+        JsonObject m = object(root, "music");
+        if (m == null) {
+            return;
+        }
+        ThemeDef.Music music = new ThemeDef.Music();
+        JsonArray tracks = array(m, "tracks", "music.tracks");
+        if (tracks != null) {
+            for (int i = 0; i < tracks.size(); i++) {
+                if (tracks.get(i).isJsonPrimitive()) {
+                    music.tracks.add(tracks.get(i).getAsString());
+                } else {
+                    problems.warn("music.tracks[" + i + "]", "must be a file path");
+                }
+            }
+        }
+        if (music.tracks.isEmpty()) {
+            problems.warn("music", "has no \"tracks\"");
+            return;
+        }
+        for (String t : music.tracks) {
+            if (!t.toLowerCase(Locale.ROOT).endsWith(".ogg")) {
+                problems.warn("music.tracks", "'" + t + "' is not an .ogg file; only Ogg Vorbis is supported");
+            }
+        }
+        music.volume = Math.max(0, Math.min(1, number(m, "volume", 1)));
+        music.loop = bool(m, "loop", true);
+        music.shuffle = bool(m, "shuffle", false);
+        music.fadeIn = Math.max(0, number(m, "fade_in", 2));
+        music.fadeOut = Math.max(0, number(m, "fade_out", 3));
+        music.continueIntoMenu = bool(m, "continue_into_menu", false);
+        for (Map.Entry<String, JsonElement> e : m.entrySet()) {
+            if (!Arrays.asList("tracks", "volume", "loop", "shuffle", "fade_in", "fade_out", "continue_into_menu").contains(e.getKey())
+                    && !isComment(e.getKey())) {
+                problems.warn("music." + e.getKey(), "unknown music key");
+            }
+        }
+        def.music = music;
     }
 
     private static boolean isComment(String key) {

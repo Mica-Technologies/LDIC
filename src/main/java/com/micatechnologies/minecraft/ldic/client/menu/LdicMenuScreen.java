@@ -46,11 +46,14 @@ public final class LdicMenuScreen extends GuiMainMenu {
     private long lastFrame = System.nanoTime();
     private String pendingLink;
     private boolean foreignHandled;
+    /** Whether this is the first menu after loading, which fades in from black. */
+    private final boolean fadeIn;
 
     LdicMenuScreen(MenuManager manager, ThemeDef theme, String screenId) {
         this.manager = manager;
         this.theme = theme;
         this.screenId = screenId;
+        this.fadeIn = manager.consumeFirstOpen() && manager.settings().menuFadeIn > 0;
         ScreenDef def = theme.screen(screenId);
         this.tree = new UiTree(def);
         this.renderer = new ThemeRenderer(manager.textures(), manager.fonts(), this::hoverStarted);
@@ -160,6 +163,10 @@ public final class LdicMenuScreen extends GuiMainMenu {
             GlStateManager.disableLighting();
         }
         drawProblems();
+        if (fadeIn && screenSeconds < manager.settings().menuFadeIn) {
+            int alpha = (int) Math.round(255 * (1 - screenSeconds / manager.settings().menuFadeIn));
+            drawRect(0, 0, width, height, alpha << 24);
+        }
     }
 
     /** Moves other mods' visible buttons into the theme's foreign_buttons area, if it has one. */

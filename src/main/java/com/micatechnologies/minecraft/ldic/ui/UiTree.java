@@ -61,6 +61,12 @@ public final class UiTree {
      */
     public void frame(NodeRenderer renderer, double width, double height, double mx, double my,
                       double time, double seconds) {
+        frame(renderer, width, height, mx, my, time, seconds, 1);
+    }
+
+    /** As above, with every element's opacity multiplied by {@code opacity} (for crossfades). */
+    public void frame(NodeRenderer renderer, double width, double height, double mx, double my,
+                      double time, double seconds, double opacity) {
         this.screenWidth = width;
         this.screenHeight = height;
         this.mouseX = mx;
@@ -69,7 +75,7 @@ public final class UiTree {
         this.delta = Math.max(0, seconds);
         interactive.clear();
         for (UiNode n : roots) {
-            visit(n, renderer, 0, 0, width, height, 1, 1, 0, 0);
+            visit(n, renderer, 0, 0, width, height, clamp01(opacity), 1, 0, 0);
         }
         // Topmost interactive node under the pointer, for the next frame's hover state.
         UiNode top = null;

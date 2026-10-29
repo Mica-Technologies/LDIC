@@ -1,0 +1,62 @@
+{
+  "_comment": "LDIC built-in loading theme 'cinematic': full-screen scenes that slowly pan, zoom and crossfade behind letterbox bars, with captions and a hairline progress bar. Replace the scenes with your own screenshots by overriding the 'scenes' element's images (and 'captions' for matching captions).",
+  "ldic": 1,
+  "name": "Cinematic",
+  "author": "Mica Technologies",
+  "description": "Panning, crossfading scenes in letterbox, with captions and a hairline progress bar.",
+  "crossfade": 1.2,
+  "constants": {
+    "accent": "#E8D8A0",
+    "scene_seconds": 9,
+    "captions": "''"
+  },
+  "variables": {
+    "bar_h": "screen_height * 0.11",
+    "scene": "floor(time / scene_seconds)"
+  },
+  "screens": {
+    "intro": {
+      "elements": [
+        { "id": "intro_bg", "type": "rect", "colour": "#000000" },
+        { "id": "intro_title", "type": "text", "anchor": "center", "align": "center", "size": 36, "colour": "#FFFFFF", "shadow": false,
+          "text": "{is_empty(pack_name) ? 'Minecraft' : pack_name}",
+          "opacity": "ease_in_out(screen_time / 1.2)", "scale": "reduced_motion ? 1 : 1 + 0.04 * ease_out(screen_time / 3)" },
+        { "id": "intro_sub", "type": "text", "anchor": "center", "align": "center", "y": 26, "size": 9, "colour": "accent", "shadow": false,
+          "text": "{upper(is_empty(pack_version) ? 'Minecraft ' + mc_version : pack_version)}",
+          "opacity": "ease_in_out((screen_time - 0.6) / 1.2)" }
+      ]
+    },
+    "main": {
+      "elements": [
+        { "id": "backdrop", "type": "rect", "colour": "#000000" },
+        { "id": "scenes", "type": "image", "fit": "cover", "duration": "scene_seconds", "fade": 2,
+          "ken_burns": "reduced_motion ? 0 : 0.12",
+          "images": [
+            "minecraft:textures/gui/title/background/panorama_0.png",
+            "minecraft:textures/gui/title/background/panorama_1.png",
+            "minecraft:textures/gui/title/background/panorama_2.png",
+            "minecraft:textures/gui/title/background/panorama_3.png"
+          ] },
+        { "id": "grade", "type": "rect", "colour": "#30000000", "colour_bottom": "#70000000" },
+
+        { "id": "bar_top", "type": "rect", "anchor": "top", "height": "bar_h", "colour": "#000000" },
+        { "id": "bar_bottom", "type": "rect", "anchor": "bottom", "height": "bar_h", "colour": "#000000", "children": [
+          { "id": "progress_track", "type": "rect", "anchor": "top", "height": 1, "colour": "#20FFFFFF" },
+          { "id": "progress_fill", "type": "rect", "anchor": "top_left", "height": 1, "width": "pw * progress", "colour": "accent" },
+          { "id": "title", "type": "text", "anchor": "left", "x": 20, "y": -5, "size": 9, "colour": "#FFFFFF", "shadow": false,
+            "text": "{upper(is_empty(pack_name) ? 'Minecraft' : pack_name)}" },
+          { "id": "caption", "type": "text", "anchor": "left", "x": 20, "y": 7, "size": 9, "colour": "#A0FFFFFF", "shadow": false,
+            "text": "{is_empty(captions) ? tip(scene) : pick(captions, scene)}",
+            "opacity": "triangle(time, scene_seconds) * 4" },
+          { "id": "status", "type": "text", "anchor": "right", "align": "right", "x": -20, "y": -5, "size": 9, "colour": "#C0FFFFFF", "shadow": false,
+            "text": "{status}" },
+          { "id": "percent", "type": "text", "anchor": "right", "align": "right", "x": -20, "y": 7, "size": 9, "colour": "accent", "shadow": false,
+            "text": "{percent(progress)}{eta >= 1 ? '  /  ' + duration(eta) : ''}" }
+        ] }
+      ]
+    }
+  },
+  "sequence": [
+    { "screen": "intro", "seconds": 3.5 }
+  ]
+}

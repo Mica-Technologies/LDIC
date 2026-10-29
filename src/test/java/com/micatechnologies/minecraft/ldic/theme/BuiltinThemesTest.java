@@ -32,6 +32,7 @@ class BuiltinThemesTest {
             s.declare(n, Type.STRING);
         }
         s.declare("is_demo", Type.BOOL);
+        s.declare("reduced_motion", Type.BOOL);
         s.define(Function.bool("mod_loaded", false, a -> false, Type.STRING));
         s.define(Function.str("translate", false, a -> a[0].str(), Type.STRING));
         s.define(Function.bool("has_translation", false, a -> true, Type.STRING));
@@ -62,7 +63,7 @@ class BuiltinThemesTest {
         }
     };
 
-    private static final String[] LOADING_THEMES = {"minimal", "console"};
+    private static final String[] LOADING_THEMES = {"minimal", "console", "cinematic", "traditional", "notices"};
 
     /** Stub of client.loading.LoadingBindings; keep in step with it. */
     private static Scope loadingStub() {
@@ -75,6 +76,7 @@ class BuiltinThemesTest {
         for (String n : new String[] {"status", "sub_status", "task", "mc_version", "forge_version", "username", "pack_name", "pack_version"}) {
             s.declare(n, Type.STRING);
         }
+        s.declare("reduced_motion", Type.BOOL);
         s.define(Function.str("tip", false, a -> "tip"));
         s.define(Function.str("tip", false, a -> "tip", Type.NUMBER));
         s.define(Function.num("tip_count", false, a -> 1));
@@ -105,6 +107,6 @@ class BuiltinThemesTest {
         assertNotNull(r, id + ": " + p.all());
         ThemeDef t = ThemeCompiler.compile(r.json, scope, p);
         assertTrue(p.isEmpty(), id + ": " + p.all());
-        assertNotNull(t.screen("main"), id);
+        assertNotNull(t.screen(id.equals("notices") ? "photosensitivity" : "main"), id);
     }
 }

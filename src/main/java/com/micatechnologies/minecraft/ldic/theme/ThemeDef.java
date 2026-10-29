@@ -39,6 +39,40 @@ public final class ThemeDef {
     public final Map<String, ScreenDef> screens = new LinkedHashMap<>();
     public final Problems problems;
 
+    /** A screen shown before {@code main} (loading themes): an intro, a logo sting. */
+    public static final class Step {
+        public final String screen;
+        public final double seconds;
+        /** Shown only the first time this player loads the game with this theme. */
+        public final boolean once;
+
+        Step(String screen, double seconds, boolean once) {
+            this.screen = screen;
+            this.seconds = seconds;
+            this.once = once;
+        }
+    }
+
+    /** Screens to show, in order, before {@code main}. */
+    public final List<Step> sequence = new ArrayList<>();
+    /** Seconds each crossfade between sequence screens (and into main) takes. */
+    public double crossfade = 0.6;
+
+    /** Background music for this theme, or null. */
+    public Music music;
+
+    /** A theme's music: tracks played in order (or shuffled), with fades. */
+    public static final class Music {
+        public final List<String> tracks = new ArrayList<>();
+        public double volume = 1;
+        public boolean loop = true;
+        public boolean shuffle;
+        public double fadeIn = 2;
+        public double fadeOut = 3;
+        /** Loading themes: keep playing on the main menu instead of fading out when loading ends. */
+        public boolean continueIntoMenu;
+    }
+
     ThemeDef(Problems problems) {
         this.problems = problems;
     }

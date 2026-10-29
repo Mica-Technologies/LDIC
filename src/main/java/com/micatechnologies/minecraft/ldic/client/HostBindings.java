@@ -63,6 +63,7 @@ public final class HostBindings {
         scope.declare("pack_name", STRING).set(settings.packName);
         scope.declare("pack_version", STRING).set(settings.packVersion);
         scope.declare("is_demo", BOOL).set(mc.isDemo());
+        scope.declare("reduced_motion", BOOL).set(settings.reducedMotion);
 
         scope.define(Function.bool("mod_loaded", false, a -> Loader.isModLoaded(a[0].str()), STRING));
         scope.define(Function.str("translate", false, a -> I18n.format(a[0].str()), STRING));

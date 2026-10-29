@@ -1,0 +1,46 @@
+{
+  "_comment": "LDIC built-in loading theme 'traditional': a classic game loading screen. Key art fills the screen, a tips panel runs along the bottom with a spinner and segmented progress bar, and the pack name sits top left. Replace the art by overriding the 'art' element's images.",
+  "ldic": 1,
+  "name": "Traditional",
+  "author": "Mica Technologies",
+  "description": "Key art, a tips panel, a spinner and a segmented progress bar.",
+  "constants": {
+    "accent": "#FFB74D",
+    "segments": 24
+  },
+  "elements": [
+    { "id": "backdrop", "type": "rect", "colour": "#000000" },
+    { "id": "art", "type": "image", "fit": "cover", "duration": 12, "fade": 1.5, "shuffle": true,
+      "ken_burns": "reduced_motion ? 0 : 0.05",
+      "images": [
+        "minecraft:textures/gui/title/background/panorama_0.png",
+        "minecraft:textures/gui/title/background/panorama_1.png",
+        "minecraft:textures/gui/title/background/panorama_2.png",
+        "minecraft:textures/gui/title/background/panorama_3.png"
+      ] },
+    { "id": "shade_top", "type": "rect", "anchor": "top", "height": "30%", "colour": "#B0000000", "colour_bottom": "#00000000" },
+
+    { "id": "title", "type": "text", "x": 16, "y": 14, "size": 18, "colour": "#FFFFFF",
+      "text": "{is_empty(pack_name) ? 'Minecraft' : pack_name}" },
+    { "id": "subtitle", "type": "text", "x": 17, "y": 36, "size": 9, "colour": "#B0FFFFFF",
+      "text": "{is_empty(pack_version) ? 'Minecraft ' + mc_version : 'Version ' + pack_version}" },
+
+    { "id": "panel", "type": "rect", "anchor": "bottom", "height": 64, "colour": "#D0101010", "border_colour": "#30FFFFFF", "children": [
+      { "id": "tip_label", "type": "text", "x": 16, "y": 10, "size": 9, "colour": "accent", "text": "TIP", "visible": "tip_count() > 0" },
+      { "id": "tip", "type": "text", "x": 40, "y": 10, "width": "pw - 200", "wrap": true, "size": 9, "line_spacing": 1.2,
+        "colour": "#E0FFFFFF", "shadow": false, "text": "{tip(floor(time / 10))}", "visible": "tip_count() > 0" },
+
+      { "id": "segments", "type": "factory", "count": "segments", "max": 64,
+        "x": 16, "y": -12, "anchor": "bottom_left", "width": "pw - 32", "height": 6,
+        "template": { "id": "segment", "type": "rect", "x": "index * pw / count", "width": "pw / count - 2", "height": "100%",
+          "colour": "index < floor(progress * count) ? accent : (index < progress * count ? mix(#30FFFFFF, accent, fract(progress * count)) : #30FFFFFF)" } },
+
+      { "id": "spinner", "type": "rect", "anchor": "top_right", "x": -26, "y": 14, "width": 10, "height": 10,
+        "colour": "accent", "pivot": "center", "rotation": "reduced_motion ? 45 : time * 180" },
+      { "id": "loading", "type": "text", "anchor": "top_right", "align": "right", "x": -44, "y": 14, "size": 9, "colour": "#FFFFFF",
+        "text": "Loading{reduced_motion ? '...' : substr('...', 0, floor(time * 2) % 4)}" },
+      { "id": "status", "type": "text", "anchor": "top_right", "align": "right", "x": -16, "y": 30, "size": 9, "colour": "#90FFFFFF", "shadow": false,
+        "text": "{status}" }
+    ] }
+  ]
+}

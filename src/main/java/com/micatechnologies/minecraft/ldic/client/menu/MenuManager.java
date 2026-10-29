@@ -6,6 +6,7 @@ import com.micatechnologies.minecraft.ldic.client.ClientThemeSource;
 import com.micatechnologies.minecraft.ldic.client.HostBindings;
 import com.micatechnologies.minecraft.ldic.client.LdicSettings;
 import com.micatechnologies.minecraft.ldic.client.WebCache;
+import com.micatechnologies.minecraft.ldic.client.audio.MusicPlayer;
 import com.micatechnologies.minecraft.ldic.client.render.Fonts;
 import com.micatechnologies.minecraft.ldic.client.render.Textures;
 import com.micatechnologies.minecraft.ldic.theme.Problems;
@@ -31,6 +32,9 @@ import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -54,6 +58,7 @@ public final class MenuManager {
     private final ClientThemeSource source;
     private final Textures textures;
     private final Fonts fonts;
+    private final AssetResolver assets;
     private final HostBindings bindings;
     private final long startNs = System.nanoTime();
     private final Deque<String> history = new ArrayDeque<>();
@@ -67,7 +72,7 @@ public final class MenuManager {
         this.configDir = configDir;
         this.settings = settings;
         this.source = new ClientThemeSource(configDir);
-        AssetResolver assets = new AssetResolver(configDir);
+        this.assets = new AssetResolver(configDir);
         this.textures = new Textures(assets, new WebCache(configDir));
         this.fonts = new Fonts(assets, com.micatechnologies.minecraft.ldic.client.render.VanillaFont.INSTANCE);
         this.bindings = new HostBindings(settings);
@@ -129,7 +134,47 @@ public final class MenuManager {
             if (theme != null) {
                 history.clear();
                 event.setGui(new LdicMenuScreen(this, theme, "main"));
+                startMusic();
             }
+        }
+    }
+
+    private boolean firstMenuShown;
+
+    /** True exactly once: for the first theme screen after the game finished loading. */
+    boolean consumeFirstOpen() {
+        boolean first = !firstMenuShown;
+        firstMenuShown = true;
+        return first;
+    }
+
+    /**
+     * Plays the menu theme's music unless LDIC music is already playing (loading music that
+     * continues into the menu, or this theme's own from an earlier visit).
+     */
+    private void startMusic() {
+        MusicPlayer playing = MusicPlayer.current();
+        if (playing != null || theme.music == null) {
+            return;
+        }
+        Minecraft mc = Minecraft.getMinecraft();
+        MusicPlayer.play(theme.music, assets, settings.musicVolume,
+                () -> mc.gameSettings.getSoundLevel(SoundCategory.MASTER) * mc.gameSettings.getSoundLevel(SoundCategory.MUSIC));
+    }
+
+    /** While LDIC music plays, vanilla's menu music stays quiet so the two never overlap. */
+    @SubscribeEvent
+    public void onPlaySound(PlaySoundEvent event) {
+        if (event.getSound() != null && event.getSound().getCategory() == SoundCategory.MUSIC && MusicPlayer.current() != null) {
+            event.setResultSound(null);
+        }
+    }
+
+    /** Menu and loading music end when the player enters a world. */
+    @SubscribeEvent
+    public void onClientTick(TickEvent.ClientTickEvent event) {
+        if (event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().world != null && MusicPlayer.current() != null) {
+            MusicPlayer.stopCurrent();
         }
     }
 

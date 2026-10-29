@@ -74,6 +74,7 @@ final class LoadingBindings {
         scope.declare("username", STRING).set(mc.getSession().getUsername());
         scope.declare("pack_name", STRING).set(settings.packName);
         scope.declare("pack_version", STRING).set(settings.packVersion);
+        scope.declare("reduced_motion", com.micatechnologies.minecraft.ldic.expr.Type.BOOL).set(settings.reducedMotion);
 
         // tip() is one tip picked at random for this launch; tip(i) walks the list from there,
         // so a theme can rotate with tip(floor(time / 8)).
@@ -119,6 +120,10 @@ final class LoadingBindings {
     private ProgressModel.Bar bar(double i) {
         int idx = (int) i;
         return idx >= 0 && idx < bars.size() ? bars.get(idx) : null;
+    }
+
+    void setScreenTime(double seconds) {
+        screenTime.set(seconds);
     }
 
     void update(double seconds, double dt, double width, double height, double gw, double gh, double gs, double ui,

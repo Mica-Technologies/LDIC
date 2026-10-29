@@ -1,0 +1,24 @@
+{
+  "_comment": "LDIC built-in notices, shown before the loading screen when a pack enables them in config/ldic/settings.json. To reword the notice, copy this file to config/ldic/notices.json and edit it.",
+  "ldic": 1,
+  "name": "Notices",
+  "author": "Mica Technologies",
+  "screens": {
+    "photosensitivity": {
+      "elements": [
+        { "id": "background", "type": "rect", "colour": "#0C0E12" },
+        { "id": "panel", "type": "group", "anchor": "center", "width": 300, "height": 160,
+          "opacity": "ease_out(screen_time / 0.5)", "children": [
+          { "id": "title", "type": "text", "anchor": "top", "align": "center", "size": 18, "colour": "#FFD54F",
+            "text": "Photosensitivity notice" },
+          { "id": "rule", "type": "rect", "anchor": "top", "y": 26, "width": 120, "height": 1, "colour": "#60FFD54F" },
+          { "id": "body", "type": "text", "anchor": "top", "y": 38, "width": 300, "wrap": true, "align": "center",
+            "size": 9, "line_spacing": 1.25, "colour": "#E0FFFFFF", "shadow": false,
+            "text": "This modpack includes moving and flashing images. A small number of people may have seizures when exposed to certain light patterns or flashing lights, even without any history of epilepsy.\n\nIf you or anyone in your family has an epileptic condition, or you feel dizzy, see blurred vision, twitch, or lose awareness while playing, stop at once and consult a doctor." },
+          { "id": "countdown", "type": "text", "anchor": "bottom", "y": 30, "align": "center", "size": 9, "colour": "#70FFFFFF", "shadow": false,
+            "text": "The game continues loading in the background." }
+        ] }
+      ]
+    }
+  }
+}
