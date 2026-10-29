@@ -1,0 +1,112 @@
+site_name: LDIC Wiki
+site_description: >-
+  Limitless Development: Immersive Client — themeable loading screens and main menus for
+  Minecraft 1.12.2 modpacks.
+site_url: https://mica-technologies.github.io/LDIC/
+repo_url: https://github.com/Mica-Technologies/LDIC
+repo_name: Mica-Technologies/LDIC
+edit_uri: edit/main/docs/
+copyright: >-
+  LDIC is licensed under the LGPL 2.1. Documentation is part of the LDIC repository.
+
+# Working plans are gitignored and absent from a CI checkout anyway. This stops a LOCAL
+# `mkdocs serve` from finding them and quietly publishing one on the next deploy.
+exclude_docs: |
+  AGENT-PLANS/
+
+theme:
+  name: material
+  language: en
+  icon:
+    repo: fontawesome/brands/github
+    logo: material/monitor-dashboard
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.sections
+    - navigation.top
+    - navigation.indexes
+    - navigation.footer
+    - search.suggest
+    - search.highlight
+    - content.code.copy
+    - content.action.edit
+    - content.tabs.link
+    - toc.follow
+  palette:
+    # LDIC's own identity: the horizon theme's sky accent over the launcher's dark surfaces.
+    # The ramps live in assets/ldic.css; `custom` tells Material to read them from there.
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Switch to light mode
+
+extra_css:
+  - assets/ldic.css
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/Mica-Technologies/LDIC
+      name: LDIC on GitHub
+
+markdown_extensions:
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.details
+  # Renders :material-…: shortcodes as inline SVG icons instead of literal text.
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.superfences
+
+plugins:
+  - search
+
+validation:
+  anchors: warn
+
+nav:
+  - Home: index.md
+  - Get started:
+      - Installing: start/installing.md
+      - Your first menu theme: start/first-theme.md
+  - Themes:
+      - Built-in themes: themes/built-in.md
+      - Theme files: themes/theme-files.md
+      - Layout: themes/layout.md
+      - Elements: themes/elements.md
+      - Actions: themes/actions.md
+      - Expressions: themes/expressions.md
+      - Game values: themes/game-values.md
+  - Loading screen: loading/index.md
+  - Help:
+      - Troubleshooting: help/troubleshooting.md
+      - Settings: help/settings.md
+  - Internals:
+      - How LDIC works: design/architecture.md
+      - Building from source: design/building-from-source.md

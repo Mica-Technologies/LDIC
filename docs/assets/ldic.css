@@ -1,0 +1,79 @@
+/* ============================================================================
+   LDIC wiki: Mica Technologies design system, LDIC colouring
+   ----------------------------------------------------------------------------
+   The accent is the sky blue of LDIC's built-in "horizon" menu theme, so the
+   wiki looks like the menus it documents. Neutrals are the Mica launcher's dark
+   surface stack (shared with the CSM and RCMC wikis), so the sites read as one
+   family. Roboto, an 8px spacing base and 4/8/16 radii follow the design
+   guidelines at micatechnologies.com/design; light and dark are equals.
+   ============================================================================ */
+
+:root {
+  --ldic-sky-50:  hsl(199, 90%, 96%);
+  --ldic-sky-100: hsl(199, 88%, 89%);
+  --ldic-sky-200: hsl(199, 88%, 78%);
+  --ldic-sky-300: hsl(199, 90%, 68%);
+  --ldic-sky-400: hsl(199, 91%, 64%); /* ~#4FC3F7, the horizon accent */
+  --ldic-sky-500: hsl(199, 80%, 50%);
+  --ldic-sky-600: hsl(199, 85%, 40%);
+  --ldic-sky-700: hsl(199, 90%, 31%);
+  --ldic-sky-800: hsl(199, 92%, 21%);
+  --ldic-sky-900: hsl(199, 95%, 13%);
+
+  --ldic-gray-50:  hsl(220, 35%, 97%);
+  --ldic-gray-100: hsl(220, 30%, 94%);
+  --ldic-gray-200: hsl(220, 20%, 88%);
+  --ldic-gray-400: hsl(220, 20%, 65%);
+  --ldic-gray-700: hsl(220, 20%, 25%);
+  --ldic-gray-800: hsl(220, 30%, 9%);
+  --ldic-gray-900: hsl(220, 30%, 5%);
+
+  --ldic-radius-1: 4px;
+  --ldic-radius-2: 8px;
+}
+
+/* ---------------------------------------------------------------- light mode */
+[data-md-color-scheme="default"] {
+  --md-primary-fg-color:        var(--ldic-gray-900);
+  --md-primary-fg-color--light: var(--ldic-gray-700);
+  --md-primary-fg-color--dark:  var(--ldic-gray-900);
+  --md-primary-bg-color:        var(--ldic-gray-50);
+  --md-primary-bg-color--light: var(--ldic-gray-100);
+  --md-accent-fg-color:         var(--ldic-sky-600);
+  --md-accent-fg-color--transparent: hsla(199, 85%, 40%, 0.1);
+  --md-typeset-a-color:         var(--ldic-sky-700);
+}
+
+/* ----------------------------------------------------------------- dark mode */
+[data-md-color-scheme="slate"] {
+  --md-hue: 220;
+  --md-default-bg-color:        var(--ldic-gray-900);
+  --md-primary-fg-color:        var(--ldic-gray-800);
+  --md-primary-fg-color--light: var(--ldic-gray-700);
+  --md-primary-fg-color--dark:  var(--ldic-gray-900);
+  --md-primary-bg-color:        var(--ldic-gray-50);
+  --md-primary-bg-color--light: var(--ldic-gray-200);
+  --md-accent-fg-color:         var(--ldic-sky-400);
+  --md-accent-fg-color--transparent: hsla(199, 91%, 64%, 0.1);
+  --md-typeset-a-color:         var(--ldic-sky-300);
+}
+
+/* A thin accent rule under the header, like the horizon theme's title rule. */
+.md-header {
+  box-shadow: inset 0 -2px 0 var(--ldic-sky-400);
+}
+
+/* Screenshots: rounded, with a soft frame so dark menus do not bleed into a dark page. */
+.md-typeset img.shot {
+  border-radius: var(--ldic-radius-2);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.md-typeset .grid.cards > ul > li {
+  border-radius: var(--ldic-radius-2);
+}
+
+/* Property tables are wide; keep the name column from wrapping. */
+.md-typeset table td:first-child code {
+  white-space: nowrap;
+}
