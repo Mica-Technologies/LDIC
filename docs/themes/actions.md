@@ -26,6 +26,7 @@ Arguments marked *text* accept `{expression}` parts.
 | `classic_options` | | Opens vanilla's own options screen instead of the themed one |
 | `resume` | | Closes the [pause menu](pause.md) and returns to the game |
 | `disconnect` | | Saves and quits to the title screen (singleplayer), or disconnects from the server |
+| `cheats` | | Turns Allow Cheats on or off in the singleplayer world, saved with the world (vanilla only offers it under Open to LAN, for the session) |
 | `classic_pause` | | Opens vanilla's own pause menu instead of the themed one |
 | `quit` | | Quits the game |
 

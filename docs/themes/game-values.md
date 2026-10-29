@@ -32,6 +32,7 @@ Names LDIC provides to every menu theme, on top of the [built-in functions](expr
 | `foreign_buttons` | number | How many of other mods' buttons are showing on this screen |
 | `singleplayer` | bool | The world is a singleplayer world |
 | `lan_open` | bool | The singleplayer world is open to LAN |
+| `cheats` | bool | The player can use cheat commands in this world (singleplayer: the world's Allow Cheats setting) |
 | `status`, `status_detail`, `status_progress` | string, string, number | On the [world-loading screen](world-loading.md): what the game is doing, the step, and 0–1 or -1 |
 
 ## Functions

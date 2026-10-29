@@ -65,6 +65,7 @@ public final class ThemeCompiler {
         action("classic_pause");
         action("resume");
         action("disconnect");
+        action("cheats");
     }
 
     private static void action(String type, Object... argKinds) {

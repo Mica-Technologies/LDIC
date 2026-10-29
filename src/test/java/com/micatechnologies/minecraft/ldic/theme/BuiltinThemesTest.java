@@ -35,6 +35,7 @@ class BuiltinThemesTest {
         s.declare("in_world", Type.BOOL);
         s.declare("singleplayer", Type.BOOL);
         s.declare("lan_open", Type.BOOL);
+        s.declare("cheats", Type.BOOL);
         s.declare("status", Type.STRING);
         s.declare("status_detail", Type.STRING);
         s.declare("status_progress", Type.NUMBER);

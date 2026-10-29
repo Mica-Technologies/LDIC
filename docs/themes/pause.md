@@ -33,7 +33,9 @@ The built-in `horizon`, `launcher` and `premiere`, and every theme that extends 
     { "type": "button", "text": "{translate('fml.menu.modoptions')}", "y": 96, "action": { "type": "open", "screen": "mod_options" } },
     { "type": "button", "text": "{translate('menu.shareToLan')}", "y": 120, "visible": "singleplayer && !lan_open",
       "action": { "type": "open", "screen": "lan" } },
-    { "type": "button", "text": "{translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect')}", "y": 150, "action": "disconnect" },
+    { "type": "button", "text": "{translate('selectWorld.allowCommands')} {translate(cheats ? 'options.on' : 'options.off')}",
+      "y": 144, "visible": "singleplayer", "action": "cheats" },
+    { "type": "button", "text": "{translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect')}", "y": 174, "action": "disconnect" },
     { "type": "foreign_buttons", "anchor": "top_right", "width": 200, "height": 120 }
   ]
 }
@@ -41,6 +43,8 @@ The built-in `horizon`, `launcher` and `premiere`, and every theme that extends 
 
 - The world shows behind the screen: draw a translucent rect rather than an opaque background.
 - `singleplayer` and `lan_open` tell the screen what kind of game it is in.
+- The `cheats` action switches the world's Allow Cheats setting without opening to LAN, and
+  `cheats` says whether it is on. The built-in pause menus have this button.
 - `include` can borrow parts of the main screen, such as horizon's clock:
   `{ "type": "include", "screen": "main", "ids": ["clock", "date"] }`.
 - Escape, and the `back` action, return to the game.

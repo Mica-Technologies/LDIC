@@ -191,7 +191,7 @@
         { "id": "pause_shade", "type": "include", "screen": "main", "ids": ["shade_left"] },
         { "id": "pause_clock", "type": "include", "screen": "main", "ids": ["clock", "date"] },
 
-        { "id": "pause_menu", "type": "group", "anchor": "left", "width": 300, "height": 280, "children": [
+        { "id": "pause_menu", "type": "group", "anchor": "left", "width": 300, "height": 292, "children": [
           { "id": "pause_title", "type": "text", "font": "ui_bold", "size": 30, "colour": "#FFFFFF", "shadow": false,
             "text": "{translate('menu.game')}", "x": "menu_x + slide(0)", "y": 0, "opacity": "enter(0)" },
           { "id": "pause_subtitle", "type": "text", "font": "ui", "size": 11, "colour": "#B0FFFFFF", "shadow": false,
@@ -228,10 +228,16 @@
             "text": "{translate('menu.shareToLan')}", "x": "menu_x + slide(4) + 6 * hover_t", "y": 200, "width": 220, "height": 22,
             "opacity": "enter(4)", "visible": "singleplayer && !lan_open", "action": { "type": "open", "screen": "lan" },
             "children": [ { "id": "lan_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] },
+          { "id": "cheats", "type": "button", "style": "none", "font": "ui_bold", "size": 13, "text_align": "left", "padding": 12,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "accent", "shadow": false,
+            "text": "{translate('selectWorld.allowCommands')} {translate(cheats ? 'options.on' : 'options.off')}",
+            "x": "menu_x + slide(4) + 6 * hover_t", "y": "lan_open ? 200 : 226", "width": 220, "height": 22,
+            "opacity": "enter(4)", "visible": "singleplayer", "action": "cheats",
+            "children": [ { "id": "cheats_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] },
 
           { "id": "leave", "type": "button", "style": "flat", "radius": 3, "colour": "#40FFFFFF", "hover_colour": "#C0E53935",
             "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF",
-            "text": "{translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect')}", "x": "menu_x", "y": 246, "width": 220, "height": 24,
+            "text": "{translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect')}", "x": "menu_x", "y": 262, "width": 220, "height": 24,
             "opacity": "enter(5)", "action": "disconnect" }
         ] },
 

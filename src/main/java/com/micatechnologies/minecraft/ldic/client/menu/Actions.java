@@ -31,7 +31,9 @@ import net.minecraft.client.gui.advancements.GuiScreenAdvancements;
 import net.minecraft.client.gui.ScreenChatOptions;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.realms.RealmsBridge;
+import net.minecraft.server.integrated.IntegratedServer;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.world.storage.WorldSummary;
@@ -96,6 +98,9 @@ final class Actions {
                     break;
                 case "disconnect":
                     disconnect();
+                    break;
+                case "cheats":
+                    toggleCheats();
                     break;
                 case "connect": {
                     String address = a.str("address", "");
@@ -266,6 +271,27 @@ final class Actions {
         } else {
             mc.displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
         }
+    }
+
+    /**
+     * Turns cheats on or off in the singleplayer world, as the world's "Allow Cheats" setting (saved
+     * with the world). Vanilla only offers this through Open to LAN, and only for the session. While
+     * the world is open to LAN, LAN players follow the setting too, as vanilla's LAN screen does.
+     */
+    private static void toggleCheats() {
+        Minecraft mc = Minecraft.getMinecraft();
+        IntegratedServer server = mc.getIntegratedServer();
+        if (server == null || mc.player == null) {
+            return;
+        }
+        boolean on = !mc.player.canUseCommand(2, "");
+        server.addScheduledTask(() -> {
+            server.worlds[0].getWorldInfo().setAllowCommands(on);
+            server.getPlayerList().setCommandsAllowedForAll(on && server.getPublic());
+            for (EntityPlayerMP player : server.getPlayerList().getPlayers()) {
+                server.getPlayerList().updatePermissionLevel(player);
+            }
+        });
     }
 
     private static void loadWorld(String folder, GuiScreen screen) throws Exception {

@@ -54,6 +54,7 @@ public final class HostBindings {
     private final Slot foreignButtons = scope.declare("foreign_buttons", NUMBER);
     private final Slot singleplayer = scope.declare("singleplayer", BOOL);
     private final Slot lanOpen = scope.declare("lan_open", BOOL);
+    private final Slot cheats = scope.declare("cheats", BOOL);
     private final Slot status = scope.declare("status", STRING);
     private final Slot statusDetail = scope.declare("status_detail", STRING);
     private final Slot statusProgress = scope.declare("status_progress", NUMBER);
@@ -156,6 +157,7 @@ public final class HostBindings {
         Minecraft mcNow = Minecraft.getMinecraft();
         singleplayer.set(mcNow.isSingleplayer());
         lanOpen.set(mcNow.isSingleplayer() && mcNow.getIntegratedServer() != null && mcNow.getIntegratedServer().getPublic());
+        cheats.set(mcNow.player != null && mcNow.player.canUseCommand(2, ""));
         Runtime rt = Runtime.getRuntime();
         double mib = 1024.0 * 1024.0;
         memTotal.set(Math.round(rt.totalMemory() / mib));

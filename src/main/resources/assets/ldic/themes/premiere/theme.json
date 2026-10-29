@@ -158,6 +158,11 @@
           { "id": "lan", "type": "button", "style": "none", "anchor": "left", "x": 12, "width": 110, "height": 24,
             "font": "ui_bold", "size": 9, "shadow": false, "text_colour": "#B0FFFFFF", "hover_text_colour": "accent",
             "text": "{upper(translate('menu.shareToLan'))}", "visible": "singleplayer && !lan_open", "action": { "type": "open", "screen": "lan" },
+            "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+          { "id": "cheats", "type": "button", "style": "none", "anchor": "left", "x": "lan_open ? 12 : 126", "width": 130, "height": 24,
+            "font": "ui_bold", "size": 9, "shadow": false, "text_colour": "#B0FFFFFF", "hover_text_colour": "accent",
+            "text": "{upper(translate('selectWorld.allowCommands') + ' ' + translate(cheats ? 'options.on' : 'options.off'))}",
+            "visible": "singleplayer", "action": "cheats",
             "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] }
         ] },
 
