@@ -75,8 +75,8 @@ Plans and decisions live in `docs/AGENT-PLANS/MASTER_PLAN.md` (gitignored by des
   of loading themes that use it.
 - Dev testing: with `"debug": true` in `run/config/ldic/settings.json` the loading screen saves
   `run/screenshots/ldic-loading-NNs.png` every 2 s and `loading.hold_seconds` keeps it up after
-  loading. LDIC rewrites `settings.json` (pretty-printed) on every launch, so write the whole file
-  rather than patching lines. Copy a built-in theme into `run/config/ldic/themes/<x>-dev/` and point
+  loading. LDIC never rewrites an existing `settings.json`; player preferences live in `player.json`.
+  Copy a built-in theme into `run/config/ldic/themes/<x>-dev/` and point
   `run/config/ldic/menu.json` at it for live reload. MCMCP (jar in `run/mods`) can screenshot the
   menu.
 - Keep theme parsing, layout and expression code free of Minecraft types.
