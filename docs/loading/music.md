@@ -28,8 +28,8 @@ Any theme, loading screen or menu, can play music:
 - **Loading music starts with the window.** It plays on its own thread through Java's audio
   system, not Minecraft's, which does not exist yet while the game loads.
 - **Volume follows the game's sliders.** The track volume is multiplied by the game's
-  Master and Music settings (live), and by the player's `player.music_volume` in
-  [settings](../help/settings.md). Setting that to 0 turns LDIC music off for that player.
+  Master and Music settings (live), and by the player's `music_volume` in
+  [`config/ldic/player.json`](../help/settings.md#playerjson). Setting that to 0 turns LDIC music off for that player.
 - **One at a time.** Menu music does not start while loading music continues into the menu.
   While LDIC music plays, vanilla's menu music stays quiet.
 - **It stops for the game.** All LDIC music fades out when the player enters a world.

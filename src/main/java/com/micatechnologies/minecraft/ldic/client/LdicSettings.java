@@ -11,9 +11,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
 /**
- * {@code config/ldic/settings.json}: switches that are not part of a theme. Missing keys keep
- * their defaults, and the file is rewritten with every key so packs and players can see what
- * exists. Read once on the loading-screen thread and again at pre-init.
+ * {@code config/ldic/settings.json} (the pack's switches) and {@code config/ldic/player.json}
+ * (the player's own preferences). Missing keys keep their defaults.
+ * Read once on the loading-screen thread and again at pre-init.
  */
 public final class LdicSettings {
 
@@ -46,22 +46,64 @@ public final class LdicSettings {
     /** Lists every theme problem on screen, not just a count; saves loading screenshots. */
     public boolean debug = false;
 
+    /**
+     * Reads {@code settings.json} (the pack's) and then {@code player.json} (the player's own
+     * choices, which win). Each is written with defaults only when it does not exist yet: a
+     * launcher-managed pack ships settings.json, and rewriting it would make the launcher think
+     * it changed; player.json is never shipped, so pack updates cannot reset a player's choices.
+     */
     public static LdicSettings load(File dir) {
         LdicSettings s = new LdicSettings();
         File file = new File(dir, "settings.json");
         if (file.isFile()) {
-            try {
-                JsonElement root = Json.parse(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8));
-                if (root.isJsonObject()) {
-                    s.read(root.getAsJsonObject());
-                }
-            } catch (IOException | RuntimeException e) {
-                Ldic.LOGGER.error("Could not read {}; using defaults", file, e);
-                return s;
+            JsonObject root = readObject(file);
+            if (root != null) {
+                s.read(root);
             }
+        } else {
+            s.save(file);
         }
-        s.save(file);
+        File player = new File(dir, "player.json");
+        if (player.isFile()) {
+            JsonObject root = readObject(player);
+            if (root != null) {
+                s.readPlayer(root);
+            }
+        } else {
+            s.savePlayer(player);
+        }
         return s;
+    }
+
+    private static JsonObject readObject(File file) {
+        try {
+            JsonElement root = Json.parse(new String(Files.readAllBytes(file.toPath()), StandardCharsets.UTF_8));
+            return root.isJsonObject() ? root.getAsJsonObject() : null;
+        } catch (IOException | RuntimeException e) {
+            Ldic.LOGGER.error("Could not read {}; using defaults", file, e);
+            return null;
+        }
+    }
+
+    private void readPlayer(JsonObject player) {
+        reducedMotion = bool(player, "reduced_motion", reducedMotion);
+        musicVolume = Math.max(0, Math.min(1, num(player, "music_volume", musicVolume)));
+    }
+
+    private void savePlayer(File file) {
+        JsonObject o = new JsonObject();
+        o.addProperty("_readme", "Your own LDIC preferences. Modpacks do not overwrite this file.");
+        o.addProperty("reduced_motion", reducedMotion);
+        o.addProperty("music_volume", musicVolume);
+        write(file, o);
+    }
+
+    private static void write(File file, JsonObject o) {
+        try {
+            Files.write(file.toPath(), new GsonBuilder().setPrettyPrinting().create().toJson(o).getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            Ldic.LOGGER.warn("Could not write {}", file, e);
+        }
     }
 
     private void read(JsonObject o) {
@@ -81,11 +123,6 @@ public final class LdicSettings {
             photosensitivityNotice = bool(notice, "enabled", photosensitivityNotice);
             photosensitivityAlways = bool(notice, "always", photosensitivityAlways);
             photosensitivitySeconds = Math.max(2, Math.min(60, num(notice, "seconds", photosensitivitySeconds)));
-        }
-        JsonObject player = obj(o, "player");
-        if (player != null) {
-            reducedMotion = bool(player, "reduced_motion", reducedMotion);
-            musicVolume = Math.max(0, Math.min(1, num(player, "music_volume", musicVolume)));
         }
         JsonObject pack = obj(o, "pack");
         if (pack != null) {
@@ -111,20 +148,12 @@ public final class LdicSettings {
         notice.addProperty("always", photosensitivityAlways);
         notice.addProperty("seconds", photosensitivitySeconds);
         o.add("photosensitivity_notice", notice);
-        JsonObject player = new JsonObject();
-        player.addProperty("reduced_motion", reducedMotion);
-        player.addProperty("music_volume", musicVolume);
-        o.add("player", player);
         JsonObject pack = new JsonObject();
         pack.addProperty("name", packName);
         pack.addProperty("version", packVersion);
         o.add("pack", pack);
         o.addProperty("debug", debug);
-        try {
-            Files.write(file.toPath(), new GsonBuilder().setPrettyPrinting().create().toJson(o).getBytes(StandardCharsets.UTF_8));
-        } catch (IOException e) {
-            Ldic.LOGGER.warn("Could not write {}", file, e);
-        }
+        write(file, o);
     }
 
     private static JsonObject obj(JsonObject o, String key) {

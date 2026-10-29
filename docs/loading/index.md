@@ -70,7 +70,7 @@ On top of the menu's general [game values](../themes/game-values.md) (`time`, sc
 | `task` | string | The title of Forge's innermost progress bar |
 | `eta` | number | Seconds left, from last launch's timings; `-1` on the first launch |
 | `mods_found` | number | Mods discovered so far |
-| `reduced_motion` | bool | The player asked for less motion; see [settings](../help/settings.md) |
+| `reduced_motion` | bool | The player asked for less motion; see [`player.json`](../help/settings.md#playerjson) |
 | `tip()`, `tip(i)`, `tip_count()` | | Tips from `config/ldic/tips.txt` (one per line, `#` for comments). `tip()` is random per launch; `tip(floor(time / 8))` rotates. |
 | `bar_count()`, `bar_title(i)`, `bar_message(i)`, `bar_progress(i)` | | Forge's raw progress bars, outermost first |
 | `duration(seconds)` | string | `m:ss`, for ETAs |

@@ -27,7 +27,7 @@ Names LDIC provides to every menu theme, on top of the [built-in functions](expr
 | `username` | string | Player name |
 | `pack_name`, `pack_version` | string | From [settings](../help/settings.md) |
 | `is_demo` | bool | Demo mode |
-| `reduced_motion` | bool | The player asked for less motion (`player.reduced_motion` in [settings](../help/settings.md)) |
+| `reduced_motion` | bool | The player asked for less motion (`reduced_motion` in [`player.json`](../help/settings.md#playerjson)) |
 
 ## Functions
 

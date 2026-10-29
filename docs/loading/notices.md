@@ -29,6 +29,6 @@ at `assets/ldic/themes/notices/theme.json`.
 
 - A theme that flashes should say so with `"flashing": true` at its top level. LDIC then logs a
   warning if the notice is off, so a pack maker does not ship one by accident.
-- Players can set `player.reduced_motion` in settings. Themes read it as `reduced_motion`, and the
+- Players can set `reduced_motion` in [`config/ldic/player.json`](../help/settings.md#playerjson). Themes read it as `reduced_motion`, and the
   built-in themes stop panning, zooming and spinning when it is on. Do the same in yours:
   `"ken_burns": "reduced_motion ? 0 : 0.1"`.
