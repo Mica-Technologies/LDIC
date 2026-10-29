@@ -1,11 +1,12 @@
 # LDIC: Limitless Development Immersive Client
 
 LDIC lets a Minecraft 1.12.2 modpack decide what players see before they reach a world: the
-**main menu** and, soon, the **loading screen**. Both are driven by **themes**: JSON files a pack
-ships in its config folder, with layout, images, fonts, animation and actions all described
+**loading screen** and the **main menu**. Both are driven by **themes**: JSON files a pack ships
+in its config folder, with layout, images, fonts, animation, music and actions all described
 there.
 
 ![The horizon theme](assets/screenshots/menu-horizon.png){ .shot }
+![The cinematic loading theme](assets/screenshots/loading-cinematic.png){ .shot }
 
 <div class="grid cards" markdown>
 
@@ -41,7 +42,7 @@ there.
     ---
 
     Cinematic and traditional loading screens with real progress, music and an optional
-    photosensitivity notice. In development.
+    photosensitivity notice.
 
     [:octicons-arrow-right-24: Loading screen](loading/index.md)
 
@@ -49,7 +50,7 @@ there.
 
 ## What LDIC does
 
-- **Replaces the title screen** with a theme. Use a built-in theme as-is, extend one, or build
+- **Replaces the loading screen and the title screen** with themes. Use a built-in theme as-is, extend one, or build
   your own from scratch.
 - **Keeps other mods working.** Buttons other mods add to the main menu are kept by default, and a
   theme can move them into an area, hide them, or put its own button on top of one.

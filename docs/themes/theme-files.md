@@ -38,6 +38,9 @@ trailing commas: in an array they read as an extra empty entry.
 | `functions` | Your own functions. See [Expressions](expressions.md#your-own-functions). |
 | `variables` | Values recomputed **every frame**, in order; each can use the ones above it. |
 | `foreign_buttons` | `"keep"` (default) or `"hide"`: what happens to buttons other mods add. |
+| `flashing` | `true` if the theme flashes or strobes; see [Photosensitivity notice](../loading/notices.md). |
+| `music` | Background music; see [Music](../loading/music.md). |
+| `sequence`, `crossfade` | Loading themes: screens shown before `main`; see [Loading screen](../loading/index.md#screens-before-the-loading-screen). |
 | `screens` | Named screens. `main` is required; it is the title screen. |
 | `elements` | Shorthand for `screens.main.elements`. |
 

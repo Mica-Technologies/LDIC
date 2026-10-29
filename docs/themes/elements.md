@@ -60,9 +60,10 @@ A filled box. With no colour it is an invisible container for children.
 | `frames`, `fps` | number *expr* | `1`, `10` | Animation: the image is a vertical strip of frames |
 | `frame` | number *expr* | | Pick the frame yourself instead of by `fps` |
 | `filter` | `linear` / `nearest` | `linear` | `nearest` keeps pixel art crisp |
+| `ken_burns` | number *expr* | `0` | Slideshows: each slide slowly zooms and pans by up to this fraction (0.05–0.15 looks cinematic) |
 
-For a slow "Ken Burns" pan, animate `scale` and `x`:
-`"scale": "1.1 + 0.05 * saw(time, 30)"`, `"x": "-20 * saw(time, 30)"`.
+For a slow "Ken Burns" pan and zoom on a slideshow, set `ken_burns`: every slide gets its own
+movement over its own lifetime, so slide changes never jump.
 
 ## text
 
