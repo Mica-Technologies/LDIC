@@ -20,6 +20,7 @@ public final class LdicClient {
         LdicSettings settings = LdicSettings.load(ensureDir(dir));
         menu = new MenuManager(dir, settings);
         MinecraftForge.EVENT_BUS.register(menu);
+        MinecraftForge.EVENT_BUS.register(menu.worldLoading());
     }
 
     public static MenuManager menu() {

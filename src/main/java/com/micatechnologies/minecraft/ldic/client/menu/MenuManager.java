@@ -66,6 +66,7 @@ public final class MenuManager {
     private final AssetResolver assets;
     private final ServerStatus servers = new ServerStatus();
     private final HostBindings bindings;
+    private final WorldLoading worldLoading = new WorldLoading(this);
     private final long startNs = System.nanoTime();
     private final Deque<String> history = new ArrayDeque<>();
 
@@ -100,6 +101,10 @@ public final class MenuManager {
 
     Fonts fonts() {
         return fonts;
+    }
+
+    public WorldLoading worldLoading() {
+        return worldLoading;
     }
 
     HostBindings bindings() {

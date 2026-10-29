@@ -51,6 +51,11 @@ final class ThemeScreenDriver {
         }
 
         /** Whether the theme may hide other mods' buttons here. The options screen never does. */
+        /** Whether to paint black under the theme first; screens over a live world skip it. */
+        default boolean opaqueBase() {
+            return Minecraft.getMinecraft().world == null;
+        }
+
         default boolean mayHideForeignButtons() {
             return true;
         }
@@ -61,7 +66,7 @@ final class ThemeScreenDriver {
     private final MenuManager manager;
     private final ThemeDef theme;
     private final String screenId;
-    private final Host host;
+    private Host host;
     private final UiTree tree;
     private final ThemeRenderer renderer;
     private final long openedAt = System.nanoTime();
@@ -93,6 +98,12 @@ final class ThemeScreenDriver {
 
     GuiScreen gui() {
         return host.gui();
+    }
+
+    /** Moves this driver to another vanilla screen, keeping its clock (world loading moves through several). */
+    void rehost(Host next) {
+        host = next;
+        foreignHandled = false;
     }
 
     Host host() {
@@ -185,7 +196,7 @@ final class ThemeScreenDriver {
         renderer.guiScale = guiScale;
         renderer.foreignArea = null;
 
-        if (mc.world == null) {
+        if (host.opaqueBase()) {
             // Opaque base, so a theme with a transparent background never shows last frame's pixels.
             Gui.drawRect(0, 0, gui.width, gui.height, 0xFF000000);
         }
@@ -263,6 +274,11 @@ final class ThemeScreenDriver {
                 b.y = (int) Math.round(ay + pos);
                 pos += b.height + spacing;
             }
+            // A button wider than the area (a 200 px vanilla button at a small UI scale) must still
+            // fit on screen, or part of it cannot be clicked.
+            GuiScreen gui = host.gui();
+            b.x = Math.max(0, Math.min(b.x, gui.width - b.width));
+            b.y = Math.max(0, Math.min(b.y, gui.height - b.height));
         }
     }
 

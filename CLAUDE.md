@@ -63,10 +63,12 @@ Minecraft-facing (`client`):
 - `audio`: Ogg Vorbis via the JOrbis classes Minecraft ships, played through Java Sound (never
   OpenAL: a second AL context would break game audio).
 
-Mixins (`mixins.ldic.json`, all in `"client"`): `AccessorGuiOptions` (the options screen's parent),
-`MixinSplashProgress` (thread takeover + null-safe
-texture deletes in `finish()`), `MixinMinecraft` (lifts vanilla's 30 fps menu cap for LDIC
-screens). `LdicCoreMod` registers the config through MixinBooter's `IEarlyMixinLoader`.
+Mixins (`mixins.ldic.json`, all in `"client"`): `Accessor*` (vanilla screen fields LDIC reads),
+`MixinSplashProgress` (thread takeover + null-safe texture deletes in `finish()`), `MixinMinecraft`
+(lifts vanilla's 30 fps menu cap for LDIC screens; redirects the world start/stop sleeps so the
+themed world-loading screen keeps drawing), `MixinLoadingScreenRenderer` (draws `menu.WorldLoading`
+in place of the dirt progress screen). `LdicCoreMod` registers the config through MixinBooter's
+`IEarlyMixinLoader`.
 
 Plans and decisions live in `docs/AGENT-PLANS/MASTER_PLAN.md` (gitignored by design).
 

@@ -232,6 +232,37 @@
         { "id": "pause_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end",
           "anchor": "top_right", "x": -16, "y": 46, "width": 200, "height": 120 }
       ]
+    },
+
+    "world_loading": {
+      "elements": [
+        { "id": "loading_background", "type": "include", "screen": "main", "ids": ["backdrop", "art", "shade"] },
+
+        { "id": "loading_bar", "type": "rect", "height": 34, "colour": "#E0080A0F", "children": [
+          { "id": "loading_mark", "type": "rect", "anchor": "left", "x": 16, "width": 4, "height": 16, "colour": "accent" },
+          { "id": "loading_brand", "type": "text", "anchor": "left", "x": 26, "font": "ui_bold", "size": 13, "shadow": false,
+            "text": "{upper(is_empty(pack_name) ? 'Minecraft' : pack_name)}" }
+        ] },
+
+        { "id": "loading_card", "type": "rect", "anchor": "center", "y": 17, "width": 340, "height": 112, "radius": 6,
+          "colour": "#D0101319", "border_colour": "#18FFFFFF", "opacity": "enter(0)", "children": [
+          { "id": "loading_headline", "type": "text", "x": 20, "y": 22, "font": "ui_bold", "size": 16, "colour": "#FFFFFF", "shadow": false,
+            "text": "{status}" },
+          { "id": "loading_detail", "type": "text", "x": 20, "y": 46, "font": "ui", "size": 10, "colour": "#B0FFFFFF", "shadow": false,
+            "text": "{status_detail}" },
+          { "id": "loading_percent", "type": "text", "x": -20, "y": 22, "anchor": "top_right", "align": "right", "font": "ui_bold", "size": 16, "colour": "accent", "shadow": false,
+            "text": "{round(status_progress * 100)}%", "visible": "status_progress >= 0" },
+          { "id": "loading_track", "type": "rect", "x": 20, "y": 74, "width": "pw - 40", "height": 6, "radius": 3, "colour": "#20FFFFFF", "children": [
+            { "id": "loading_fill", "type": "rect", "width": "pw * clamp(status_progress, 0, 1)", "height": 6, "radius": 3, "colour": "accent",
+              "visible": "status_progress >= 0" },
+            { "id": "loading_sweep", "type": "rect", "x": "(pw - 80) * (0.5 + 0.5 * sin(time * 160))", "width": 80, "height": 6, "radius": 3, "colour": "accent",
+              "visible": "status_progress < 0" }
+          ] }
+        ] },
+
+        { "id": "loading_buttons", "type": "foreign_buttons", "layout": "column", "align": "center",
+          "anchor": "center", "y": 100, "width": 200, "height": 24 }
+      ]
     }
   }
 }

@@ -542,25 +542,7 @@ public final class LoadingScreen {
             }
             int at = (int) Math.round(EVERY * (next + 1));
             next++;
-            int w = Display.getWidth();
-            int h = Display.getHeight();
-            java.nio.ByteBuffer buf = org.lwjgl.BufferUtils.createByteBuffer(w * h * 4);
-            GL11.glReadPixels(0, 0, w, h, GL11.GL_RGBA, GL11.GL_UNSIGNED_BYTE, buf);
-            java.awt.image.BufferedImage img = new java.awt.image.BufferedImage(w, h, java.awt.image.BufferedImage.TYPE_INT_RGB);
-            for (int y = 0; y < h; y++) {
-                for (int x = 0; x < w; x++) {
-                    int i = ((h - 1 - y) * w + x) * 4;
-                    img.setRGB(x, y, ((buf.get(i) & 0xFF) << 16) | ((buf.get(i + 1) & 0xFF) << 8) | (buf.get(i + 2) & 0xFF));
-                }
-            }
-            File dir = new File(Minecraft.getMinecraft().gameDir, "screenshots");
-            try {
-                if (dir.isDirectory() || dir.mkdirs()) {
-                    javax.imageio.ImageIO.write(img, "png", new File(dir, String.format("ldic-loading-%02ds.png", at)));
-                }
-            } catch (IOException e) {
-                Ldic.LOGGER.warn("LDIC: could not save a loading screenshot", e);
-            }
+            com.micatechnologies.minecraft.ldic.client.render.DebugCapture.save(String.format("ldic-loading-%02ds", at));
         }
     }
 

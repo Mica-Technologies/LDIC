@@ -54,6 +54,9 @@ public final class HostBindings {
     private final Slot foreignButtons = scope.declare("foreign_buttons", NUMBER);
     private final Slot singleplayer = scope.declare("singleplayer", BOOL);
     private final Slot lanOpen = scope.declare("lan_open", BOOL);
+    private final Slot status = scope.declare("status", STRING);
+    private final Slot statusDetail = scope.declare("status_detail", STRING);
+    private final Slot statusProgress = scope.declare("status_progress", NUMBER);
 
     private final Map<String, SimpleDateFormat> dateFormats = new HashMap<>();
     private String splash = "";
@@ -116,6 +119,13 @@ public final class HostBindings {
     }
 
     /** How many of other mods' buttons are showing on the current screen. */
+    /** What the world-loading screen is doing: a headline, a detail line, and 0..1 or -1 when unknown. */
+    public void setStatus(String headline, String detail, double progress) {
+        status.set(headline == null ? "" : headline);
+        statusDetail.set(detail == null ? "" : detail);
+        statusProgress.set(progress);
+    }
+
     public void setForeignButtons(int count) {
         foreignButtons.set(count);
     }

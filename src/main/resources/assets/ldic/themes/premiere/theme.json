@@ -194,6 +194,33 @@
         { "id": "pause_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "start",
           "anchor": "top_right", "x": -12, "y": "bar_h + 12", "width": 200, "height": 140 }
       ]
+    },
+
+    "world_loading": {
+      "elements": [
+        { "id": "loading_background", "type": "include", "screen": "main", "ids": ["backdrop", "scenes", "grade"] },
+
+        { "id": "loading_bar_top", "type": "rect", "anchor": "top", "height": "bar_h", "colour": "#000000", "children": [
+          { "id": "loading_title", "type": "text", "anchor": "center", "align": "center", "font": "ui_bold", "size": 16, "colour": "#FFFFFF", "shadow": false,
+            "text": "{upper(is_empty(pack_name) ? 'Minecraft' : pack_name)}" }
+        ] },
+
+        { "id": "loading_bar_bottom", "type": "rect", "anchor": "bottom", "height": "bar_h", "colour": "#000000", "children": [
+          { "id": "loading_line", "type": "rect", "anchor": "top", "height": 1, "colour": "#30FFFFFF", "children": [
+            { "id": "loading_fill", "type": "rect", "anchor": "left", "width": "pw * clamp(status_progress, 0, 1)", "height": 1, "colour": "accent",
+              "visible": "status_progress >= 0" },
+            { "id": "loading_sweep", "type": "rect", "anchor": "left", "x": "(pw - 120) * (0.5 + 0.5 * sin(time * 120))", "width": 120, "height": 1, "colour": "accent",
+              "visible": "status_progress < 0" }
+          ] },
+          { "id": "loading_headline", "type": "text", "anchor": "center", "align": "center", "y": -6, "font": "ui_bold", "size": 10, "colour": "#FFFFFF", "shadow": false,
+            "text": "{upper(status)}", "opacity": "reveal(0)" },
+          { "id": "loading_detail", "type": "text", "anchor": "center", "align": "center", "y": 8, "font": "ui", "size": 8, "colour": "#90FFFFFF", "shadow": false,
+            "text": "{status_detail}{status_progress >= 0 ? '  ' + round(status_progress * 100) + '%' : ''}", "opacity": "reveal(1)" }
+        ] },
+
+        { "id": "loading_buttons", "type": "foreign_buttons", "layout": "column", "align": "center",
+          "anchor": "bottom", "y": "-(bar_h + 16)", "width": 200, "height": 24 }
+      ]
     }
   }
 }

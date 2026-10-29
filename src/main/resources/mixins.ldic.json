@@ -6,7 +6,12 @@
   "compatibilityLevel": "JAVA_8",
   "mixins": [],
   "client": [
+    "AccessorGuiConnecting",
     "AccessorGuiOptions",
+    "AccessorGuiScreen",
+    "AccessorGuiScreenWorking",
+    "AccessorMinecraft",
+    "MixinLoadingScreenRenderer",
     "MixinMinecraft",
     "MixinSplashProgress"
   ],

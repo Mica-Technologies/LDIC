@@ -101,3 +101,8 @@ vanilla's. See [Options screen](options.md).
 
 The same three themes restyle the pause menu, with the world showing behind it. See
 [Pause menu](pause.md).
+
+## World loading
+
+They also replace the "Loading world", "Connecting" and "Loading terrain" screens, with the menu's
+background and real progress while a new world generates. See [World loading](world-loading.md).
