@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
 import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.client.network.ServerPinger;
 import net.minecraft.util.text.TextFormatting;
@@ -76,6 +77,13 @@ public final class ServerStatus {
         return t;
     });
 
+    /**
+     * Held while a ping sends its first packets from the pool, and by {@link #tick()}. Both flush
+     * the connection's outbound queue, and vanilla's flush (under a read lock only) can then poll
+     * an empty queue and crash the game with a NullPointerException.
+     */
+    private final ReentrantLock sending = new ReentrantLock();
+
     private boolean forgeReady;
 
     /** The status of {@code address} ({@code host} or {@code host:port}), starting a ping if due. */
@@ -95,7 +103,12 @@ public final class ServerStatus {
             pool.submit(() -> {
                 try {
                     e.failed = false;
-                    pinger.ping(e.data);
+                    sending.lock();
+                    try {
+                        pinger.ping(e.data);
+                    } finally {
+                        sending.unlock();
+                    }
                 } catch (Exception ex) {
                     e.failed = true;
                     Ldic.LOGGER.debug("LDIC: could not ping {}: {}", address, ex.toString());
@@ -107,8 +120,14 @@ public final class ServerStatus {
         return e;
     }
 
-    /** Processes ping replies. Main thread, once a tick. */
+    /** Processes ping replies. Main thread, once a tick; skipped while a ping is sending, so as not to wait on it. */
     public void tick() {
-        pinger.pingPendingNetworks();
+        if (sending.tryLock()) {
+            try {
+                pinger.pingPendingNetworks();
+            } finally {
+                sending.unlock();
+            }
+        }
     }
 }
