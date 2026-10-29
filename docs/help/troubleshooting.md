@@ -22,6 +22,12 @@ menu itself.
 | Invalid JSON in `menu.json` | Uses `builtin:classic` instead |
 | No usable theme at all | Shows the vanilla menu |
 
+## Finding which element is which
+
+Set `"debug": true` in `config/ldic/settings.json` and restart. The menu then outlines every
+element's box (interactive ones in cyan), and names the element under the pointer at the bottom of
+the screen with its `id`, type, JSON path and size.
+
 ## An image shows as a magenta and black checkerboard
 
 The image could not be loaded. The log has `LDIC could not load image '…'` with the reason.

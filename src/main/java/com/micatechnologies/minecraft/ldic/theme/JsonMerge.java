@@ -12,7 +12,9 @@ import java.util.Set;
  * Merges a theme over the theme it {@code extends}.
  *
  * <ul>
- *   <li>Objects merge key by key, recursively. A {@code null} value in the child deletes the key.</li>
+ *   <li>Objects merge key by key, recursively. A {@code null} value in the child deletes the key.
+ *       An object whose {@code "type"} differs from the parent's (an action changing from
+ *       {@code open} to {@code connect}) replaces it instead.</li>
  *   <li>Arrays whose entries are all objects with an {@code "id"} merge by id: a child entry
  *       with a parent's id deep-merges into it in place, even when that element is nested in a
  *       group's {@code children} or a factory's {@code template}; a new id is appended. Any
@@ -39,7 +41,11 @@ public final class JsonMerge {
                 continue;
             }
             JsonElement existing = out.get(key);
-            if (existing != null && existing.isJsonObject() && value.isJsonObject()) {
+            if (existing != null && existing.isJsonObject() && value.isJsonObject() && typeChanges(existing.getAsJsonObject(), value.getAsJsonObject())) {
+                // A different kind of thing (an "open" action becoming "connect"): the old keys mean
+                // nothing for the new type, so replace instead of merging.
+                out.add(key, Json.copy(value));
+            } else if (existing != null && existing.isJsonObject() && value.isJsonObject()) {
                 out.add(key, merge(existing.getAsJsonObject(), value.getAsJsonObject()));
             } else if (existing != null && existing.isJsonArray() && value.isJsonArray()
                     && isIdArray(existing.getAsJsonArray()) && isIdArray(value.getAsJsonArray())) {
@@ -65,6 +71,12 @@ public final class JsonMerge {
         return out;
     }
 
+    private static boolean typeChanges(JsonObject parent, JsonObject child) {
+        JsonElement a = parent.get("type");
+        JsonElement b = child.get("type");
+        return a != null && b != null && a.isJsonPrimitive() && b.isJsonPrimitive() && !a.getAsString().equals(b.getAsString());
+    }
+
     private static boolean isIdArray(JsonArray array) {
         if (array.size() == 0) {
             return true;
@@ -88,7 +100,7 @@ public final class JsonMerge {
             String id = o.get("id").getAsString();
             JsonObject existing = byId.get(id);
             if (existing != null) {
-                byId.put(id, merge(existing, o));
+                byId.put(id, typeChanges(existing, o) ? Json.copy(o) : merge(existing, o));
                 continue;
             }
             // Not at this level: an id names an element anywhere in the tree, so look inside
@@ -122,7 +134,7 @@ public final class JsonMerge {
                 }
                 JsonObject c = a.get(i).getAsJsonObject();
                 if (c.has("id") && c.get("id").getAsString().equals(id)) {
-                    a.set(i, merge(c, child));
+                    a.set(i, typeChanges(c, child) ? Json.copy(child) : merge(c, child));
                     return true;
                 }
                 if (mergeNested(c, id, child)) {
@@ -134,7 +146,7 @@ public final class JsonMerge {
         if (template != null && template.isJsonObject()) {
             JsonObject t = template.getAsJsonObject();
             if (t.has("id") && t.get("id").getAsString().equals(id)) {
-                node.add("template", merge(t, child));
+                node.add("template", typeChanges(t, child) ? Json.copy(child) : merge(t, child));
                 return true;
             }
             return mergeNested(t, id, child);

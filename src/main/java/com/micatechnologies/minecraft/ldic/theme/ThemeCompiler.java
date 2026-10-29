@@ -41,7 +41,7 @@ public final class ThemeCompiler {
     private static final Set<String> TOP_LEVEL = new HashSet<>(Arrays.asList(
             "ldic", "name", "author", "description", "flashing", "extends", "design", "anchors",
             "fonts", "constants", "state", "functions", "variables", "screens", "elements",
-            "foreign_buttons", "remove", "sequence", "crossfade", "music"));
+            "foreign_buttons", "remove", "sequence", "crossfade", "music", "forge_update_notice"));
 
     private static final Map<String, Map<String, Kind>> ACTION_ARGS = new HashMap<>();
 
@@ -113,6 +113,7 @@ public final class ThemeCompiler {
         def.author = string(root, "author", def.author);
         def.description = string(root, "description", def.description);
         def.flashing = bool(root, "flashing", false);
+        def.forgeUpdateNotice = bool(root, "forge_update_notice", true);
         String foreign = string(root, "foreign_buttons", "keep");
         if (!foreign.equals("keep") && !foreign.equals("hide")) {
             problems.warn("foreign_buttons", "must be \"keep\" or \"hide\"");

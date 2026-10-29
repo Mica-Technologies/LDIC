@@ -1,0 +1,104 @@
+{
+  "_comment": "LDIC built-in menu theme 'launcher': a game-launcher layout. Top bar with the pack name and secondary buttons, a large Play button, and optional cards for a featured server (live status) and news (a text file on the web). Set server_address / server_name / news_url in 'constants' to turn the cards on.",
+  "ldic": 1,
+  "forge_update_notice": false,
+  "name": "Launcher",
+  "author": "Mica Technologies",
+  "description": "Top bar, big Play button, live server card and news card.",
+  "design": { "mode": "height", "height": 420, "min": 0.5 },
+  "fonts": { "ui": "sans", "ui_bold": "sans:bold" },
+  "constants": {
+    "accent": "#7C4DFF",
+    "server_address": "''",
+    "server_name": "'Featured server'",
+    "news_url": "''"
+  },
+  "functions": {
+    "enter(number i)": "reduced_motion ? 1 : ease_out_cubic(saturate((screen_time - 0.05 * i) / 0.4))"
+  },
+  "screens": {
+    "main": {
+      "elements": [
+        { "id": "backdrop", "type": "rect", "colour": "#0B0D12" },
+        { "id": "art", "type": "image", "fit": "cover", "duration": 14, "fade": 2, "ken_burns": "reduced_motion ? 0 : 0.06",
+          "images": [
+            "minecraft:textures/gui/title/background/panorama_0.png",
+            "minecraft:textures/gui/title/background/panorama_1.png",
+            "minecraft:textures/gui/title/background/panorama_2.png",
+            "minecraft:textures/gui/title/background/panorama_3.png"
+          ] },
+        { "id": "shade", "type": "rect", "gradient": "horizontal", "colour": "#F00B0D12", "colour_bottom": "#400B0D12" },
+
+        { "id": "top_bar", "type": "rect", "height": 34, "colour": "#E0080A0F", "children": [
+          { "id": "brand_mark", "type": "rect", "anchor": "left", "x": 16, "width": 4, "height": 16, "colour": "accent" },
+          { "id": "brand", "type": "text", "anchor": "left", "x": 26, "font": "ui_bold", "size": 13, "shadow": false,
+            "text": "{upper(is_empty(pack_name) ? 'Minecraft' : pack_name)}" },
+          { "id": "top_quit", "type": "button", "style": "none", "anchor": "right", "x": -12, "width": 54, "height": 34,
+            "font": "ui", "size": 10, "shadow": false, "text_colour": "#B0FFFFFF", "hover_text_colour": "#FF8A80",
+            "text": "{translate('menu.quit')}", "action": "quit" },
+          { "id": "top_options", "type": "button", "style": "none", "anchor": "right", "x": -72, "width": 70, "height": 34,
+            "font": "ui", "size": 10, "shadow": false, "text_colour": "#B0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate('menu.options')}", "action": { "type": "open", "screen": "options" },
+            "children": [ { "id": "underline", "type": "rect", "anchor": "bottom", "y": -6, "height": 2, "width": "40 * parent_hover_t", "colour": "accent" } ] },
+          { "id": "top_mods", "type": "button", "style": "none", "anchor": "right", "x": -146, "width": 56, "height": 34,
+            "font": "ui", "size": 10, "shadow": false, "text_colour": "#B0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate('fml.menu.mods')}", "action": { "type": "open", "screen": "mods" },
+            "children": [ { "id": "underline", "type": "rect", "anchor": "bottom", "y": -6, "height": 2, "width": "30 * parent_hover_t", "colour": "accent" } ] },
+          { "id": "top_language", "type": "button", "style": "none", "anchor": "right", "x": -206, "width": 70, "height": 34,
+            "font": "ui", "size": 10, "shadow": false, "text_colour": "#B0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate('options.language')}", "action": { "type": "open", "screen": "language" },
+            "children": [ { "id": "underline", "type": "rect", "anchor": "bottom", "y": -6, "height": 2, "width": "40 * parent_hover_t", "colour": "accent" } ] }
+        ] },
+
+        { "id": "hero", "type": "group", "anchor": "left", "x": 40, "y": 10, "width": 300, "height": 200, "children": [
+          { "id": "welcome", "type": "text", "font": "ui", "size": 11, "colour": "#90FFFFFF", "shadow": false,
+            "text": "Welcome back, {username}", "opacity": "enter(0)" },
+          { "id": "headline", "type": "text", "y": 16, "font": "ui_bold", "size": 30, "colour": "#FFFFFF", "shadow": false,
+            "text": "{is_empty(pack_name) ? 'Minecraft' : pack_name}", "opacity": "enter(1)", "x": "-12 * (1 - enter(1))" },
+          { "id": "play", "type": "button", "style": "flat", "x": 85, "y": 88, "width": 170, "height": 36, "radius": 4,
+            "colour": "accent", "hover_colour": "brighten(accent, 0.2)", "pressed_colour": "darken(accent, 0.15)",
+            "font": "ui_bold", "size": 14, "shadow": false, "text_colour": "#FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{upper(translate('menu.singleplayer'))}", "opacity": "enter(2)", "scale": "1 + 0.03 * hover_t",
+            "pivot": "center", "action": { "type": "open", "screen": "singleplayer" } },
+          { "id": "multiplayer", "type": "button", "style": "flat", "y": 114, "width": 170, "height": 28, "radius": 4,
+            "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "border_colour": "#40FFFFFF",
+            "font": "ui", "size": 11, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate('menu.multiplayer')}", "opacity": "enter(3)", "action": { "type": "open", "screen": "multiplayer" } }
+        ] },
+
+        { "id": "server_card", "type": "rect", "anchor": "top_right", "x": -24, "y": 56, "width": 220, "height": 92, "radius": 6,
+          "colour": "#C0101420", "border_colour": "#30FFFFFF", "visible": "!is_empty(server_address)", "opacity": "enter(4)",
+          "children": [
+            { "id": "server_label", "type": "text", "x": 14, "y": 12, "font": "ui", "size": 9, "colour": "#80FFFFFF", "shadow": false, "text": "FEATURED SERVER" },
+            { "id": "server_title", "type": "text", "x": 14, "y": 26, "font": "ui_bold", "size": 13, "colour": "#FFFFFF", "shadow": false, "text": "{server_name}" },
+            { "id": "server_dot", "type": "rect", "x": 14, "y": 49, "width": 7, "height": 7, "radius": 3.5,
+              "colour": "server_online(server_address) ? #66BB6A : #EF5350" },
+            { "id": "server_state", "type": "text", "x": 26, "y": 48, "font": "ui", "size": 9, "colour": "#C0FFFFFF", "shadow": false,
+              "text": "{server_online(server_address) ? server_players(server_address) + ' / ' + server_max_players(server_address) + ' online  ·  ' + server_ping(server_address) + ' ms' : 'Offline or unreachable'}" },
+            { "id": "server_join", "type": "button", "style": "flat", "anchor": "bottom_right", "x": -12, "y": -10, "width": 64, "height": 20, "radius": 3,
+              "colour": "accent", "hover_colour": "brighten(accent, 0.2)", "font": "ui_bold", "size": 10, "shadow": false,
+              "text_colour": "#FFFFFF", "hover_text_colour": "#FFFFFF", "text": "Join",
+              "action": { "type": "connect", "address": "{server_address}", "name": "{server_name}" } }
+          ] },
+
+        { "id": "news_card", "type": "rect", "anchor": "top_right", "x": -24, "y": 160, "width": 220, "height": 70, "radius": 6,
+          "colour": "#C0101420", "border_colour": "#30FFFFFF", "visible": "!is_empty(news_url) && web_line_count(news_url) > 0",
+          "opacity": "enter(5)", "children": [
+            { "id": "news_label", "type": "text", "x": 14, "y": 12, "font": "ui", "size": 9, "colour": "#80FFFFFF", "shadow": false, "text": "NEWS" },
+            { "id": "news_line", "type": "text", "x": 14, "y": 28, "width": 192, "wrap": true, "font": "ui", "size": 10, "colour": "#E0FFFFFF",
+              "shadow": false, "line_spacing": 1.2, "text": "{web_line(news_url, floor(time / 8))}", "opacity": "triangle(time, 8) * 4" }
+          ] },
+
+        { "id": "footer", "type": "rect", "anchor": "bottom", "height": 22, "colour": "#A0080A0F", "children": [
+          { "id": "version", "type": "text", "anchor": "left", "x": 16, "font": "ui", "size": 9, "colour": "#70FFFFFF", "shadow": false,
+            "text": "Minecraft {mc_version}  ·  Forge {forge_version}  ·  {mod_count} mods" },
+          { "id": "clock", "type": "text", "anchor": "right", "align": "right", "x": -16, "font": "ui", "size": 9, "colour": "#B0FFFFFF", "shadow": false,
+            "text": "{clock()}" }
+        ] },
+
+        { "id": "mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end",
+          "anchor": "bottom_right", "x": -24, "y": -32, "width": 200, "height": 120 }
+      ]
+    }
+  }
+}

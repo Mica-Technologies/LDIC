@@ -150,7 +150,7 @@ public final class LdicMenuScreen extends GuiMainMenu {
         for (GuiButton b : buttonList) {
             b.drawButton(mc, mouseX, mouseY, partialTicks);
         }
-        if (screenId.equals("main")) {
+        if (screenId.equals("main") && theme.forgeUpdateNotice) {
             ForgeHooksClient.renderMainMenu(this, fontRenderer, width, height, "");
         }
         String tip = tree.tooltip();
@@ -161,6 +161,11 @@ public final class LdicMenuScreen extends GuiMainMenu {
             }
             drawHoveringText(lines, mouseX, mouseY);
             GlStateManager.disableLighting();
+        }
+        if (manager.settings().debug) {
+            Gfx.beginUi();
+            drawDebugOverlay(ui, mouseX, mouseY);
+            Gfx.endUi();
         }
         drawProblems();
         if (fadeIn && screenSeconds < manager.settings().menuFadeIn) {
@@ -210,6 +215,32 @@ public final class LdicMenuScreen extends GuiMainMenu {
                 b.y = (int) Math.round(ay + pos);
                 pos += b.height + spacing;
             }
+        }
+    }
+
+    /**
+     * With debug on: outlines every visible element's box (interactive ones in cyan) and names
+     * the element under the pointer with its JSON path, so a theme author can find what to edit.
+     */
+    private void drawDebugOverlay(double ui, int mouseX, int mouseY) {
+        UiNode under = null;
+        for (UiNode n : allNodes()) {
+            if (!n.visible) {
+                continue;
+            }
+            long colour = n.def.isInteractive() ? 0xC000E5FFL : 0x50FFFFFFL;
+            Gfx.border(n.x * ui, n.y * ui, (n.x + n.width) * ui, (n.y + n.height) * ui, 1, colour, 1);
+            if (n.contains(mouseX / ui, mouseY / ui)) {
+                under = n;
+            }
+        }
+        if (under != null) {
+            String label = (under.def.id != null ? under.def.id + " " : "") + "(" + under.def.type + ")  " + under.def.path
+                    + String.format("  [%.0f, %.0f  %.0f x %.0f]", under.x, under.y, under.width, under.height);
+            label = fontRenderer.trimStringToWidth(label, width - 8);
+            int w = fontRenderer.getStringWidth(label);
+            drawRect(width / 2 - w / 2 - 3, height - 14, width / 2 + w / 2 + 3, height - 2, 0xC0000000);
+            drawString(fontRenderer, label, width / 2 - w / 2, height - 12, 0x00E5FF);
         }
     }
 

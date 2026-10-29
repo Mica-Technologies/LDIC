@@ -1,6 +1,7 @@
 # Built-in themes
 
-Use one directly with `"extends": "builtin:<name>"` in `config/ldic/menu.json`, or as the starting
+Menu themes: `classic`, `horizon`, `launcher`, `premiere`. Loading themes are on the
+[loading screen](../loading/index.md) page. Use one directly with `"extends": "builtin:<name>"` in `config/ldic/menu.json`, or as the starting
 point for your own.
 
 ## classic
@@ -38,3 +39,40 @@ empty. The subtitle shows `pack.version` and the mod count.
 | `small_language`, `small_packs` | Language and resource pack buttons |
 | `clock`, `date`, `branding` | Bottom corners |
 | `mod_buttons` | Where other mods' buttons go (top right) |
+
+## launcher
+
+`builtin:launcher` is a game-launcher layout: a top bar with the pack name and secondary buttons,
+a large Play button, and optional cards for a **featured server** with live status and for
+**news** read from a text file on the web. Turn the cards on with constants:
+
+```json
+{
+  "ldic": 1,
+  "extends": "builtin:launcher",
+  "constants": {
+    "server_address": "'play.example.com'",
+    "server_name": "'Example City'",
+    "news_url": "'https://example.com/news.txt'"
+  }
+}
+```
+
+The news file is plain text; each paragraph (lines separated by a blank line) is shown in turn.
+
+![launcher](../assets/screenshots/menu-launcher.png){ .shot }
+
+## premiere
+
+`builtin:premiere` is cinematic: scenes slowly pan and crossfade in letterbox, the title sits in
+the top bar and the menu is a single row in the bottom bar. Override the `scenes` element's
+`images` with screenshots of your world.
+
+![premiere](../assets/screenshots/menu-premiere.png){ .shot }
+
+## Examples
+
+The repository has complete themes in
+[`docs/examples`](https://github.com/Mica-Technologies/LDIC/tree/main/docs/examples), including
+the City of Alto menu converted one-to-one from Custom Main Menu (`alto/menu-classic.json`) and a
+modern version built on `horizon` with live server status (`alto/menu.json`).

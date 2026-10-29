@@ -20,6 +20,8 @@ public final class ThemeDef {
     public String description = "";
     /** Whether the theme contains flashing or strobing animation (for the photosensitivity notice). */
     public boolean flashing;
+    /** Main menu: let Forge draw its "new version available" notice. Modern themes usually turn it off. */
+    public boolean forgeUpdateNotice = true;
 
     public DesignMode designMode = DesignMode.NONE;
     public double designWidth = 854;

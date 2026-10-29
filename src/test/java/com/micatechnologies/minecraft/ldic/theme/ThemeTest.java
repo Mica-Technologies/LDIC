@@ -71,6 +71,17 @@ class ThemeTest {
     }
 
     @Test
+    void aChangedTypeReplacesInsteadOfMerging() {
+        JsonObject parent = Json.parse("{elements:[{id:'b', type:'button', text:'A', action:{type:'open', screen:'mods'}}]}").getAsJsonObject();
+        JsonObject child = Json.parse("{elements:[{id:'b', action:{type:'connect', address:'x'}}]}").getAsJsonObject();
+        JsonObject b = JsonMerge.merge(parent, child).getAsJsonArray("elements").get(0).getAsJsonObject();
+        assertEquals("A", b.get("text").getAsString());
+        JsonObject action = b.getAsJsonObject("action");
+        assertEquals("connect", action.get("type").getAsString());
+        assertTrue(!action.has("screen"));
+    }
+
+    @Test
     void extendsChainRewritesAssetsPerFile() {
         MapSource src = new MapSource();
         src.files.put("builtin:base", "{ldic:1, elements:[{id:'logo', type:'image', image:'logo.png'}]}");

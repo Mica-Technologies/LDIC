@@ -19,7 +19,7 @@ import org.junit.jupiter.api.Test;
  */
 class BuiltinThemesTest {
 
-    private static final String[] THEMES = {"classic", "horizon"};
+    private static final String[] THEMES = {"classic", "horizon", "launcher", "premiere"};
 
     private static Scope hostStub() {
         Scope s = Scope.withLibrary().child();
@@ -37,6 +37,14 @@ class BuiltinThemesTest {
         s.define(Function.str("translate", false, a -> a[0].str(), Type.STRING));
         s.define(Function.bool("has_translation", false, a -> true, Type.STRING));
         s.define(Function.str("splash", false, a -> "splash"));
+        s.define(Function.bool("server_online", false, a -> true, Type.STRING));
+        s.define(Function.num("server_players", false, a -> 3, Type.STRING));
+        s.define(Function.num("server_max_players", false, a -> 20, Type.STRING));
+        s.define(Function.str("server_motd", false, a -> "motd", Type.STRING));
+        s.define(Function.num("server_ping", false, a -> 40, Type.STRING));
+        s.define(Function.str("web_text", false, a -> "", Type.STRING));
+        s.define(Function.str("web_line", false, a -> "", Type.STRING, Type.NUMBER));
+        s.define(Function.num("web_line_count", false, a -> 0, Type.STRING));
         s.define(Function.str("branding", false, a -> "Minecraft 1.12.2"));
         s.define(Function.str("date", false, a -> "2026-01-01", Type.STRING));
         s.define(Function.str("clock", false, a -> "10:04 AM"));

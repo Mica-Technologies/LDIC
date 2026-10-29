@@ -42,6 +42,12 @@ Names LDIC provides to every menu theme, on top of the [built-in functions](expr
 | `long_date()` | The date in the regional long format: `Thursday, October 29, 2026` |
 | `date('pattern')` | Date and time with a [Java pattern](https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html): `date('yyyy-MM-dd')` |
 | `month()`, `day()`, `hour()` | Numbers, for seasonal art: `"visible": "month() == 12"` |
+| `server_online('host:port')` | Whether the server answers. Pinged in the background, every 30 s while a theme reads it. |
+| `server_players(address)`, `server_max_players(address)` | Player counts (0 while unknown) |
+| `server_motd(address)` | The server's message of the day, with its colours |
+| `server_ping(address)` | Round trip in ms, -1 while unknown |
+| `web_text(url)` | A text file from the web, cached (also offline) and refreshed every 10 minutes; empty until it arrives |
+| `web_line(url, i)`, `web_line_count(url)` | Its paragraphs (separated by blank lines), wrapping: `web_line(url, floor(time / 8))` rotates them |
 
 Every element also has its own values (`hover`, `hover_t`, `pw`, …); see
 [Elements](elements.md#common-properties).

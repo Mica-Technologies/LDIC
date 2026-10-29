@@ -1,0 +1,39 @@
+{
+  "_comment": "The City of Alto main menu as it was under Custom Main Menu, converted one-to-one to LDIC. The logo, panorama and icon sprites come from the Alto resource pack. Install as config/ldic/menu.json.",
+  "ldic": 1,
+  "name": "Alto (classic layout)",
+  "author": "Mica Technologies",
+  "foreign_buttons": "hide",
+  "screens": {
+    "main": {
+      "elements": [
+        { "id": "panorama", "type": "panorama", "images": "minecraft:textures/gui/title/background/panorama_#.png" },
+
+        { "id": "title", "type": "image", "image": "minecraft:textures/gui/uia-menu-logo.png",
+          "anchor": "center", "pivot": "top_left", "x": -128, "y": -55, "width": 256, "height": 256 },
+
+        { "id": "alto", "type": "button", "text": "Play", "anchor": "center", "pivot": "top_left", "x": -128, "y": -10, "width": 50, "height": 20,
+          "action": { "type": "connect", "address": "alto.tacomano.micatechnologies.com:8585", "name": "City of Alto" } },
+        { "id": "map", "type": "button", "text": "City Map", "anchor": "center", "pivot": "top_left", "x": -74, "y": -10, "width": 50, "height": 20,
+          "action": { "type": "open_link", "url": "https://micatechnologies.com/projects/alto/webmap" } },
+        { "id": "website", "type": "button", "text": "Website", "anchor": "center", "pivot": "top_left", "x": -20, "y": -10, "width": 50, "height": 20,
+          "action": { "type": "open_link", "url": "https://micatechnologies.com/projects/alto" } },
+        { "id": "singleplayer", "type": "button", "text": "Singleplayer", "anchor": "center", "pivot": "top_left", "x": 58, "y": -10, "width": 70, "height": 20,
+          "action": { "type": "open", "screen": "singleplayer" } },
+
+        { "id": "options", "type": "button", "style": "image", "image": "minecraft:textures/gui/gear.png", "sheet_rows": 2,
+          "anchor": "bottom", "pivot": "top_left", "x": -55, "y": -25, "width": 20, "height": 20,
+          "tooltip": "{translate('menu.options')}", "action": { "type": "open", "screen": "options" } },
+        { "id": "language", "type": "button", "style": "image", "image": "minecraft:textures/gui/lang.png", "sheet_rows": 2,
+          "anchor": "bottom", "pivot": "top_left", "x": -25, "y": -25, "width": 20, "height": 20,
+          "tooltip": "{translate('options.language')}", "action": { "type": "open", "screen": "language" } },
+        { "id": "refresh", "type": "button", "style": "image", "image": "minecraft:textures/gui/refresh.png", "sheet_rows": 2,
+          "anchor": "bottom", "pivot": "top_left", "x": 5, "y": -25, "width": 20, "height": 20,
+          "tooltip": "Reload menu", "action": "reload" },
+        { "id": "quit", "type": "button", "style": "image", "image": "minecraft:textures/gui/exit.png", "sheet_rows": 2,
+          "anchor": "bottom", "pivot": "top_left", "x": 35, "y": -25, "width": 20, "height": 20,
+          "tooltip": "{translate('menu.quit')}", "action": "quit" }
+      ]
+    }
+  }
+}

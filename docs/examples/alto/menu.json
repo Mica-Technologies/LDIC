@@ -1,0 +1,37 @@
+{
+  "_comment": "A modern City of Alto menu built on LDIC's horizon theme: Alto's own buttons, the UIA logo, and live server status. Set pack.name to Alto in config/ldic/settings.json. Install as config/ldic/menu.json.",
+  "ldic": 1,
+  "extends": "builtin:horizon",
+  "name": "Alto",
+  "constants": {
+    "alto": "'alto.tacomano.micatechnologies.com:8585'"
+  },
+  "screens": {
+    "main": {
+      "remove": ["mods", "small_packs"],
+      "elements": [
+        { "id": "logo", "type": "image", "image": "minecraft:textures/gui/uia-menu-logo.png", "fit": "contain",
+          "anchor": "right", "x": -40, "width": 220, "height": 220, "opacity": "0.9 * enter(2)" },
+
+        { "id": "subtitle",
+          "text": "{server_online(alto) ? server_players(alto) + ' players in the city now' : 'Version ' + pack_version}" },
+        { "id": "play", "text": "Play on Alto",
+          "action": { "type": "connect", "address": "{alto}", "name": "City of Alto" } },
+        { "id": "multiplayer", "text": "City Map",
+          "action": { "type": "open_link", "url": "https://micatechnologies.com/projects/alto/webmap" } },
+
+        { "id": "menu", "children": [
+          { "id": "website", "type": "button", "style": "none", "font": "ui_bold", "size": 15, "text_align": "left", "padding": 14,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "accent", "shadow": false,
+            "text": "Website", "x": "menu_x + slide(4) + 6 * hover_t", "y": "menu_y + row * 2", "width": 220, "height": 26,
+            "opacity": "enter(4)", "action": { "type": "open_link", "url": "https://micatechnologies.com/projects/alto" },
+            "children": [ { "id": "website_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] },
+          { "id": "small_singleplayer", "type": "button", "style": "flat", "radius": 3, "colour": "#40FFFFFF", "hover_colour": "#80FFFFFF",
+            "font": "ui", "size": 10, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate('menu.singleplayer')}", "x": "menu_x + 104", "y": "menu_y + row * 5 + 26", "width": 116, "height": 20,
+            "opacity": "enter(8)", "action": { "type": "open", "screen": "singleplayer" } }
+        ] }
+      ]
+    }
+  }
+}

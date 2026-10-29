@@ -54,7 +54,7 @@ public final class HostBindings {
     private String splash = "";
     private int frames;
 
-    public HostBindings(LdicSettings settings) {
+    public HostBindings(LdicSettings settings, ServerStatus servers, WebText web) {
         Minecraft mc = Minecraft.getMinecraft();
         scope.declare("mc_version", STRING).set(net.minecraftforge.common.ForgeVersion.mcVersion);
         scope.declare("forge_version", STRING).set(ForgeVersion.getVersion());
@@ -69,6 +69,16 @@ public final class HostBindings {
         scope.define(Function.str("translate", false, a -> I18n.format(a[0].str()), STRING));
         scope.define(Function.bool("has_translation", false, a -> I18n.hasKey(a[0].str()), STRING));
         scope.define(Function.str("splash", false, a -> splash));
+        // Live server status, pinged in the background (see ServerStatus).
+        scope.define(Function.bool("server_online", false, a -> servers.get(a[0].str()).online(), STRING));
+        scope.define(Function.num("server_players", false, a -> servers.get(a[0].str()).players(), STRING));
+        scope.define(Function.num("server_max_players", false, a -> servers.get(a[0].str()).maxPlayers(), STRING));
+        scope.define(Function.str("server_motd", false, a -> servers.get(a[0].str()).motd(), STRING));
+        scope.define(Function.num("server_ping", false, a -> servers.get(a[0].str()).ping(), STRING));
+        // Text from the web (news, messages), fetched in the background and cached.
+        scope.define(Function.str("web_text", false, a -> web.text(a[0].str()), STRING));
+        scope.define(Function.str("web_line", false, a -> web.line(a[0].str(), (int) Math.floor(a[1].num())), STRING, NUMBER));
+        scope.define(Function.num("web_line_count", false, a -> web.lineCount(a[0].str()), STRING));
         // Forge's branding lines (Minecraft, MCP, Forge, mod counts), top line first.
         scope.define(Function.str("branding", false, a -> String.join("\n", FMLCommonHandler.instance().getBrandings(true))));
         scope.define(Function.str("date", false, a -> {

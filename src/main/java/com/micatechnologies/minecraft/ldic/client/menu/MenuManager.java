@@ -5,7 +5,9 @@ import com.micatechnologies.minecraft.ldic.client.AssetResolver;
 import com.micatechnologies.minecraft.ldic.client.ClientThemeSource;
 import com.micatechnologies.minecraft.ldic.client.HostBindings;
 import com.micatechnologies.minecraft.ldic.client.LdicSettings;
+import com.micatechnologies.minecraft.ldic.client.ServerStatus;
 import com.micatechnologies.minecraft.ldic.client.WebCache;
+import com.micatechnologies.minecraft.ldic.client.WebText;
 import com.micatechnologies.minecraft.ldic.client.audio.MusicPlayer;
 import com.micatechnologies.minecraft.ldic.client.render.Fonts;
 import com.micatechnologies.minecraft.ldic.client.render.Textures;
@@ -59,6 +61,7 @@ public final class MenuManager {
     private final Textures textures;
     private final Fonts fonts;
     private final AssetResolver assets;
+    private final ServerStatus servers = new ServerStatus();
     private final HostBindings bindings;
     private final long startNs = System.nanoTime();
     private final Deque<String> history = new ArrayDeque<>();
@@ -73,9 +76,10 @@ public final class MenuManager {
         this.settings = settings;
         this.source = new ClientThemeSource(configDir);
         this.assets = new AssetResolver(configDir);
-        this.textures = new Textures(assets, new WebCache(configDir));
+        WebCache web = new WebCache(configDir);
+        this.textures = new Textures(assets, web);
         this.fonts = new Fonts(assets, com.micatechnologies.minecraft.ldic.client.render.VanillaFont.INSTANCE);
-        this.bindings = new HostBindings(settings);
+        this.bindings = new HostBindings(settings, servers, new WebText(web));
         writeStarterTheme();
         IResourceManager rm = Minecraft.getMinecraft().getResourceManager();
         if (rm instanceof IReloadableResourceManager) {
@@ -170,11 +174,19 @@ public final class MenuManager {
         }
     }
 
-    /** Menu and loading music end when the player enters a world. */
+    /** Menu and loading music end when the player enters a world; server pings are processed on the menu. */
     @SubscribeEvent
     public void onClientTick(TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END && Minecraft.getMinecraft().world != null && MusicPlayer.current() != null) {
-            MusicPlayer.stopCurrent();
+        if (event.phase != TickEvent.Phase.END) {
+            return;
+        }
+        if (Minecraft.getMinecraft().world != null) {
+            if (MusicPlayer.current() != null) {
+                MusicPlayer.stopCurrent();
+            }
+        } else {
+            // Process replies to the theme's server-status pings.
+            servers.tick();
         }
     }
 

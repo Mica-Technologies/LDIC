@@ -1,6 +1,7 @@
 {
   "_comment": "LDIC built-in theme 'horizon': a modern, left-aligned menu over a slow panorama, with staggered entrance animations. Override 'title' (or set pack.name in config/ldic/settings.json) for your pack's name.",
   "ldic": 1,
+  "forge_update_notice": false,
   "name": "Horizon",
   "author": "Mica Technologies",
   "description": "Left-aligned menu with an accent bar, slow cinematic panorama, clock and pack title.",

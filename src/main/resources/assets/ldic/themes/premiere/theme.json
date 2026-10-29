@@ -1,0 +1,72 @@
+{
+  "_comment": "LDIC built-in menu theme 'premiere': cinematic. Scenes slowly pan and crossfade in letterbox; the title sits in the top bar and the menu is a single row in the bottom bar. Override the 'scenes' element's images with screenshots of your world.",
+  "ldic": 1,
+  "forge_update_notice": false,
+  "name": "Premiere",
+  "author": "Mica Technologies",
+  "description": "Letterboxed, slowly panning scenes with a single-row menu.",
+  "design": { "mode": "height", "height": 360, "min": 0.5 },
+  "fonts": { "ui": "sans", "ui_bold": "sans:bold" },
+  "constants": {
+    "accent": "#E8D8A0",
+    "item_w": 104
+  },
+  "variables": {
+    "bar_h": "screen_height * 0.13"
+  },
+  "functions": {
+    "reveal(number i)": "reduced_motion ? 1 : ease_out_cubic(saturate((screen_time - 0.4 - 0.08 * i) / 0.6))"
+  },
+  "screens": {
+    "main": {
+      "elements": [
+        { "id": "backdrop", "type": "rect", "colour": "#000000" },
+        { "id": "scenes", "type": "image", "fit": "cover", "duration": 12, "fade": 2.5, "ken_burns": "reduced_motion ? 0 : 0.14",
+          "images": [
+            "minecraft:textures/gui/title/background/panorama_0.png",
+            "minecraft:textures/gui/title/background/panorama_1.png",
+            "minecraft:textures/gui/title/background/panorama_2.png",
+            "minecraft:textures/gui/title/background/panorama_3.png"
+          ] },
+        { "id": "grade", "type": "rect", "colour": "#20000000", "colour_bottom": "#60000000" },
+
+        { "id": "bar_top", "type": "rect", "anchor": "top", "height": "bar_h", "colour": "#000000", "children": [
+          { "id": "title", "type": "text", "anchor": "center", "align": "center", "font": "ui_bold", "size": 16, "colour": "#FFFFFF", "shadow": false,
+            "text": "{upper(is_empty(pack_name) ? 'Minecraft' : pack_name)}", "opacity": "reveal(0)" },
+          { "id": "clock", "type": "text", "anchor": "right", "align": "right", "x": -20, "font": "ui", "size": 9, "colour": "#80FFFFFF", "shadow": false,
+            "text": "{clock()}" }
+        ] },
+
+        { "id": "bar_bottom", "type": "rect", "anchor": "bottom", "height": "bar_h", "colour": "#000000", "children": [
+          { "id": "menu", "type": "group", "anchor": "center", "width": "item_w * 5", "height": 24, "children": [
+            { "id": "play", "type": "button", "style": "none", "x": "item_w * 0", "width": "item_w", "height": 24,
+              "font": "ui_bold", "size": 10, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('menu.singleplayer'))}", "opacity": "reveal(1)", "action": { "type": "open", "screen": "singleplayer" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "multiplayer", "type": "button", "style": "none", "x": "item_w * 1", "width": "item_w", "height": 24,
+              "font": "ui_bold", "size": 10, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('menu.multiplayer'))}", "opacity": "reveal(2)", "action": { "type": "open", "screen": "multiplayer" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "mods", "type": "button", "style": "none", "x": "item_w * 2", "width": "item_w", "height": 24,
+              "font": "ui_bold", "size": 10, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('fml.menu.mods'))}", "opacity": "reveal(3)", "action": { "type": "open", "screen": "mods" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "options", "type": "button", "style": "none", "x": "item_w * 3", "width": "item_w", "height": 24,
+              "font": "ui_bold", "size": 10, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('menu.options'))}", "opacity": "reveal(4)", "action": { "type": "open", "screen": "options" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "quit", "type": "button", "style": "none", "x": "item_w * 4", "width": "item_w", "height": 24,
+              "font": "ui_bold", "size": 10, "shadow": false, "text_colour": "#90FFFFFF", "hover_text_colour": "#FF8A80",
+              "text": "{upper(translate('menu.quit'))}", "opacity": "reveal(5)", "action": "quit",
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "#FF8A80" } ] }
+          ] },
+          { "id": "branding", "type": "text", "anchor": "bottom_left", "x": 12, "y": -4, "font": "ui", "size": 7, "colour": "#50FFFFFF", "shadow": false,
+            "text": "Minecraft {mc_version}  ·  {mod_count} mods" }
+        ] },
+
+        { "id": "mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "start",
+          "anchor": "top_right", "x": -12, "y": "bar_h + 12", "width": 200, "height": 140 }
+      ]
+    }
+  }
+}

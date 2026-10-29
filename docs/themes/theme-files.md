@@ -39,6 +39,7 @@ trailing commas: in an array they read as an extra empty entry.
 | `variables` | Values recomputed **every frame**, in order; each can use the ones above it. |
 | `foreign_buttons` | `"keep"` (default) or `"hide"`: what happens to buttons other mods add. |
 | `flashing` | `true` if the theme flashes or strobes; see [Photosensitivity notice](../loading/notices.md). |
+| `forge_update_notice` | Menu: `false` hides Forge's "new version available" line (default `true`). Packs pin their Forge version, so modern themes usually hide it. |
 | `music` | Background music; see [Music](../loading/music.md). |
 | `sequence`, `crossfade` | Loading themes: screens shown before `main`; see [Loading screen](../loading/index.md#screens-before-the-loading-screen). |
 | `screens` | Named screens. `main` is required; it is the title screen. |
@@ -65,7 +66,8 @@ Images can be PNG, JPEG, GIF (first frame), or BMP. Fonts can be `.ttf` or `.otf
 
 `extends` loads the other theme first, then merges yours over it:
 
-- Objects merge key by key. Setting a key to `null` deletes it.
+- Objects merge key by key. Setting a key to `null` deletes it. An object whose `type` is
+  different (an action changing from `open` to `connect`) replaces the old one instead.
 - **Elements merge by `id`.** An element whose `id` matches one in the parent, at any depth inside
   groups, is changed in place with only the keys you give. A new `id` adds an element at the end
   of that list.
