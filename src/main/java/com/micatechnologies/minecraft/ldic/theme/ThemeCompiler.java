@@ -361,6 +361,8 @@ public final class ThemeCompiler {
         d.locals.hoverT = scope.declare("hover_t", Type.NUMBER);
         d.locals.pressed = scope.declare("pressed", Type.BOOL);
         d.locals.focused = scope.declare("focused", Type.BOOL);
+        d.locals.parentHover = scope.declare("parent_hover", Type.BOOL);
+        d.locals.parentHoverT = scope.declare("parent_hover_t", Type.NUMBER);
         d.locals.parentWidth = scope.declare("pw", Type.NUMBER);
         d.locals.parentHeight = scope.declare("ph", Type.NUMBER);
         d.locals.width = scope.declare("elem_width", Type.NUMBER);

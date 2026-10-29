@@ -21,6 +21,8 @@ public final class ElementDef {
         public Slot hoverT;
         public Slot pressed;
         public Slot focused;
+        public Slot parentHover;
+        public Slot parentHoverT;
         public Slot parentWidth;
         public Slot parentHeight;
         public Slot width;

@@ -151,6 +151,13 @@ public final class UiTree {
         l.hoverT.set(n.hoverT);
         l.pressed.set(n.pressed);
         l.focused.set(n.focused);
+        // The nearest interactive ancestor's state, so a child can react to its button's hover.
+        UiNode p = n.parent;
+        while (p != null && !p.def.isInteractive()) {
+            p = p.parent;
+        }
+        l.parentHover.set(p != null && p.isHot());
+        l.parentHoverT.set(p != null ? p.hoverT : 0);
         l.width.set(n.width);
         l.height.set(n.height);
     }
@@ -271,9 +278,26 @@ public final class UiTree {
         return hot == null ? null : hot.tooltip;
     }
 
+    /** The topmost enabled interactive node at a point (layout units), using the last frame's layout. */
+    public UiNode pick(double x, double y) {
+        for (int i = interactive.size() - 1; i >= 0; i--) {
+            UiNode n = interactive.get(i);
+            if (n.enabled && n.contains(x, y)) {
+                return n;
+            }
+        }
+        return null;
+    }
+
     /** Pointer pressed: returns the node that will receive the click on release, or null. */
     public UiNode press() {
         pressed = hot;
+        return pressed;
+    }
+
+    /** Pointer pressed at a point: hit-tests the event's own position rather than the last hover. */
+    public UiNode press(double x, double y) {
+        pressed = pick(x, y);
         return pressed;
     }
 
@@ -282,6 +306,13 @@ public final class UiTree {
         UiNode p = pressed;
         pressed = null;
         return p != null && p == hot ? p : null;
+    }
+
+    /** Pointer released at a point: the node clicked, if the press was on it too. */
+    public UiNode release(double x, double y) {
+        UiNode p = pressed;
+        pressed = null;
+        return p != null && p == pick(x, y) ? p : null;
     }
 
     /** Moves keyboard focus to the next (or previous) interactive node in draw order. */

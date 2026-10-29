@@ -34,5 +34,8 @@ public class Ldic {
     @EventHandler
     public void preInit(FMLPreInitializationEvent event) {
         LOGGER.info("{} {} loaded", Tags.MODNAME, Tags.VERSION);
+        if (event.getSide().isClient()) {
+            com.micatechnologies.minecraft.ldic.client.LdicClient.preInit(event.getModConfigurationDirectory());
+        }
     }
 }

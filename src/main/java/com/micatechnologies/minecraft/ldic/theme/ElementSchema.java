@@ -70,6 +70,7 @@ public final class ElementSchema {
         type("rect",
                 new Prop("colour", Kind.COLOUR, 0x00000000L),
                 new Prop("colour_bottom", Kind.COLOUR, null),
+                new Prop("gradient", Kind.ENUM, "vertical", "vertical", "horizontal"),
                 new Prop("border_colour", Kind.COLOUR, null),
                 new Prop("border_width", Kind.NUMBER, 1),
                 new Prop("radius", Kind.NUMBER, 0));

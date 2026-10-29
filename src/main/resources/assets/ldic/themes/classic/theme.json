@@ -1,0 +1,59 @@
+{
+  "_comment": "LDIC built-in theme 'classic': the vanilla 1.12 title screen layout, drawn by LDIC. Extend it with \"extends\": \"builtin:classic\" and override elements by id.",
+  "ldic": 1,
+  "name": "Classic",
+  "author": "Mica Technologies",
+  "description": "The familiar vanilla layout with a sharp, full-resolution panorama.",
+  "variables": {
+    "button_top": "screen_height / 4 + 48"
+  },
+  "screens": {
+    "main": {
+      "elements": [
+        { "id": "panorama", "type": "panorama", "blur": 2 },
+        { "id": "shade", "type": "rect", "colour": "#40FFFFFF", "colour_bottom": "#80000000" },
+
+        { "id": "logo_left", "type": "image", "image": "minecraft:textures/gui/title/minecraft.png", "filter": "nearest",
+          "anchor": "top", "pivot": "top_right", "y": 30, "width": 155, "height": 44, "uv": [0, 0, 0.60546875, 0.171875] },
+        { "id": "logo_right", "type": "image", "image": "minecraft:textures/gui/title/minecraft.png", "filter": "nearest",
+          "anchor": "top", "pivot": "top_left", "y": 30, "width": 155, "height": 44, "uv": [0, 0.17578125, 0.60546875, 0.34765625] },
+        { "id": "edition", "type": "image", "image": "minecraft:textures/gui/title/edition.png", "filter": "nearest",
+          "anchor": "top", "pivot": "top_left", "x": -49, "y": 67, "width": 98, "height": 14, "uv": [0, 0, 0.765625, 0.875] },
+
+        { "id": "splash", "type": "text", "text": "{splash()}", "colour": "#FFFF00", "align": "center",
+          "anchor": "top", "pivot": "center", "x": 90, "y": 66, "rotation": -20,
+          "scale": "(1.8 - abs(sin(saw(time, 1) * 360)) * 0.1) * 100 / (len(splash()) * 6 + 32)" },
+
+        { "id": "singleplayer", "type": "button", "text": "{translate('menu.singleplayer')}",
+          "anchor": "top", "pivot": "top", "y": "button_top", "action": { "type": "open", "screen": "singleplayer" } },
+        { "id": "multiplayer", "type": "button", "text": "{translate('menu.multiplayer')}",
+          "anchor": "top", "pivot": "top", "y": "button_top + 24", "action": { "type": "open", "screen": "multiplayer" } },
+        { "id": "mods", "type": "button", "text": "{translate('fml.menu.mods')}", "width": 98,
+          "anchor": "top", "pivot": "top_right", "x": -2, "y": "button_top + 48", "action": { "type": "open", "screen": "mods" } },
+        { "id": "realms", "type": "button", "text": "{trim(replace(translate('menu.online'), 'Minecraft', ''))}", "width": 98,
+          "anchor": "top", "pivot": "top_left", "x": 2, "y": "button_top + 48", "action": { "type": "open", "screen": "realms" } },
+        { "id": "options", "type": "button", "text": "{translate('menu.options')}", "width": 98,
+          "anchor": "top", "pivot": "top_right", "x": -2, "y": "button_top + 84", "action": { "type": "open", "screen": "options" } },
+        { "id": "quit", "type": "button", "text": "{translate('menu.quit')}", "width": 98,
+          "anchor": "top", "pivot": "top_left", "x": 2, "y": "button_top + 84", "action": "quit" },
+        { "id": "language", "type": "image", "image": "minecraft:textures/gui/widgets.png", "filter": "nearest",
+          "anchor": "top", "pivot": "top_left", "x": -124, "y": "button_top + 84", "width": 20, "height": 20,
+          "uv": [0, "hover ? 0.4921875 : 0.4140625", 0.078125, "hover ? 0.5703125 : 0.4921875"],
+          "tooltip": "{translate('options.language')}", "sound_press": "minecraft:ui.button.click",
+          "action": { "type": "open", "screen": "language" } },
+
+        { "id": "branding", "type": "text", "text": "{branding()}", "line_spacing": 1.111,
+          "anchor": "bottom_left", "x": 2, "y": -1 },
+        { "id": "copyright", "type": "text", "text": "Copyright Mojang AB. Do not distribute!",
+          "anchor": "bottom_right", "x": -2, "y": -1,
+          "action": { "type": "open", "screen": "credits" }, "sound_press": "minecraft:ui.button.click",
+          "children": [
+            { "id": "copyright_underline", "type": "rect", "colour": "#FFFFFF", "visible": "parent_hover",
+              "anchor": "bottom_left", "y": 1, "height": 1 }
+          ] },
+
+        { "id": "mod_buttons", "type": "foreign_buttons", "layout": "keep" }
+      ]
+    }
+  }
+}
