@@ -1,0 +1,41 @@
+{
+  "_comment": "LDIC built-in loading theme 'console': a rotating panorama behind a log of loading steps that scrolls up and fades, a full-width progress bar on the bottom edge, and a memory and time readout in the corner.",
+  "ldic": 1,
+  "name": "Console",
+  "author": "Mica Technologies",
+  "description": "Scrolling, fading loading log over a panorama, with a memory readout.",
+  "constants": {
+    "bar_colour": "#1144CC",
+    "line_h": 12,
+    "lines": 28
+  },
+  "variables": {
+    "log_line": "is_empty(sub_status) ? status : status + ' - ' + ellipsize(sub_status, 40)"
+  },
+  "elements": [
+    { "id": "panorama", "type": "panorama", "speed": 4 },
+
+    { "id": "log", "type": "factory", "trigger": "log_line", "max": 40,
+      "keep": { "line": "log_line" },
+      "destroy_when": "index >= lines || 20 + index * line_h > screen_height * 0.75",
+      "template": { "id": "log_entry", "type": "text", "anchor": "bottom_left", "x": 35, "y": "-20 - index * line_h",
+        "text": "{line}", "colour": "rgb(max(0x20, 255 - 255 * index / lines), max(0x20, 255 - 255 * index / lines), max(0x20, 255 - 255 * index / lines))" } },
+
+    { "id": "percent", "type": "text", "anchor": "bottom_left", "x": 5, "y": -20, "text": "{floor(progress * 100)}%" },
+    { "id": "bar_track", "type": "rect", "anchor": "bottom", "height": 5, "colour": "#000000", "children": [
+      { "id": "bar_fill", "type": "rect", "width": "pw * progress", "colour": "bar_colour" }
+    ] },
+
+    { "id": "stats", "type": "group", "x": 8, "y": 8, "width": 180, "height": 70, "children": [
+      { "id": "alloc_label", "type": "text", "text": "Memory allocated" },
+      { "id": "alloc", "type": "text", "anchor": "top_right", "text": "{mem.total} MiB" },
+      { "id": "used_label", "type": "text", "y": 12, "text": "Memory used" },
+      { "id": "used", "type": "text", "anchor": "top_right", "y": 12, "text": "{mem.used} MiB" },
+      { "id": "rule", "type": "rect", "anchor": "top_right", "y": 23, "width": 60, "height": 1, "colour": "#C0FFFFFF" },
+      { "id": "free_label", "type": "text", "y": 27, "text": "Memory free" },
+      { "id": "free", "type": "text", "anchor": "top_right", "y": 27, "text": "{mem.free} MiB" },
+      { "id": "max", "type": "text", "y": 43, "text": "[ {mem.max} MiB maximum ]" },
+      { "id": "elapsed", "type": "text", "y": 55, "text": "[ {fixed(time, 1)} seconds elapsed ]" }
+    ] }
+  ]
+}

@@ -30,7 +30,14 @@ public final class Fonts {
     private Map<String, String> aliases = new HashMap<>();
     private double pixelScale = 2;
 
-    public Fonts(AssetResolver assets) {
+    private final LdicFont minecraft;
+
+    /**
+     * @param minecraft what the name {@code minecraft} means: the vanilla font renderer on the
+     *                  main thread, LDIC's own bitmap copy of it on the loading screen
+     */
+    public Fonts(AssetResolver assets, LdicFont minecraft) {
+        this.minecraft = minecraft;
         this.assets = assets;
     }
 
@@ -50,7 +57,7 @@ public final class Fonts {
 
     public LdicFont get(String spec) {
         if (spec == null || spec.isEmpty() || spec.equals("minecraft")) {
-            return VanillaFont.INSTANCE;
+            return minecraft;
         }
         LdicFont f = cache.get(spec);
         if (f == null) {
@@ -84,7 +91,7 @@ public final class Fonts {
         }
         switch (name.toLowerCase(Locale.ROOT)) {
             case "minecraft":
-                return VanillaFont.INSTANCE;
+                return minecraft;
             case "sans":
                 return new TtfFont(new Font(Font.SANS_SERIF, style, 16));
             case "serif":
@@ -101,11 +108,11 @@ public final class Fonts {
                 return new TtfFont(style == Font.PLAIN ? f : f.deriveFont(style));
             } catch (IOException | FontFormatException | RuntimeException e) {
                 Ldic.LOGGER.error("LDIC could not load font '{}': {}; using the Minecraft font", name, e.toString());
-                return VanillaFont.INSTANCE;
+                return minecraft;
             }
         }
         Ldic.LOGGER.error("LDIC: unknown font '{}' (use minecraft, sans, serif, mono, a .ttf/.otf file or a theme font name); using the Minecraft font", spec);
-        return VanillaFont.INSTANCE;
+        return minecraft;
     }
 
     public void clear() {

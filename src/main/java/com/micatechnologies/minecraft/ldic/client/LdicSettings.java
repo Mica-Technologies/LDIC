@@ -21,6 +21,10 @@ public final class LdicSettings {
     /** Shown to themes as {@code pack_name} / {@code pack_version}; launchers can set these. */
     public String packName = "";
     public String packVersion = "";
+    /** Replace Forge's loading screen with the LDIC theme. */
+    public boolean loadingEnabled = true;
+    /** Loading-screen frame cap. Lower leaves more CPU for loading itself. */
+    public int loadingFps = 60;
     /** Lists every theme problem on screen, not just a count. */
     public boolean debug = false;
 
@@ -47,6 +51,15 @@ public final class LdicSettings {
         if (menu != null && menu.has("enabled")) {
             menuEnabled = menu.get("enabled").getAsBoolean();
         }
+        JsonObject loading = obj(o, "loading");
+        if (loading != null) {
+            if (loading.has("enabled")) {
+                loadingEnabled = loading.get("enabled").getAsBoolean();
+            }
+            if (loading.has("fps")) {
+                loadingFps = Math.max(10, Math.min(240, loading.get("fps").getAsInt()));
+            }
+        }
         JsonObject pack = obj(o, "pack");
         if (pack != null) {
             packName = str(pack, "name", packName);
@@ -62,6 +75,10 @@ public final class LdicSettings {
         JsonObject menu = new JsonObject();
         menu.addProperty("enabled", menuEnabled);
         o.add("menu", menu);
+        JsonObject loading = new JsonObject();
+        loading.addProperty("enabled", loadingEnabled);
+        loading.addProperty("fps", loadingFps);
+        o.add("loading", loading);
         JsonObject pack = new JsonObject();
         pack.addProperty("name", packName);
         pack.addProperty("version", packVersion);

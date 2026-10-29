@@ -1,14 +1,10 @@
 package com.micatechnologies.minecraft.ldic.client.render;
 
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 /**
- * Immediate drawing helpers for the main thread. State changes go through
- * {@link GlStateManager} so its cache stays truthful for the vanilla code that runs after us.
+ * Immediate drawing helpers, on whichever {@link GlBackend} the current thread uses: the
+ * vanilla-safe one on the main thread, raw GL on the loading-screen thread.
  *
  * <p>Colours are {@code 0xAARRGGBB}; every call takes an extra opacity multiplier so element
  * fades compose without touching the colour values themselves.</p>
@@ -16,26 +12,60 @@ import org.lwjgl.opengl.GL11;
 public final class Gfx {
 
     private static final int CORNER_SEGMENTS = 8;
+    private static final ThreadLocal<GlBackend> BACKEND = ThreadLocal.withInitial(() -> McGl.INSTANCE);
 
     private Gfx() {
     }
 
+    /** The GL backend for the current thread. */
+    public static GlBackend gl() {
+        return BACKEND.get();
+    }
+
+    /**
+     * Makes the current thread draw with {@code backend} (the loading screen uses
+     * {@link RawGl}); null restores the default.
+     */
+    public static void useBackend(GlBackend backend) {
+        if (backend == null) {
+            BACKEND.remove();
+        } else {
+            BACKEND.set(backend);
+        }
+    }
+
     /** Standard alpha blending for UI drawing. Call before a batch of draws. */
     public static void beginUi() {
-        GlStateManager.enableBlend();
-        GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
-                GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
-        GlStateManager.disableAlpha();
-        GlStateManager.disableCull();
-        GlStateManager.disableDepth();
-        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlBackend gl = gl();
+        if (gl == McGl.INSTANCE) {
+            net.minecraft.client.renderer.GlStateManager.enableBlend();
+            net.minecraft.client.renderer.GlStateManager.tryBlendFuncSeparate(
+                    net.minecraft.client.renderer.GlStateManager.SourceFactor.SRC_ALPHA,
+                    net.minecraft.client.renderer.GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA,
+                    net.minecraft.client.renderer.GlStateManager.SourceFactor.ONE,
+                    net.minecraft.client.renderer.GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);
+            net.minecraft.client.renderer.GlStateManager.disableAlpha();
+            net.minecraft.client.renderer.GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        } else {
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GL11.glDisable(GL11.GL_ALPHA_TEST);
+            GL11.glShadeModel(GL11.GL_SMOOTH);
+        }
+        gl.disableCull();
+        gl.disableDepth();
     }
 
     public static void endUi() {
-        GlStateManager.shadeModel(GL11.GL_FLAT);
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
-        GlStateManager.color(1, 1, 1, 1);
+        GlBackend gl = gl();
+        if (gl == McGl.INSTANCE) {
+            net.minecraft.client.renderer.GlStateManager.shadeModel(GL11.GL_FLAT);
+            net.minecraft.client.renderer.GlStateManager.enableAlpha();
+            net.minecraft.client.renderer.GlStateManager.color(1, 1, 1, 1);
+        } else {
+            GL11.glShadeModel(GL11.GL_FLAT);
+        }
+        gl.enableTexture();
     }
 
     static int a(long c, double opacity) {
@@ -67,16 +97,15 @@ public final class Gfx {
         if (invisible(top, opacity) && invisible(bottom, opacity)) {
             return;
         }
-        GlStateManager.disableTexture2D();
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder bb = t.getBuffer();
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        bb.pos(x0, y1, 0).color(r(bottom), g(bottom), b(bottom), a(bottom, opacity)).endVertex();
-        bb.pos(x1, y1, 0).color(r(bottom), g(bottom), b(bottom), a(bottom, opacity)).endVertex();
-        bb.pos(x1, y0, 0).color(r(top), g(top), b(top), a(top, opacity)).endVertex();
-        bb.pos(x0, y0, 0).color(r(top), g(top), b(top), a(top, opacity)).endVertex();
-        t.draw();
-        GlStateManager.enableTexture2D();
+        GlBackend gl = gl();
+        gl.disableTexture();
+        gl.begin(GL11.GL_QUADS, false);
+        gl.vertex(x0, y1, 0, 0, 0, r(bottom), g(bottom), b(bottom), a(bottom, opacity));
+        gl.vertex(x1, y1, 0, 0, 0, r(bottom), g(bottom), b(bottom), a(bottom, opacity));
+        gl.vertex(x1, y0, 0, 0, 0, r(top), g(top), b(top), a(top, opacity));
+        gl.vertex(x0, y0, 0, 0, 0, r(top), g(top), b(top), a(top, opacity));
+        gl.end();
+        gl.enableTexture();
     }
 
     /** A rectangle graded from {@code left} to {@code right}. */
@@ -84,16 +113,15 @@ public final class Gfx {
         if (invisible(left, opacity) && invisible(right, opacity)) {
             return;
         }
-        GlStateManager.disableTexture2D();
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder bb = t.getBuffer();
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
-        bb.pos(x0, y1, 0).color(r(left), g(left), b(left), a(left, opacity)).endVertex();
-        bb.pos(x1, y1, 0).color(r(right), g(right), b(right), a(right, opacity)).endVertex();
-        bb.pos(x1, y0, 0).color(r(right), g(right), b(right), a(right, opacity)).endVertex();
-        bb.pos(x0, y0, 0).color(r(left), g(left), b(left), a(left, opacity)).endVertex();
-        t.draw();
-        GlStateManager.enableTexture2D();
+        GlBackend gl = gl();
+        gl.disableTexture();
+        gl.begin(GL11.GL_QUADS, false);
+        gl.vertex(x0, y1, 0, 0, 0, r(left), g(left), b(left), a(left, opacity));
+        gl.vertex(x1, y1, 0, 0, 0, r(right), g(right), b(right), a(right, opacity));
+        gl.vertex(x1, y0, 0, 0, 0, r(right), g(right), b(right), a(right, opacity));
+        gl.vertex(x0, y0, 0, 0, 0, r(left), g(left), b(left), a(left, opacity));
+        gl.end();
+        gl.enableTexture();
     }
 
     /** A rectangle with rounded corners of {@code radius}, optionally graded top to bottom. */
@@ -106,37 +134,36 @@ public final class Gfx {
         if (invisible(top, opacity) && invisible(bottom, opacity)) {
             return;
         }
-        GlStateManager.disableTexture2D();
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder bb = t.getBuffer();
-        bb.begin(GL11.GL_TRIANGLE_FAN, DefaultVertexFormats.POSITION_COLOR);
+        GlBackend gl = gl();
+        gl.disableTexture();
+        gl.begin(GL11.GL_TRIANGLE_FAN, false);
         double cx = (x0 + x1) / 2;
         double cy = (y0 + y1) / 2;
-        vertex(bb, cx, cy, y0, y1, top, bottom, opacity);
-        corner(bb, x1 - rad, y0 + rad, rad, -90, y0, y1, top, bottom, opacity);
-        corner(bb, x1 - rad, y1 - rad, rad, 0, y0, y1, top, bottom, opacity);
-        corner(bb, x0 + rad, y1 - rad, rad, 90, y0, y1, top, bottom, opacity);
-        corner(bb, x0 + rad, y0 + rad, rad, 180, y0, y1, top, bottom, opacity);
-        vertex(bb, x1 - rad, y0, y0, y1, top, bottom, opacity);
-        t.draw();
-        GlStateManager.enableTexture2D();
+        vertex(gl, cx, cy, y0, y1, top, bottom, opacity);
+        corner(gl, x1 - rad, y0 + rad, rad, -90, y0, y1, top, bottom, opacity);
+        corner(gl, x1 - rad, y1 - rad, rad, 0, y0, y1, top, bottom, opacity);
+        corner(gl, x0 + rad, y1 - rad, rad, 90, y0, y1, top, bottom, opacity);
+        corner(gl, x0 + rad, y0 + rad, rad, 180, y0, y1, top, bottom, opacity);
+        vertex(gl, x1 - rad, y0, y0, y1, top, bottom, opacity);
+        gl.end();
+        gl.enableTexture();
     }
 
-    private static void corner(BufferBuilder bb, double cx, double cy, double rad, double startDeg,
+    private static void corner(GlBackend gl, double cx, double cy, double rad, double startDeg,
                                double y0, double y1, long top, long bottom, double opacity) {
         for (int i = 0; i <= CORNER_SEGMENTS; i++) {
             double ang = Math.toRadians(startDeg + 90.0 * i / CORNER_SEGMENTS);
-            vertex(bb, cx + Math.cos(ang) * rad, cy + Math.sin(ang) * rad, y0, y1, top, bottom, opacity);
+            vertex(gl, cx + Math.cos(ang) * rad, cy + Math.sin(ang) * rad, y0, y1, top, bottom, opacity);
         }
     }
 
-    private static void vertex(BufferBuilder bb, double x, double y, double y0, double y1, long top, long bottom, double opacity) {
+    private static void vertex(GlBackend gl, double x, double y, double y0, double y1, long top, long bottom, double opacity) {
         double t = y1 == y0 ? 0 : (y - y0) / (y1 - y0);
         int a = (int) Math.round(a(top, opacity) + (a(bottom, opacity) - a(top, opacity)) * t);
         int r = (int) Math.round(r(top) + (r(bottom) - r(top)) * t);
         int g = (int) Math.round(g(top) + (g(bottom) - g(top)) * t);
         int b = (int) Math.round(b(top) + (b(bottom) - b(top)) * t);
-        bb.pos(x, y, 0).color(r, g, b, a).endVertex();
+        gl.vertex(x, y, 0, 0, 0, r, g, b, a);
     }
 
     /** An outline {@code w} thick drawn inside the box (square corners). */
@@ -160,19 +187,18 @@ public final class Gfx {
         if (w <= 0 || invisible(colour, opacity)) {
             return;
         }
-        GlStateManager.disableTexture2D();
+        GlBackend gl = gl();
+        gl.disableTexture();
         GL11.glLineWidth((float) Math.max(1, w));
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder bb = t.getBuffer();
-        bb.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
+        gl.begin(GL11.GL_LINE_LOOP, false);
         double h = w / 2;
-        corner(bb, x1 - rad, y0 + rad, rad - h, -90, y0, y1, colour, colour, opacity);
-        corner(bb, x1 - rad, y1 - rad, rad - h, 0, y0, y1, colour, colour, opacity);
-        corner(bb, x0 + rad, y1 - rad, rad - h, 90, y0, y1, colour, colour, opacity);
-        corner(bb, x0 + rad, y0 + rad, rad - h, 180, y0, y1, colour, colour, opacity);
-        t.draw();
+        corner(gl, x1 - rad, y0 + rad, rad - h, -90, y0, y1, colour, colour, opacity);
+        corner(gl, x1 - rad, y1 - rad, rad - h, 0, y0, y1, colour, colour, opacity);
+        corner(gl, x0 + rad, y1 - rad, rad - h, 90, y0, y1, colour, colour, opacity);
+        corner(gl, x0 + rad, y0 + rad, rad - h, 180, y0, y1, colour, colour, opacity);
+        gl.end();
         GL11.glLineWidth(1);
-        GlStateManager.enableTexture2D();
+        gl.enableTexture();
     }
 
     /** A textured quad tinted by {@code colour}. The texture must already be bound. */
@@ -181,18 +207,17 @@ public final class Gfx {
         if (invisible(colour, opacity)) {
             return;
         }
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder bb = t.getBuffer();
-        bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
+        GlBackend gl = gl();
         int r = r(colour);
         int g = g(colour);
         int b = b(colour);
         int a = a(colour, opacity);
-        bb.pos(x0, y1, 0).tex(u0, v1).color(r, g, b, a).endVertex();
-        bb.pos(x1, y1, 0).tex(u1, v1).color(r, g, b, a).endVertex();
-        bb.pos(x1, y0, 0).tex(u1, v0).color(r, g, b, a).endVertex();
-        bb.pos(x0, y0, 0).tex(u0, v0).color(r, g, b, a).endVertex();
-        t.draw();
+        gl.begin(GL11.GL_QUADS, true);
+        gl.vertex(x0, y1, 0, u0, v1, r, g, b, a);
+        gl.vertex(x1, y1, 0, u1, v1, r, g, b, a);
+        gl.vertex(x1, y0, 0, u1, v0, r, g, b, a);
+        gl.vertex(x0, y0, 0, u0, v0, r, g, b, a);
+        gl.end();
     }
 
     /**

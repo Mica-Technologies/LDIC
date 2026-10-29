@@ -69,7 +69,7 @@ public final class MenuManager {
         this.source = new ClientThemeSource(configDir);
         AssetResolver assets = new AssetResolver(configDir);
         this.textures = new Textures(assets, new WebCache(configDir));
-        this.fonts = new Fonts(assets);
+        this.fonts = new Fonts(assets, com.micatechnologies.minecraft.ldic.client.render.VanillaFont.INSTANCE);
         this.bindings = new HostBindings(settings);
         writeStarterTheme();
         IResourceManager rm = Minecraft.getMinecraft().getResourceManager();

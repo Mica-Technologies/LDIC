@@ -1,11 +1,6 @@
 package com.micatechnologies.minecraft.ldic.client.render;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.shader.Framebuffer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.util.glu.Project;
@@ -17,7 +12,8 @@ import org.lwjgl.util.glu.Project;
  * viewport and blurs that, this draws one sharp pass at the rectangle's real resolution and
  * the real aspect ratio. Blur is opt-in: level {@code n} renders at 1/2^n resolution into a
  * framebuffer and scales it up with linear filtering, which is soft and costs less than the
- * sharp pass, not more.</p>
+ * sharp pass, not more. Blur needs a framebuffer, so it is main-thread only; on the loading
+ * screen the panorama is always sharp.</p>
  *
  * <p>Face order follows the vanilla files {@code panorama_0..5}: front, right, back, left,
  * top, bottom.</p>
@@ -42,12 +38,11 @@ public final class PanoramaRenderer {
         if (pxWidth <= 0 || pxHeight <= 0) {
             return;
         }
-        Minecraft mc = Minecraft.getMinecraft();
-        boolean useBuffer = blur > 0 && OpenGlHelper.isFramebufferEnabled();
-        if (!useBuffer) {
-            GlStateManager.viewport(pxLeft, mc.displayHeight - pxTop - pxHeight, pxWidth, pxHeight);
-            cube(faces, pxWidth / (double) pxHeight, yaw, pitch, fov, tint, opacity);
-            GlStateManager.viewport(0, 0, mc.displayWidth, mc.displayHeight);
+        GlBackend gl = Gfx.gl();
+        if (blur <= 0 || !gl.supportsBlur()) {
+            gl.viewport(pxLeft, gl.displayHeight() - pxTop - pxHeight, pxWidth, pxHeight);
+            cube(gl, faces, pxWidth / (double) pxHeight, yaw, pitch, fov, tint, opacity);
+            gl.viewport(0, 0, gl.displayWidth(), gl.displayHeight());
             return;
         }
         int level = Math.min(blur, 6);
@@ -63,77 +58,75 @@ public final class PanoramaRenderer {
         buffer.setFramebufferColor(0, 0, 0, 1);
         buffer.framebufferClear();
         buffer.bindFramebuffer(true);
-        cube(faces, w / (double) h, yaw, pitch, fov, 0xFFFFFFFFL, 1);
-        mc.getFramebuffer().bindFramebuffer(true);
+        cube(gl, faces, w / (double) h, yaw, pitch, fov, 0xFFFFFFFFL, 1);
+        Minecraft.getMinecraft().getFramebuffer().bindFramebuffer(true);
 
-        GlStateManager.enableTexture2D();
-        GlStateManager.bindTexture(buffer.framebufferTexture);
+        gl.enableTexture();
+        gl.bindTexture(buffer.framebufferTexture);
         double u1 = buffer.framebufferWidth / (double) buffer.framebufferTextureWidth;
         double v1 = buffer.framebufferHeight / (double) buffer.framebufferTextureHeight;
         // Framebuffer textures have a bottom-left origin.
         Gfx.texturedQuad(x0, y0, x1, y1, 0, v1, u1, 0, tint, opacity);
     }
 
-    private static void cube(Textures.Texture[] faces, double aspect, double yaw, double pitch, double fov,
-                             long tint, double opacity) {
-        GlStateManager.matrixMode(GL11.GL_PROJECTION);
-        GlStateManager.pushMatrix();
-        GlStateManager.loadIdentity();
+    private static void cube(GlBackend gl, Textures.Texture[] faces, double aspect, double yaw, double pitch,
+                             double fov, long tint, double opacity) {
+        gl.matrixMode(true);
+        gl.pushMatrix();
+        gl.loadIdentity();
         Project.gluPerspective((float) fov, (float) aspect, 0.05F, 10.0F);
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        GlStateManager.pushMatrix();
-        GlStateManager.loadIdentity();
-        GlStateManager.rotate(180.0F, 1.0F, 0.0F, 0.0F);
-        GlStateManager.rotate((float) pitch, 1.0F, 0.0F, 0.0F);
-        GlStateManager.rotate((float) yaw, 0.0F, 1.0F, 0.0F);
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableCull();
-        GlStateManager.disableDepth();
-        GlStateManager.depthMask(false);
-        GlStateManager.enableBlend();
+        gl.matrixMode(false);
+        gl.pushMatrix();
+        gl.loadIdentity();
+        gl.rotate(180.0F, 1.0F, 0.0F, 0.0F);
+        gl.rotate((float) pitch, 1.0F, 0.0F, 0.0F);
+        gl.rotate((float) yaw, 0.0F, 1.0F, 0.0F);
+        gl.enableTexture();
+        gl.disableCull();
+        gl.disableDepth();
+        gl.depthMask(false);
+        gl.enableBlend();
 
         int r = Gfx.r(tint);
         int g = Gfx.g(tint);
         int b = Gfx.b(tint);
         int a = Gfx.a(tint, opacity);
-        Tessellator t = Tessellator.getInstance();
-        BufferBuilder bb = t.getBuffer();
         for (int k = 0; k < 6; k++) {
-            GlStateManager.pushMatrix();
+            gl.pushMatrix();
             switch (k) {
                 case 1:
-                    GlStateManager.rotate(90.0F, 0.0F, 1.0F, 0.0F);
+                    gl.rotate(90.0F, 0.0F, 1.0F, 0.0F);
                     break;
                 case 2:
-                    GlStateManager.rotate(180.0F, 0.0F, 1.0F, 0.0F);
+                    gl.rotate(180.0F, 0.0F, 1.0F, 0.0F);
                     break;
                 case 3:
-                    GlStateManager.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
+                    gl.rotate(-90.0F, 0.0F, 1.0F, 0.0F);
                     break;
                 case 4:
-                    GlStateManager.rotate(90.0F, 1.0F, 0.0F, 0.0F);
+                    gl.rotate(90.0F, 1.0F, 0.0F, 0.0F);
                     break;
                 case 5:
-                    GlStateManager.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
+                    gl.rotate(-90.0F, 1.0F, 0.0F, 0.0F);
                     break;
                 default:
                     break;
             }
             faces[k].bind();
-            bb.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX_COLOR);
-            bb.pos(-1, -1, 1).tex(0, 0).color(r, g, b, a).endVertex();
-            bb.pos(1, -1, 1).tex(1, 0).color(r, g, b, a).endVertex();
-            bb.pos(1, 1, 1).tex(1, 1).color(r, g, b, a).endVertex();
-            bb.pos(-1, 1, 1).tex(0, 1).color(r, g, b, a).endVertex();
-            t.draw();
-            GlStateManager.popMatrix();
+            gl.begin(GL11.GL_QUADS, true);
+            gl.vertex(-1, -1, 1, 0, 0, r, g, b, a);
+            gl.vertex(1, -1, 1, 1, 0, r, g, b, a);
+            gl.vertex(1, 1, 1, 1, 1, r, g, b, a);
+            gl.vertex(-1, 1, 1, 0, 1, r, g, b, a);
+            gl.end();
+            gl.popMatrix();
         }
 
-        GlStateManager.matrixMode(GL11.GL_PROJECTION);
-        GlStateManager.popMatrix();
-        GlStateManager.matrixMode(GL11.GL_MODELVIEW);
-        GlStateManager.popMatrix();
-        GlStateManager.depthMask(true);
+        gl.matrixMode(true);
+        gl.popMatrix();
+        gl.matrixMode(false);
+        gl.popMatrix();
+        gl.depthMask(true);
     }
 
     public void delete() {

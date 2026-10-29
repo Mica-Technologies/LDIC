@@ -8,7 +8,6 @@ import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
-import net.minecraft.client.renderer.GlStateManager;
 
 /**
  * A TrueType/OpenType (or AWT logical) font rasterised into glyph atlases.
@@ -94,7 +93,7 @@ public final class TtfFont implements LdicFont {
         double unit = size / s.px;
         long colour = argb;
         double pen = x;
-        GlStateManager.enableTexture2D();
+        Gfx.gl().enableTexture();
         for (int i = 0; i < text.length(); i++) {
             char c = text.charAt(i);
             if (c == '§' && i + 1 < text.length()) {
@@ -180,7 +179,7 @@ public final class TtfFont implements LdicFont {
 
         void delete() {
             for (Page p : pages.values()) {
-                GlStateManager.deleteTexture(p.texture.id);
+                Gfx.gl().deleteTexture(p.texture.id);
             }
             pages.clear();
         }

@@ -14,7 +14,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import javax.imageio.ImageIO;
-import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
@@ -47,7 +46,7 @@ public final class Textures {
         }
 
         public void bind() {
-            GlStateManager.bindTexture(id);
+            Gfx.gl().bindTexture(id);
         }
     }
 
@@ -129,7 +128,7 @@ public final class Textures {
     public void clear() {
         for (Texture t : loaded.values()) {
             if (t != missing) {
-                GlStateManager.deleteTexture(t.id);
+                Gfx.gl().deleteTexture(t.id);
             }
         }
         loaded.clear();
@@ -169,8 +168,8 @@ public final class Textures {
         int[] argb = img.getRGB(0, 0, w, h, null, 0, w);
         IntBuffer buf = BufferUtils.createIntBuffer(argb.length);
         buf.put(argb).flip();
-        int id = GlStateManager.generateTexture();
-        GlStateManager.bindTexture(id);
+        int id = Gfx.gl().genTexture();
+        Gfx.gl().bindTexture(id);
         boolean mipmaps = linear && GLContext.getCapabilities().OpenGL30;
         GL11.glTexParameteri(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_MIN_FILTER,
                 linear ? (mipmaps ? GL11.GL_LINEAR_MIPMAP_LINEAR : GL11.GL_LINEAR) : GL11.GL_NEAREST);

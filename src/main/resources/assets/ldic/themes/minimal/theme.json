@@ -1,0 +1,42 @@
+{
+  "_comment": "LDIC built-in loading theme 'minimal': a dim panorama, the pack name, a slim progress bar, the current stage and step, an ETA from the previous launch, and rotating tips from config/ldic/tips.txt.",
+  "ldic": 1,
+  "name": "Minimal",
+  "author": "Mica Technologies",
+  "description": "Clean centred progress over a dim panorama.",
+  "constants": {
+    "accent": "#4FC3F7",
+    "bar_w": 260
+  },
+  "elements": [
+    { "id": "background", "type": "rect", "colour": "#0C1017" },
+    { "id": "panorama", "type": "panorama", "speed": 1.2, "pitch": "15 + 5 * sin(time * 4)", "fov": 80, "tint": "#FF6A7280" },
+    { "id": "vignette", "type": "rect", "colour": "#600C1017", "colour_bottom": "#E00C1017" },
+
+    { "id": "centre", "type": "group", "anchor": "center", "width": "bar_w", "height": 90, "children": [
+      { "id": "title", "type": "text", "size": 27, "align": "center", "anchor": "top", "colour": "#FFFFFF",
+        "text": "{is_empty(pack_name) ? 'Minecraft' : pack_name}", "opacity": "ease_out(time / 0.6)" },
+      { "id": "subtitle", "type": "text", "size": 9, "align": "center", "anchor": "top", "y": 30, "colour": "#90FFFFFF", "shadow": false,
+        "text": "{is_empty(pack_version) ? 'Minecraft ' + mc_version : 'Version ' + pack_version}" },
+
+      { "id": "track", "type": "rect", "anchor": "top", "y": 50, "height": 3, "colour": "#30FFFFFF", "children": [
+        { "id": "fill", "type": "rect", "width": "pw * progress", "colour": "accent" },
+        { "id": "glow", "type": "rect", "x": "pw * progress - 24", "width": 24, "gradient": "horizontal",
+          "colour": "#004FC3F7", "colour_bottom": "with_alpha(accent, 0.5 + 0.5 * wave(time, 1.4))", "visible": "progress < 0.999" }
+      ] },
+      { "id": "status", "type": "text", "size": 9, "anchor": "top_left", "y": 58, "colour": "#E8FFFFFF", "shadow": false,
+        "text": "{status}" },
+      { "id": "percent", "type": "text", "size": 9, "anchor": "top_right", "y": 58, "colour": "accent", "shadow": false,
+        "text": "{percent(progress)}" },
+      { "id": "step", "type": "text", "size": 9, "anchor": "top_left", "y": 70, "colour": "#70FFFFFF", "shadow": false,
+        "text": "{ellipsize(sub_status, 44)}" }
+    ] },
+
+    { "id": "eta", "type": "text", "size": 9, "align": "center", "anchor": "bottom", "y": -26, "colour": "#80FFFFFF", "shadow": false,
+      "text": "{eta >= 1 ? 'About ' + duration(eta) + ' left' : ''}" },
+    { "id": "tip", "type": "text", "size": 9, "align": "center", "anchor": "bottom", "y": -12, "colour": "#B0FFFFFF", "shadow": false,
+      "text": "{tip(floor(time / 9))}", "opacity": "triangle(time, 9) * 4", "visible": "tip_count() > 0" },
+    { "id": "memory", "type": "text", "size": 9, "anchor": "bottom_right", "x": -6, "y": -4, "colour": "#50FFFFFF", "shadow": false,
+      "text": "{mem.used} / {mem.max} MiB" }
+  ]
+}

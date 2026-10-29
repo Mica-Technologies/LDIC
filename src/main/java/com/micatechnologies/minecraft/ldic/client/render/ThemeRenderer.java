@@ -1,10 +1,5 @@
-package com.micatechnologies.minecraft.ldic.client.menu;
+package com.micatechnologies.minecraft.ldic.client.render;
 
-import com.micatechnologies.minecraft.ldic.client.render.Fonts;
-import com.micatechnologies.minecraft.ldic.client.render.Gfx;
-import com.micatechnologies.minecraft.ldic.client.render.LdicFont;
-import com.micatechnologies.minecraft.ldic.client.render.PanoramaRenderer;
-import com.micatechnologies.minecraft.ldic.client.render.Textures;
 import com.micatechnologies.minecraft.ldic.expr.Expr;
 import com.micatechnologies.minecraft.ldic.expr.Library;
 import com.micatechnologies.minecraft.ldic.theme.ElementDef;
@@ -14,13 +9,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import net.minecraft.client.renderer.GlStateManager;
 
 /**
- * Draws theme elements on the main thread. One instance per open screen; per-node caches (text
+ * Draws theme elements, for the main menu and the loading screen alike (GL goes through
+ * {@link Gfx#gl()}, so the same code is safe on either thread). One instance per open screen; per-node caches (text
  * layout, shuffled slideshow order, panorama framebuffer) live in {@link UiNode#renderState}.
  */
-final class MenuRenderer implements NodeRenderer {
+public final class ThemeRenderer implements NodeRenderer {
 
     private static final String WIDGETS = "minecraft:textures/gui/widgets.png";
 
@@ -28,22 +23,22 @@ final class MenuRenderer implements NodeRenderer {
     private final Fonts fonts;
     private final java.util.function.Consumer<UiNode> hoverStarted;
     /** Seconds on the menu's clock (continues across screens), for slideshows and frames. */
-    double now;
+    public double now;
     /** Layout units to GUI pixels, and GUI pixels to window pixels. */
-    double uiScale = 1;
-    double guiScale = 2;
+    public double uiScale = 1;
+    public double guiScale = 2;
     /** The rectangle (layout units) of the theme's foreign_buttons element this frame, or null. */
-    double[] foreignArea;
-    UiNode foreignNode;
+    public double[] foreignArea;
+    public UiNode foreignNode;
     private final List<PanoramaRenderer> panoramas = new ArrayList<>();
 
-    MenuRenderer(Textures textures, Fonts fonts, java.util.function.Consumer<UiNode> hoverStarted) {
+    public ThemeRenderer(Textures textures, Fonts fonts, java.util.function.Consumer<UiNode> hoverStarted) {
         this.textures = textures;
         this.fonts = fonts;
         this.hoverStarted = hoverStarted;
     }
 
-    void dispose() {
+    public void dispose() {
         for (PanoramaRenderer p : panoramas) {
             p.delete();
         }
@@ -106,22 +101,22 @@ final class MenuRenderer implements NodeRenderer {
     @Override
     public void begin(UiNode n) {
         if (n.rotation != 0 || n.scale != 1) {
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(n.pivotX, n.pivotY, 0);
+            Gfx.gl().pushMatrix();
+            Gfx.gl().translate(n.pivotX, n.pivotY, 0);
             if (n.rotation != 0) {
-                GlStateManager.rotate((float) n.rotation, 0, 0, 1);
+                Gfx.gl().rotate((float) n.rotation, 0, 0, 1);
             }
             if (n.scale != 1) {
-                GlStateManager.scale(n.scale, n.scale, 1);
+                Gfx.gl().scale(n.scale, n.scale, 1);
             }
-            GlStateManager.translate(-n.pivotX, -n.pivotY, 0);
+            Gfx.gl().translate(-n.pivotX, -n.pivotY, 0);
         }
     }
 
     @Override
     public void end(UiNode n) {
         if (n.rotation != 0 || n.scale != 1) {
-            GlStateManager.popMatrix();
+            Gfx.gl().popMatrix();
         }
     }
 
@@ -286,7 +281,7 @@ final class MenuRenderer implements NodeRenderer {
             default:
                 break;
         }
-        GlStateManager.enableTexture2D();
+        Gfx.gl().enableTexture();
         t.bind();
         Gfx.texturedQuad(x0, y0, x1, y1, u0, v0, u1, v1, tint, opacity);
     }
@@ -348,7 +343,7 @@ final class MenuRenderer implements NodeRenderer {
             case "vanilla": {
                 Textures.Texture w = textures.get(WIDGETS, false);
                 if (w != null) {
-                    GlStateManager.enableTexture2D();
+                    Gfx.gl().enableTexture();
                     w.bind();
                     // widgets.png rows: disabled at v=46, normal at 66, hover at 86; 200x20 each.
                     if (!n.enabled) {
@@ -385,7 +380,7 @@ final class MenuRenderer implements NodeRenderer {
                 Textures.Texture t = textures.get(d.str("image", null), linear);
                 if (t != null) {
                     int rows = (int) Math.max(1, d.num("sheet_rows", 2));
-                    GlStateManager.enableTexture2D();
+                    Gfx.gl().enableTexture();
                     t.bind();
                     double rh = 1.0 / rows;
                     if (!n.enabled && rows >= 3) {
@@ -418,7 +413,7 @@ final class MenuRenderer implements NodeRenderer {
         if (iconSize > 0) {
             Textures.Texture icon = textures.get(d.str("icon", null), linear);
             if (icon != null) {
-                GlStateManager.enableTexture2D();
+                Gfx.gl().enableTexture();
                 icon.bind();
                 double iy = y0 + (n.height - iconSize) / 2;
                 Gfx.texturedQuad(cx, iy, cx + iconSize, iy + iconSize, 0, 0, 1, 1, colour(d, "icon_tint", 0xFFFFFFFFL), n.opacity);

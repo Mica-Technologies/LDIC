@@ -24,9 +24,20 @@ import net.minecraft.util.ResourceLocation;
 public final class AssetResolver {
 
     private final File configDir;
+    private final boolean early;
 
     public AssetResolver(File configDir) {
+        this(configDir, false);
+    }
+
+    /**
+     * @param early true on the loading screen: the resource manager is not ready (and not
+     *              thread-safe), so {@code namespace:path} reads straight from the game's
+     *              built-in resources, without resource packs
+     */
+    public AssetResolver(File configDir, boolean early) {
         this.configDir = configDir;
+        this.early = early;
     }
 
     public static boolean isWeb(String path) {
@@ -63,6 +74,9 @@ public final class AssetResolver {
             throw new FileNotFoundException("web assets load through WebCache: " + path);
         }
         ResourceLocation rl = new ResourceLocation(path);
+        if (early) {
+            return Minecraft.getMinecraft().defaultResourcePack.getInputStream(rl);
+        }
         return Minecraft.getMinecraft().getResourceManager().getResource(rl).getInputStream();
     }
 }

@@ -2,6 +2,7 @@ package com.micatechnologies.minecraft.ldic.client.menu;
 
 import com.micatechnologies.minecraft.ldic.Ldic;
 import com.micatechnologies.minecraft.ldic.client.render.Gfx;
+import com.micatechnologies.minecraft.ldic.client.render.ThemeRenderer;
 import com.micatechnologies.minecraft.ldic.theme.ElementDef;
 import com.micatechnologies.minecraft.ldic.theme.Problems;
 import com.micatechnologies.minecraft.ldic.theme.ScreenDef;
@@ -40,7 +41,7 @@ public final class LdicMenuScreen extends GuiMainMenu {
     private final String screenId;
     private final ThemeDef theme;
     private final UiTree tree;
-    private final MenuRenderer renderer;
+    private final ThemeRenderer renderer;
     private final long openedAt = System.nanoTime();
     private long lastFrame = System.nanoTime();
     private String pendingLink;
@@ -52,7 +53,7 @@ public final class LdicMenuScreen extends GuiMainMenu {
         this.screenId = screenId;
         ScreenDef def = theme.screen(screenId);
         this.tree = new UiTree(def);
-        this.renderer = new MenuRenderer(manager.textures(), manager.fonts(), this::hoverStarted);
+        this.renderer = new ThemeRenderer(manager.textures(), manager.fonts(), this::hoverStarted);
     }
 
     public String screenId() {
