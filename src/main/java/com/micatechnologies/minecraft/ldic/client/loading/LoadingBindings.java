@@ -60,6 +60,8 @@ final class LoadingBindings {
     private final Slot skipHold = scope.declare("skip_hold", NUMBER);
     private final Slot skipSeconds = scope.declare("skip_seconds", NUMBER);
     private final Slot loadingDone = scope.declare("loading_done", com.micatechnologies.minecraft.ldic.expr.Type.BOOL);
+    private final Slot details = scope.declare("details", com.micatechnologies.minecraft.ldic.expr.Type.BOOL);
+    private final Slot detailsOpen = scope.declare("details_open", NUMBER);
 
     private final List<ProgressModel.Bar> bars = new ArrayList<>();
     private final List<String> tips;
@@ -74,6 +76,7 @@ final class LoadingBindings {
         scope.declare("stage_count", NUMBER).set(ProgressModel.STAGES);
         scope.declare("mc_version", STRING).set(ForgeVersion.mcVersion);
         scope.declare("forge_version", STRING).set(ForgeVersion.getVersion());
+        scope.declare("java_version", STRING).set(System.getProperty("java.version", ""));
         scope.declare("username", STRING).set(mc.getSession().getUsername());
         scope.declare("pack_name", STRING).set(settings.packName);
         scope.declare("pack_version", STRING).set(settings.packVersion);
@@ -91,6 +94,8 @@ final class LoadingBindings {
             ProgressModel.Bar b = bar(a[0].num());
             return b == null || b.steps <= 0 ? 0 : Math.max(0, b.step - 1) / (double) b.steps;
         }, NUMBER));
+        scope.define(Function.num("bar_step", false, a -> bar(a[0].num()) == null ? 0 : Math.max(0, bar(a[0].num()).step), NUMBER));
+        scope.define(Function.num("bar_steps", false, a -> bar(a[0].num()) == null ? 0 : bar(a[0].num()).steps, NUMBER));
         DateFormat clock = DateFormat.getTimeInstance(DateFormat.SHORT, Locale.getDefault());
         scope.define(Function.str("clock", false, a -> clock.format(new Date())));
         DateFormat longDate = DateFormat.getDateInstance(DateFormat.FULL, Locale.getDefault());
@@ -130,6 +135,12 @@ final class LoadingBindings {
         skipHold.set(hold);
         skipSeconds.set(holdSeconds);
         loadingDone.set(done);
+    }
+
+    /** Whether the F3 details panel is open, and how far its open/close animation has got (0..1). */
+    void setDetails(boolean open, double t) {
+        details.set(open);
+        detailsOpen.set(t);
     }
 
     void setScreenTime(double seconds) {

@@ -12,6 +12,9 @@
   },
   "variables": {
     "bar_h": "screen_height * 0.11",
+    "details_h": 62,
+    "detail_col": 120,
+    "detail_chars": "max(8, floor((screen_width - 280) / 5.5))",
     "scene": "floor(time / scene_seconds)"
   },
   "screens": {
@@ -39,19 +42,67 @@
           ] },
         { "id": "grade", "type": "rect", "colour": "#30000000", "colour_bottom": "#70000000" },
 
-        { "id": "bar_top", "type": "rect", "anchor": "top", "height": "bar_h", "colour": "#000000" },
-        { "id": "bar_bottom", "type": "rect", "anchor": "bottom", "height": "bar_h", "colour": "#000000", "children": [
+        { "id": "bar_top", "type": "rect", "anchor": "top", "height": "bar_h", "colour": "#000000", "children": [
+          { "id": "details_hint", "type": "text", "anchor": "right", "align": "right", "x": -20, "size": 9, "colour": "#60FFFFFF", "shadow": false,
+            "text": "F3  {details ? 'hide details' : 'details'}",
+            "opacity": "saturate(screen_time - 1.5)" }
+        ] },
+        { "id": "bar_bottom", "type": "rect", "anchor": "bottom", "height": "bar_h + details_h * ease_in_out(details_open)", "colour": "#000000", "children": [
           { "id": "progress_track", "type": "rect", "anchor": "top", "height": 1, "colour": "#20FFFFFF" },
           { "id": "progress_fill", "type": "rect", "anchor": "top_left", "height": 1, "width": "pw * progress", "colour": "accent" },
-          { "id": "title", "type": "text", "anchor": "left", "x": 20, "y": -5, "size": 9, "colour": "#FFFFFF", "shadow": false,
-            "text": "{upper(is_empty(pack_name) ? 'Minecraft' : pack_name)}" },
-          { "id": "caption", "type": "text", "anchor": "left", "x": 20, "y": 7, "size": 9, "colour": "#A0FFFFFF", "shadow": false,
-            "text": "{is_empty(captions) ? tip(scene) : pick(captions, scene)}",
-            "opacity": "triangle(time, scene_seconds) * 4" },
-          { "id": "status", "type": "text", "anchor": "right", "align": "right", "x": -20, "y": -5, "size": 9, "colour": "#C0FFFFFF", "shadow": false,
-            "text": "{status}" },
-          { "id": "percent", "type": "text", "anchor": "right", "align": "right", "x": -20, "y": 7, "size": 9, "colour": "accent", "shadow": false,
-            "text": "{percent(progress)}{eta >= 1 ? '  /  ' + duration(eta) : ''}" }
+          { "id": "summary", "type": "rect", "anchor": "top", "height": "bar_h", "colour": "#00000000", "children": [
+            { "id": "title", "type": "text", "anchor": "left", "x": 20, "y": -5, "size": 9, "colour": "#FFFFFF", "shadow": false,
+              "text": "{upper(is_empty(pack_name) ? 'Minecraft' : pack_name)}" },
+            { "id": "caption", "type": "text", "anchor": "left", "x": 20, "y": 7, "size": 9, "colour": "#A0FFFFFF", "shadow": false,
+              "text": "{is_empty(captions) ? tip(scene) : pick(captions, scene)}",
+              "opacity": "triangle(time, scene_seconds) * 4" },
+            { "id": "status", "type": "text", "anchor": "right", "align": "right", "x": -20, "y": -5, "size": 9, "colour": "#C0FFFFFF", "shadow": false,
+              "text": "{status}" },
+            { "id": "percent", "type": "text", "anchor": "right", "align": "right", "x": -20, "y": 7, "size": 9, "colour": "accent", "shadow": false,
+              "text": "{percent(progress)}{eta >= 1 ? '  /  ' + duration(eta) : ''}" }
+          ] },
+          { "id": "details_panel", "type": "rect", "anchor": "top", "y": "bar_h", "height": "details_h", "colour": "#00000000",
+            "visible": "details_open > 0", "opacity": "ease_in_out(details_open)", "children": [
+            { "id": "details_rule", "type": "rect", "anchor": "top", "width": "pw - 40", "height": 1, "colour": "#14FFFFFF" },
+
+            { "id": "bar0_title", "type": "text", "anchor": "top_left", "x": 20, "y": 8, "size": 9, "colour": "#80FFFFFF", "shadow": false,
+              "text": "{bar_count() > 0 ? bar_title(0) : 'Loading'}" },
+            { "id": "bar0_message", "type": "text", "anchor": "top_left", "x": "detail_col", "y": 8, "size": 9, "colour": "#D0FFFFFF", "shadow": false,
+              "text": "{bar_count() > 0 ? ellipsize(bar_message(0), detail_chars) : 'Finished'}" },
+            { "id": "bar0_count", "type": "text", "anchor": "top_right", "align": "right", "x": -112, "y": 8, "size": 9, "colour": "#80FFFFFF", "shadow": false,
+              "text": "{bar_steps(0) > 0 ? str(bar_step(0)) + ' / ' + str(bar_steps(0)) : ''}", "visible": "bar_count() > 0" },
+            { "id": "bar0_track", "type": "rect", "anchor": "top_right", "x": -20, "y": 11, "width": 80, "height": 2, "colour": "#20FFFFFF",
+              "visible": "bar_count() > 0", "children": [
+              { "id": "bar0_fill", "type": "rect", "anchor": "top_left", "width": "pw * bar_progress(0)", "colour": "accent" }
+            ] },
+
+            { "id": "bar1_title", "type": "text", "anchor": "top_left", "x": 20, "y": 20, "size": 9, "colour": "#80FFFFFF", "shadow": false,
+              "text": "{bar_title(1)}", "visible": "bar_count() > 1" },
+            { "id": "bar1_message", "type": "text", "anchor": "top_left", "x": "detail_col", "y": 20, "size": 9, "colour": "#D0FFFFFF", "shadow": false,
+              "text": "{ellipsize(bar_message(1), detail_chars)}", "visible": "bar_count() > 1" },
+            { "id": "bar1_count", "type": "text", "anchor": "top_right", "align": "right", "x": -112, "y": 20, "size": 9, "colour": "#80FFFFFF", "shadow": false,
+              "text": "{bar_steps(1) > 0 ? str(bar_step(1)) + ' / ' + str(bar_steps(1)) : ''}", "visible": "bar_count() > 1" },
+            { "id": "bar1_track", "type": "rect", "anchor": "top_right", "x": -20, "y": 23, "width": 80, "height": 2, "colour": "#20FFFFFF",
+              "visible": "bar_count() > 1", "children": [
+              { "id": "bar1_fill", "type": "rect", "anchor": "top_left", "width": "pw * bar_progress(1)", "colour": "accent" }
+            ] },
+
+            { "id": "memory_title", "type": "text", "anchor": "top_left", "x": 20, "y": 36, "size": 9, "colour": "#80FFFFFF", "shadow": false,
+              "text": "Memory" },
+            { "id": "memory_value", "type": "text", "anchor": "top_left", "x": "detail_col", "y": 36, "size": 9, "colour": "#D0FFFFFF", "shadow": false,
+              "text": "{fixed(mem.used / 1024, 1)} / {fixed(mem.max / 1024, 1)} GB" },
+            { "id": "elapsed", "type": "text", "anchor": "top_right", "align": "right", "x": -112, "y": 36, "size": 9, "colour": "#80FFFFFF", "shadow": false,
+              "text": "Elapsed {duration(time)}" },
+            { "id": "memory_track", "type": "rect", "anchor": "top_right", "x": -20, "y": 39, "width": 80, "height": 2, "colour": "#20FFFFFF", "children": [
+              { "id": "memory_fill", "type": "rect", "anchor": "top_left", "width": "pw * saturate(mem.used / max(1, mem.max))",
+                "colour": "mem.used / max(1, mem.max) > 0.85 ? hex('#E8A060') : accent" }
+            ] },
+
+            { "id": "versions_title", "type": "text", "anchor": "top_left", "x": 20, "y": 48, "size": 9, "colour": "#80FFFFFF", "shadow": false,
+              "text": "Game" },
+            { "id": "versions", "type": "text", "anchor": "top_left", "x": "detail_col", "y": 48, "size": 9, "colour": "#A0FFFFFF", "shadow": false,
+              "text": "{ellipsize('Minecraft ' + mc_version + '  /  Forge ' + forge_version + '  /  Java ' + java_version + '  /  ' + str(mods_found) + ' mods', max(8, floor((screen_width - 140) / 5.5)))}" }
+          ] }
         ] }
       ]
     }

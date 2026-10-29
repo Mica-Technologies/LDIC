@@ -72,10 +72,35 @@ On top of the menu's general [game values](../themes/game-values.md) (`time`, sc
 | `mods_found` | number | Mods discovered so far |
 | `reduced_motion` | bool | The player asked for less motion; see [`player.json`](../help/settings.md#playerjson) |
 | `tip()`, `tip(i)`, `tip_count()` | | Tips from `config/ldic/tips.txt` (one per line, `#` for comments). `tip()` is random per launch; `tip(floor(time / 8))` rotates. |
-| `bar_count()`, `bar_title(i)`, `bar_message(i)`, `bar_progress(i)` | | Forge's raw progress bars, outermost first |
+| `bar_count()`, `bar_title(i)`, `bar_message(i)`, `bar_progress(i)`, `bar_step(i)`, `bar_steps(i)` | | Forge's raw progress bars, outermost first; `bar_step(i)` of `bar_steps(i)` is the "212 / 348" count |
+| `details` | bool | The player has opened the details panel with **F3** (see below) |
+| `details_open` | number | 0–1, eases with the panel opening or closing over 0.3 s: animate with it |
+| `java_version` | string | The Java version, such as `1.8.0_412` |
 | `duration(seconds)` | string | `m:ss`, for ETAs |
 
 Translations (`translate`) are not available yet while the game is loading.
+
+## Details panel (F3)
+
+Players can press **F3** on the loading screen to open a details panel, and press it again to close
+it. It starts closed, and LDIC remembers the choice in
+[`player.json`](../help/settings.md#playerjson) (`loading_details`), so a player who likes it open
+sees it open next launch too.
+
+LDIC handles the key; the theme decides what the panel looks like, through `details` and
+`details_open`. The built-in **cinematic** theme grows its bottom bar into rows for Forge's
+progress bars (the stage, then the current mod or step with its count), memory used out of the
+maximum (amber above 85%), time elapsed, and the Minecraft, Forge and Java versions with the mod
+count. Its top bar shows a faint "F3 details" hint.
+
+![The cinematic theme with the details panel open](../assets/screenshots/loading-details.png){ .shot }
+
+In your own theme, grow or reveal something with `details_open`:
+
+```json
+{ "id": "panel", "type": "rect", "anchor": "bottom", "height": "60 * ease_in_out(details_open)",
+  "visible": "details_open > 0", "opacity": "details_open", "children": [ … ] }
+```
 
 ## Screens before the loading screen
 

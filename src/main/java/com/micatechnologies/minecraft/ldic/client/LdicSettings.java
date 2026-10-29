@@ -53,6 +53,8 @@ public final class LdicSettings {
     public boolean reducedMotion = false;
     /** Player choice: theme music volume, 0..1, on top of the game's Master and Music sliders. */
     public double musicVolume = 1;
+    /** Player choice: the loading screen's F3 details panel is open (remembered between launches). */
+    public boolean loadingDetails = false;
 
     /** Shown to themes as {@code pack_name} / {@code pack_version}; launchers can set these. */
     public String packName = "";
@@ -102,6 +104,22 @@ public final class LdicSettings {
     private void readPlayer(JsonObject player) {
         reducedMotion = bool(player, "reduced_motion", reducedMotion);
         musicVolume = Math.max(0, Math.min(1, num(player, "music_volume", musicVolume)));
+        loadingDetails = bool(player, "loading_details", loadingDetails);
+    }
+
+    /**
+     * Remembers the player's F3 choice on the loading screen in {@code player.json}, keeping
+     * whatever else the file holds.
+     */
+    public void saveLoadingDetails(File dir, boolean on) {
+        loadingDetails = on;
+        File file = new File(dir, "player.json");
+        JsonObject o = file.isFile() ? readObject(file) : null;
+        if (o == null) {
+            o = new JsonObject();
+        }
+        o.addProperty("loading_details", on);
+        write(file, o);
     }
 
     private void savePlayer(File file) {
@@ -109,6 +127,7 @@ public final class LdicSettings {
         o.addProperty("_readme", "Your own LDIC preferences. Modpacks do not overwrite this file.");
         o.addProperty("reduced_motion", reducedMotion);
         o.addProperty("music_volume", musicVolume);
+        o.addProperty("loading_details", loadingDetails);
         write(file, o);
     }
 

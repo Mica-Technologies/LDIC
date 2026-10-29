@@ -89,14 +89,15 @@ class BuiltinThemesTest {
         Scope s = Scope.withLibrary().child();
         for (String n : new String[] {"time", "screen_time", "delta", "frame", "screen_width", "screen_height",
                 "gui_width", "gui_height", "gui_scale", "ui_scale", "mem.used", "mem.total", "mem.max", "mem.free",
-                "progress", "progress_raw", "stage", "stage_count", "eta", "mods_found", "skip_hold", "skip_seconds"}) {
+                "progress", "progress_raw", "stage", "stage_count", "eta", "mods_found", "skip_hold", "skip_seconds", "details_open"}) {
             s.declare(n, Type.NUMBER);
         }
-        for (String n : new String[] {"status", "sub_status", "task", "mc_version", "forge_version", "username", "pack_name", "pack_version"}) {
+        for (String n : new String[] {"status", "sub_status", "task", "mc_version", "forge_version", "java_version", "username", "pack_name", "pack_version"}) {
             s.declare(n, Type.STRING);
         }
         s.declare("reduced_motion", Type.BOOL);
         s.declare("loading_done", Type.BOOL);
+        s.declare("details", Type.BOOL);
         s.define(Function.str("tip", false, a -> "tip"));
         s.define(Function.str("tip", false, a -> "tip", Type.NUMBER));
         s.define(Function.num("tip_count", false, a -> 1));
@@ -104,6 +105,8 @@ class BuiltinThemesTest {
         s.define(Function.str("bar_title", false, a -> "", Type.NUMBER));
         s.define(Function.str("bar_message", false, a -> "", Type.NUMBER));
         s.define(Function.num("bar_progress", false, a -> 0, Type.NUMBER));
+        s.define(Function.num("bar_step", false, a -> 0, Type.NUMBER));
+        s.define(Function.num("bar_steps", false, a -> 0, Type.NUMBER));
         s.define(Function.str("clock", false, a -> "10:04 AM"));
         s.define(Function.str("long_date", false, a -> "Thursday, October 29, 2026"));
         s.define(Function.str("date", false, a -> "2026-01-01", Type.STRING));

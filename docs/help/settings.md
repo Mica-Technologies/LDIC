@@ -41,13 +41,14 @@ launcher that manages `settings.json` does not see it change.
 ## player.json
 
 ```json
-{ "reduced_motion": false, "music_volume": 1 }
+{ "reduced_motion": false, "music_volume": 1, "loading_details": false }
 ```
 
 | Key | Default | Meaning |
 | --- | --- | --- |
 | `reduced_motion` | `false` | Ask themes to keep motion to a minimum (no panning, zooming or spinning in the built-in themes) |
 | `music_volume` | `1` | LDIC music volume, 0 to 1 (0 turns it off), on top of the game's Master and Music sliders |
+| `loading_details` | `false` | The loading screen's F3 details panel is open; LDIC saves it when the player presses F3 |
 
 ## Other files LDIC keeps
 

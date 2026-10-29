@@ -9,7 +9,8 @@ import java.util.Locale;
 import org.lwjgl.input.Keyboard;
 
 /**
- * Whether the player is holding Space, read from the loading-screen thread.
+ * Whether the player is holding a key (Space to skip, F3 for details), read from the
+ * loading-screen thread.
  *
  * <p>On Windows, LWJGL cannot tell: the game window belongs to the main thread, and Windows
  * delivers its key messages to that thread's queue, which nobody pumps while the game loads.
@@ -32,6 +33,7 @@ final class SkipKey {
     }
 
     private static final int VK_SPACE = 0x20;
+    private static final int VK_F3 = 0x72;
 
     private static final User32 USER32;
     private static final int PROCESS_ID;
@@ -56,6 +58,14 @@ final class SkipKey {
     }
 
     static boolean spaceDown() {
+        return down(VK_SPACE, Keyboard.KEY_SPACE);
+    }
+
+    static boolean f3Down() {
+        return down(VK_F3, Keyboard.KEY_F3);
+    }
+
+    private static boolean down(int virtualKey, int lwjglKey) {
         if (USER32 != null) {
             Pointer front = USER32.GetForegroundWindow();
             if (front == null) {
@@ -63,8 +73,8 @@ final class SkipKey {
             }
             IntByReference owner = new IntByReference();
             USER32.GetWindowThreadProcessId(front, owner);
-            return owner.getValue() == PROCESS_ID && (USER32.GetAsyncKeyState(VK_SPACE) & 0x8000) != 0;
+            return owner.getValue() == PROCESS_ID && (USER32.GetAsyncKeyState(virtualKey) & 0x8000) != 0;
         }
-        return Keyboard.isCreated() && Keyboard.isKeyDown(Keyboard.KEY_SPACE);
+        return Keyboard.isCreated() && Keyboard.isKeyDown(lwjglKey);
     }
 }

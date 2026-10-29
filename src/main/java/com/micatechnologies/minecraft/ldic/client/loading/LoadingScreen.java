@@ -164,6 +164,8 @@ public final class LoadingScreen {
     private static final String LOGO_SCREEN = "logo";
     /** How quickly the next screen fades in after one is skipped. */
     private static final double SKIP_FADE = 0.35;
+    /** Seconds the F3 details panel takes to open or close. */
+    private static final double DETAILS_ANIM = 0.3;
     /** How long the screen after the logo card or the notice takes to fade in over it. */
     private static final double INTRO_FADE = 0.6;
 
@@ -296,6 +298,9 @@ public final class LoadingScreen {
             double doneAt = -1;
             double skipHeld = 0;
             boolean skipNeedsRelease = false;
+            boolean details = settings.loadingDetails;
+            double detailsOpen = details ? 1 : 0;
+            boolean f3WasDown = false;
             while (true) {
                 double t = (System.nanoTime() - start) / 1e9;
                 boolean done = isDone();
@@ -332,6 +337,16 @@ public final class LoadingScreen {
                 }
                 bindings.setIntro(settings.introSkipHoldSeconds > 0 ? Math.min(1, skipHeld / settings.introSkipHoldSeconds) : 0,
                         settings.introSkipHoldSeconds, done);
+
+                // F3 opens or closes the details panel; the choice is remembered for next time.
+                boolean f3 = SkipKey.f3Down();
+                if (f3 && !f3WasDown) {
+                    details = !details;
+                    settings.saveLoadingDetails(configDir, details);
+                }
+                f3WasDown = f3;
+                detailsOpen = details ? Math.min(1, detailsOpen + dt / DETAILS_ANIM) : Math.max(0, detailsOpen - dt / DETAILS_ANIM);
+                bindings.setDetails(details, detailsOpen);
 
                 bars.clear();
                 Iterator<ProgressManager.ProgressBar> it = ProgressManager.barIterator();
