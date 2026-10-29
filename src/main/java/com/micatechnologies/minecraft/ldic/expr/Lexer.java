@@ -66,6 +66,20 @@ final class Lexer {
                 i = string(src, i, out);
                 continue;
             }
+            if (c == '#') {
+                // Colour literal: #RGB, #RRGGBB or #AARRGGBB.
+                int end = i + 1;
+                while (end < n && isHex(src.charAt(end))) {
+                    end++;
+                }
+                Long colour = Library.parseHexColour(src.substring(i, end));
+                if (colour == null) {
+                    throw new ExprException("bad colour literal (use #RGB, #RRGGBB or #AARRGGBB)", src, i);
+                }
+                out.add(new Token(Kind.NUMBER, src.substring(i, end), colour, i));
+                i = end;
+                continue;
+            }
             switch (c) {
                 case '(':
                     out.add(new Token(Kind.LPAREN, "(", 0, i++));

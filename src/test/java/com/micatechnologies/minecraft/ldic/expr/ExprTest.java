@@ -52,6 +52,9 @@ class ExprTest {
         assertEquals(1000000, num("1_000_000"));
         assertEquals(0.5, num(".5"));
         assertEquals(1500, num("1.5e3"));
+        assertEquals(0xFF1144CCL, (long) num("#1144CC"));
+        assertEquals(0x801144CCL, (long) num("#801144CC"));
+        assertEquals(0xFFFFFFFFL, (long) num("#fff"));
     }
 
     @Test
