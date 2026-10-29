@@ -1,14 +1,30 @@
 {
-  "_comment": "LDIC built-in notices, shown before the loading screen when a pack enables them in config/ldic/settings.json. To reword the notice, copy this file to config/ldic/notices.json and edit it.",
+  "_comment": "LDIC built-in intro screens, shown before the loading screen: the logo card ('logo') and the photosensitivity notice ('photosensitivity'). Both are on unless a pack turns them off in config/ldic/settings.json. To reword the notice or show your own logo, copy this file to config/ldic/notices.json and edit it; a screen you leave out comes from this file.",
   "ldic": 1,
   "name": "Notices",
   "author": "Mica Technologies",
   "screens": {
+    "logo": {
+      "elements": [
+        { "id": "background", "type": "rect", "colour": "#FFFFFF" },
+        { "id": "logo", "type": "image", "image": "minecraft:textures/gui/title/mojang.png", "fit": "contain", "anchor": "center",
+          "width": "min(screen_width * 0.8, screen_height)", "height": "min(screen_width * 0.8, screen_height)",
+          "opacity": "ease_out(saturate(screen_time / 0.5))" },
+        { "id": "skip", "type": "group", "anchor": "bottom_right", "x": -16, "y": -14, "width": 90, "height": 14,
+          "visible": "skip_seconds > 0", "opacity": "saturate((screen_time - 0.6) / 0.4) * (0.55 + 0.45 * saturate(skip_hold * 4))", "children": [
+          { "id": "skip_text", "type": "text", "anchor": "top_right", "align": "right", "size": 8, "colour": "#80000000", "shadow": false,
+            "text": "Hold SPACE to skip" },
+          { "id": "skip_track", "type": "rect", "anchor": "bottom_right", "width": "pw", "height": 2, "colour": "#18000000", "children": [
+            { "id": "skip_fill", "type": "rect", "width": "pw * skip_hold", "height": 2, "colour": "#C0000000" }
+          ] }
+        ] }
+      ]
+    },
     "photosensitivity": {
       "elements": [
         { "id": "background", "type": "rect", "colour": "#0C0E12" },
         { "id": "panel", "type": "group", "anchor": "center", "width": 300, "height": 160,
-          "opacity": "ease_out(screen_time / 0.5)", "children": [
+          "opacity": "ease_out(saturate(screen_time / 0.5))", "children": [
           { "id": "title", "type": "text", "anchor": "top", "align": "center", "size": 18, "colour": "#FFD54F",
             "text": "Photosensitivity notice" },
           { "id": "rule", "type": "rect", "anchor": "top", "y": 26, "width": 120, "height": 1, "colour": "#60FFD54F" },
@@ -16,7 +32,15 @@
             "size": 9, "line_spacing": 1.25, "colour": "#E0FFFFFF", "shadow": false,
             "text": "This modpack includes moving and flashing images. A small number of people may have seizures when exposed to certain light patterns or flashing lights, even without any history of epilepsy.\n\nIf you or anyone in your family has an epileptic condition, or you feel dizzy, see blurred vision, twitch, or lose awareness while playing, stop at once and consult a doctor." },
           { "id": "countdown", "type": "text", "anchor": "bottom", "y": 30, "align": "center", "size": 9, "colour": "#70FFFFFF", "shadow": false,
-            "text": "The game continues loading in the background." }
+            "text": "{loading_done ? 'The game has finished loading.' : 'The game continues loading in the background.'}" }
+        ] },
+        { "id": "skip", "type": "group", "anchor": "bottom_right", "x": -16, "y": -14, "width": 90, "height": 14,
+          "visible": "skip_seconds > 0", "opacity": "saturate((screen_time - 0.6) / 0.4) * (0.55 + 0.45 * saturate(skip_hold * 4))", "children": [
+          { "id": "skip_text", "type": "text", "anchor": "top_right", "align": "right", "size": 8, "colour": "#A0FFFFFF", "shadow": false,
+            "text": "Hold SPACE to skip" },
+          { "id": "skip_track", "type": "rect", "anchor": "bottom_right", "width": "pw", "height": 2, "colour": "#20FFFFFF", "children": [
+            { "id": "skip_fill", "type": "rect", "width": "pw * skip_hold", "height": 2, "colour": "#FFD54F" }
+          ] }
         ] }
       ]
     }

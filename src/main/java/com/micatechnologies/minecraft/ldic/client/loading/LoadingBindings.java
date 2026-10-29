@@ -57,6 +57,9 @@ final class LoadingBindings {
     private final Slot task = scope.declare("task", STRING);
     private final Slot eta = scope.declare("eta", NUMBER);
     private final Slot modsFound = scope.declare("mods_found", NUMBER);
+    private final Slot skipHold = scope.declare("skip_hold", NUMBER);
+    private final Slot skipSeconds = scope.declare("skip_seconds", NUMBER);
+    private final Slot loadingDone = scope.declare("loading_done", com.micatechnologies.minecraft.ldic.expr.Type.BOOL);
 
     private final List<ProgressModel.Bar> bars = new ArrayList<>();
     private final List<String> tips;
@@ -120,6 +123,13 @@ final class LoadingBindings {
     private ProgressModel.Bar bar(double i) {
         int idx = (int) i;
         return idx >= 0 && idx < bars.size() ? bars.get(idx) : null;
+    }
+
+    /** How far the player has held Space to skip (0..1), how long skipping takes, and whether loading has finished. */
+    void setIntro(double hold, double holdSeconds, boolean done) {
+        skipHold.set(hold);
+        skipSeconds.set(holdSeconds);
+        loadingDone.set(done);
     }
 
     void setScreenTime(double seconds) {

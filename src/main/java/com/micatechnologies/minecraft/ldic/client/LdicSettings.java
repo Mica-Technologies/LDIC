@@ -34,12 +34,20 @@ public final class LdicSettings {
     /** With debug on: keep the loading screen up this long after loading ends, to preview a theme. */
     public double loadingHoldSeconds = 0;
 
-    /** Show the photosensitivity notice before the loading screen. Packs turn this on. */
-    public boolean photosensitivityNotice = false;
+    /** Show a logo card (Mojang's, or the pack's own) first, while loading starts behind it. */
+    public boolean logoScreen = true;
+    /** Seconds the logo card stays up. */
+    public double logoSeconds = 3;
+
+    /** Show the photosensitivity notice before the loading screen. On unless a pack opts out. */
+    public boolean photosensitivityNotice = true;
     /** Show it every launch instead of only until the player has seen it once. */
-    public boolean photosensitivityAlways = false;
+    public boolean photosensitivityAlways = true;
     /** Seconds the notice stays up. */
-    public double photosensitivitySeconds = 7;
+    public double photosensitivitySeconds = 5;
+
+    /** Holding Space this long skips the logo card or the notice; 0 turns skipping off. */
+    public double introSkipHoldSeconds = 1.5;
 
     /** Player choice: themes should keep motion to a minimum (built-in themes honour it). */
     public boolean reducedMotion = false;
@@ -127,6 +135,15 @@ public final class LdicSettings {
             loadingFps = (int) Math.max(10, Math.min(240, num(loading, "fps", loadingFps)));
             loadingHoldSeconds = Math.max(0, Math.min(120, num(loading, "hold_seconds", loadingHoldSeconds)));
         }
+        JsonObject logo = obj(o, "logo_screen");
+        if (logo != null) {
+            logoScreen = bool(logo, "enabled", logoScreen);
+            logoSeconds = Math.max(1, Math.min(30, num(logo, "seconds", logoSeconds)));
+        }
+        JsonObject skip = obj(o, "intro_skip");
+        if (skip != null) {
+            introSkipHoldSeconds = Math.max(0, Math.min(10, num(skip, "hold_seconds", introSkipHoldSeconds)));
+        }
         JsonObject notice = obj(o, "photosensitivity_notice");
         if (notice != null) {
             photosensitivityNotice = bool(notice, "enabled", photosensitivityNotice);
@@ -155,11 +172,18 @@ public final class LdicSettings {
         loading.addProperty("fps", loadingFps);
         loading.addProperty("hold_seconds", loadingHoldSeconds);
         o.add("loading", loading);
+        JsonObject logo = new JsonObject();
+        logo.addProperty("enabled", logoScreen);
+        logo.addProperty("seconds", logoSeconds);
+        o.add("logo_screen", logo);
         JsonObject notice = new JsonObject();
         notice.addProperty("enabled", photosensitivityNotice);
         notice.addProperty("always", photosensitivityAlways);
         notice.addProperty("seconds", photosensitivitySeconds);
         o.add("photosensitivity_notice", notice);
+        JsonObject skip = new JsonObject();
+        skip.addProperty("hold_seconds", introSkipHoldSeconds);
+        o.add("intro_skip", skip);
         JsonObject pack = new JsonObject();
         pack.addProperty("name", packName);
         pack.addProperty("version", packVersion);

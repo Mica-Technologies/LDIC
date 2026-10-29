@@ -1,29 +1,53 @@
-# Photosensitivity notice
+# Logo card and photosensitivity notice
 
-Packs with flashing or fast-moving loading screens or menus can show a photosensitivity notice
-before anything else. It is off by default; turn it on in `config/ldic/settings.json`:
+Before the loading screen, LDIC shows two short screens: a **logo card** (Mojang's logo, the way
+the game itself opens) and a **photosensitivity notice**. Both are on by default, and a pack can
+turn either off or reword it. The game loads behind them the whole time, so they cost no loading
+time; when they end, the pack's loading theme takes over.
+
+![The logo card](../assets/screenshots/loading-logo.png){ .shot }
+
+## Settings
+
+In `config/ldic/settings.json`:
 
 ```json
-"photosensitivity_notice": { "enabled": true, "always": false, "seconds": 7 }
+"logo_screen": { "enabled": true, "seconds": 3 },
+"photosensitivity_notice": { "enabled": true, "always": true, "seconds": 5 },
+"intro_skip": { "hold_seconds": 1.5 }
 ```
 
 | Key | Default | Meaning |
 | --- | --- | --- |
-| `enabled` | `false` | Show the notice |
-| `always` | `false` | Every launch, instead of only until the player has seen it once |
-| `seconds` | `7` | How long it stays up (2–60) |
+| `logo_screen.enabled` | `true` | Show the logo card |
+| `logo_screen.seconds` | `3` | How long it stays up (1–30) |
+| `photosensitivity_notice.enabled` | `true` | Show the notice |
+| `photosensitivity_notice.always` | `true` | Every launch; `false` shows it only until the player has seen it once |
+| `photosensitivity_notice.seconds` | `5` | How long it stays up (2–60) |
+| `intro_skip.hold_seconds` | `1.5` | Holding **Space** this long skips the logo card or the notice; `0` turns skipping off |
 
-The notice is always shown for its full time. If the game finishes loading sooner, the menu waits
-for it. The game keeps loading behind it, so it costs no time otherwise. Whether a player has seen
-it is stored in `config/ldic/cache/seen.json`.
+Both screens are shown for their full time even when the game finishes loading sooner: the menu
+waits for them. A player who does not want to wait holds Space; a bar under "Hold SPACE to skip"
+fills while they hold it, and the next screen fades in. Each screen needs its own press, so one
+long hold never skips both. Whether a player has seen the notice is stored in
+`config/ldic/cache/seen.json`.
 
 ![The photosensitivity notice](../assets/screenshots/loading-notice.png){ .shot }
 
-## Changing the wording
+## Your own logo or wording
 
-Copy the built-in notices theme to `config/ldic/notices.json` and edit the `photosensitivity`
-screen. It is an ordinary theme screen, so any element works. The built-in one is in the LDIC jar
-at `assets/ldic/themes/notices/theme.json`.
+Copy the built-in file to `config/ldic/notices.json` and edit it. It is an ordinary theme with two
+screens, `logo` and `photosensitivity`, so any element works: put your studio's logo on the card, or
+reword the notice. A screen you leave out of your copy comes from the built-in one. The built-in
+file is in the LDIC jar at `assets/ldic/themes/notices/theme.json`.
+
+Values these screens can read, on top of the [loading screen's](index.md):
+
+| Name | Type | Value |
+| --- | --- | --- |
+| `skip_hold` | number | How far the player has held Space, 0 to 1 |
+| `skip_seconds` | number | `intro_skip.hold_seconds`; 0 when skipping is off |
+| `loading_done` | bool | The game has finished loading and is waiting for this screen |
 
 ## Flashing themes and reduced motion
 

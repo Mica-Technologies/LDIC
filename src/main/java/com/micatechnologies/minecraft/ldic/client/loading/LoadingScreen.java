@@ -129,22 +129,25 @@ public final class LoadingScreen {
         }
         Ldic.LOGGER.info("LDIC: loading theme '{}' with {} problem(s)", theme.name, problems.size());
 
-        ThemeDef notice = null;
         Seen seen = Seen.load(configDir);
-        if (settings.photosensitivityNotice && (settings.photosensitivityAlways || !seen.has(NOTICE_KEY))) {
-            Problems np = new Problems();
-            File custom = new File(configDir, NOTICE_FILE);
-            notice = compile(source, custom.isFile() ? source.openConfigFile(NOTICE_FILE) : source.open(NOTICE_THEME), bindings, np, NOTICE_SCREEN);
-            for (Problems.Problem p : np.all()) {
-                Ldic.LOGGER.warn("LDIC notice theme {}", p);
-            }
-        } else if (theme.flashing && !settings.photosensitivityNotice) {
+        boolean wantNotice = settings.photosensitivityNotice && (settings.photosensitivityAlways || !seen.has(NOTICE_KEY));
+        if (theme.flashing && !settings.photosensitivityNotice) {
             Ldic.LOGGER.warn("LDIC: loading theme '{}' declares flashing content but the photosensitivity notice is off "
                     + "(photosensitivity_notice.enabled in config/ldic/settings.json)", theme.name);
         }
-
         LoadingScreen screen = new LoadingScreen(settings, theme, bindings, configDir);
-        screen.notice = notice;
+        if (wantNotice || settings.logoScreen) {
+            // config/ldic/notices.json rewords them; a screen it lacks comes from the built-in file.
+            Problems np = new Problems();
+            ThemeDef builtin = compile(source, source.open(NOTICE_THEME), bindings, np, null);
+            ThemeDef custom = new File(configDir, NOTICE_FILE).isFile()
+                    ? compile(source, source.openConfigFile(NOTICE_FILE), bindings, np, null) : null;
+            for (Problems.Problem p : np.all()) {
+                Ldic.LOGGER.warn("LDIC notice theme {}", p);
+            }
+            screen.logo = settings.logoScreen ? pick(custom, builtin, LOGO_SCREEN) : null;
+            screen.notice = wantNotice ? pick(custom, builtin, NOTICE_SCREEN) : null;
+        }
         screen.seen = seen;
         if (theme.music != null) {
             Minecraft mc = Minecraft.getMinecraft();
@@ -158,8 +161,21 @@ public final class LoadingScreen {
     private static final String NOTICE_THEME = "builtin:notices";
     private static final String NOTICE_SCREEN = "photosensitivity";
     private static final String NOTICE_KEY = "notice:photosensitivity";
+    private static final String LOGO_SCREEN = "logo";
+    /** How quickly the next screen fades in after one is skipped. */
+    private static final double SKIP_FADE = 0.35;
+    /** How long the screen after the logo card or the notice takes to fade in over it. */
+    private static final double INTRO_FADE = 0.6;
 
+    private ThemeDef logo;
     private ThemeDef notice;
+
+    private static ThemeDef pick(ThemeDef custom, ThemeDef builtin, String screen) {
+        if (custom != null && custom.screen(screen) != null) {
+            return custom;
+        }
+        return builtin != null && builtin.screen(screen) != null ? builtin : null;
+    }
     private Seen seen;
 
     private static ThemeDef compile(ThemeSource source, ThemeSource.Document doc, LoadingBindings bindings, Problems problems) {
@@ -173,6 +189,9 @@ public final class LoadingScreen {
             return null;
         }
         ThemeDef t = ThemeCompiler.compile(r.json, bindings.scope, problems);
+        if (requiredScreen == null) {
+            return t;
+        }
         if (!requiredScreen.equals("main")) {
             if (t.screen(requiredScreen) == null) {
                 problems.error("screens", doc.name + " has no \"" + requiredScreen + "\" screen");
@@ -270,18 +289,22 @@ public final class LoadingScreen {
             long updateNanos = 0;
             int frames = 0;
             boolean vsyncForced = false;
-            // The photosensitivity notice is shown in full even if loading finishes first: that is
-            // its whole point. finish() simply waits for it. With debug on, hold_seconds keeps the
-            // screen up after loading ends, so authors can preview a theme on a fast machine.
+            // The logo card and the photosensitivity notice are shown in full even if loading
+            // finishes first (unless the player skips them): finish() simply waits. With debug on,
+            // hold_seconds keeps the screen up after loading ends, so authors can preview a theme
+            // on a fast machine.
             double doneAt = -1;
+            double skipHeld = 0;
+            boolean skipNeedsRelease = false;
             while (true) {
                 double t = (System.nanoTime() - start) / 1e9;
-                if (isDone()) {
+                boolean done = isDone();
+                if (done) {
                     if (doneAt < 0) {
                         doneAt = t;
                     }
                     double hold = settings.debug ? settings.loadingHoldSeconds : 0;
-                    if (t >= doneAt + hold && !noticeShowing(segments, t)) {
+                    if (t >= doneAt + hold && !introShowing(segments, t)) {
                         break;
                     }
                 }
@@ -289,6 +312,26 @@ public final class LoadingScreen {
                 double seconds = (now - start) / 1e9;
                 double dt = Math.min(0.25, (now - last) / 1e9);
                 last = now;
+
+                // Holding Space skips the intro screen showing; the next one needs a fresh press.
+                Segment intro = currentIntro(segments, seconds);
+                boolean space = SkipKey.spaceDown();
+                if (!space) {
+                    skipNeedsRelease = false;
+                }
+                if (intro != null && space && !skipNeedsRelease && settings.introSkipHoldSeconds > 0) {
+                    skipHeld += dt;
+                    if (skipHeld >= settings.introSkipHoldSeconds) {
+                        Ldic.LOGGER.info("LDIC: intro screen skipped at {}s", String.format("%.1f", seconds));
+                        skip(segments, intro, seconds);
+                        skipHeld = 0;
+                        skipNeedsRelease = true;
+                    }
+                } else {
+                    skipHeld = 0;
+                }
+                bindings.setIntro(settings.introSkipHoldSeconds > 0 ? Math.min(1, skipHeld / settings.introSkipHoldSeconds) : 0,
+                        settings.introSkipHoldSeconds, done);
 
                 bars.clear();
                 Iterator<ProgressManager.ProgressBar> it = ProgressManager.barIterator();
@@ -365,22 +408,29 @@ public final class LoadingScreen {
         }
     }
 
-    /** One screen in the loading sequence: the notice, an intro, or main (which never ends). */
+    /**
+     * One screen in the loading sequence: the logo card, the notice, a theme intro, or main
+     * (which never ends). Times move when the player skips one.
+     */
     private static final class Segment {
         final ThemeDef theme;
         final UiTree tree;
-        final double start;
-        final double end;
+        double start;
+        double end;
+        /** Seconds it fades in over the one before. */
+        double fade;
         final String seenKey;
-        final boolean notice;
+        /** The logo card or the notice: shown in full even after loading ends, and skippable. */
+        final boolean intro;
 
-        Segment(ThemeDef theme, String screen, double start, double end, String seenKey, boolean notice) {
+        Segment(ThemeDef theme, String screen, double start, double end, double fade, String seenKey, boolean intro) {
             this.theme = theme;
             this.tree = new UiTree(theme.screen(screen));
             this.start = start;
             this.end = end;
+            this.fade = fade;
             this.seenKey = seenKey;
-            this.notice = notice;
+            this.intro = intro;
         }
     }
 
@@ -392,30 +442,73 @@ public final class LoadingScreen {
         List<Segment> out = new ArrayList<>();
         double cf = theme.crossfade;
         double t = 0;
+        // The intro screens hand over quickly; the theme's own crossfade is meant for its scenes.
+        double fadeIn = cf;
+        if (logo != null) {
+            double len = settings.logoSeconds;
+            out.add(new Segment(logo, LOGO_SCREEN, t, t + len, fadeIn, null, true));
+            t += len - INTRO_FADE;
+            fadeIn = INTRO_FADE;
+        }
         if (notice != null) {
             double len = settings.photosensitivitySeconds;
-            out.add(new Segment(notice, NOTICE_SCREEN, t, t + len, NOTICE_KEY, true));
-            t += len - cf;
+            out.add(new Segment(notice, NOTICE_SCREEN, Math.max(0, t), t + len, fadeIn, NOTICE_KEY, true));
+            t += len - INTRO_FADE;
+            fadeIn = INTRO_FADE;
         }
         for (ThemeDef.Step step : theme.sequence) {
             String key = "once:" + theme.name + ":" + step.screen;
             if (step.once && seen.has(key)) {
                 continue;
             }
-            out.add(new Segment(theme, step.screen, t, t + step.seconds, step.once ? key : null, false));
+            out.add(new Segment(theme, step.screen, Math.max(0, t), t + step.seconds, fadeIn, step.once ? key : null, false));
             t += step.seconds - cf;
+            fadeIn = cf;
         }
-        out.add(new Segment(theme, "main", Math.max(0, t), Double.MAX_VALUE, null, false));
+        out.add(new Segment(theme, "main", Math.max(0, t), Double.MAX_VALUE, fadeIn, null, false));
         return out;
     }
 
-    private static boolean noticeShowing(List<Segment> segments, double t) {
+    private static boolean introShowing(List<Segment> segments, double t) {
         for (Segment s : segments) {
-            if (s.notice && t < s.end) {
+            if (s.intro && t < s.end) {
                 return true;
             }
         }
         return false;
+    }
+
+    /** The intro screen on top now (the latest one started), or null. */
+    private static Segment currentIntro(List<Segment> segments, double t) {
+        Segment top = null;
+        for (Segment s : segments) {
+            if (t >= s.start && t < s.end) {
+                top = s;
+            }
+        }
+        return top != null && top.intro ? top : null;
+    }
+
+    /**
+     * Ends {@code s} now: the next screen fades in over it quickly, and everything after moves
+     * earlier by the same amount, so the rest of the sequence keeps its timing.
+     */
+    private static void skip(List<Segment> segments, Segment s, double now) {
+        int i = segments.indexOf(s);
+        s.end = Math.min(s.end, now + SKIP_FADE);
+        if (i + 1 >= segments.size()) {
+            return;
+        }
+        Segment next = segments.get(i + 1);
+        double shift = Math.max(0, next.start - now);
+        for (int j = i + 1; j < segments.size(); j++) {
+            Segment n = segments.get(j);
+            n.start = Math.max(now, n.start - shift);
+            if (n.end != Double.MAX_VALUE) {
+                n.end -= shift;
+            }
+        }
+        next.fade = SKIP_FADE;
     }
 
     private void markSeen(List<Segment> segments, double t) {
@@ -458,8 +551,7 @@ public final class LoadingScreen {
             }
             // A segment fades in over the one before it; that one stays opaque underneath until
             // it ends, so the crossfade never dips through black.
-            double cf = theme.crossfade;
-            double opacity = s.start <= 0 || cf <= 0 ? 1 : Math.min(1, (seconds - s.start) / cf);
+            double opacity = s.start <= 0 || s.fade <= 0 ? 1 : Math.min(1, (seconds - s.start) / s.fade);
             double ui = s.theme.uiScale(gw, gh);
             fonts.setAliases(s.theme.fonts);
             fonts.setPixelScale(ui * scale);

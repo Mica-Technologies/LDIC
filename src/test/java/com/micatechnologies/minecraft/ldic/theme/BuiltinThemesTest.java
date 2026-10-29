@@ -89,13 +89,14 @@ class BuiltinThemesTest {
         Scope s = Scope.withLibrary().child();
         for (String n : new String[] {"time", "screen_time", "delta", "frame", "screen_width", "screen_height",
                 "gui_width", "gui_height", "gui_scale", "ui_scale", "mem.used", "mem.total", "mem.max", "mem.free",
-                "progress", "progress_raw", "stage", "stage_count", "eta", "mods_found"}) {
+                "progress", "progress_raw", "stage", "stage_count", "eta", "mods_found", "skip_hold", "skip_seconds"}) {
             s.declare(n, Type.NUMBER);
         }
         for (String n : new String[] {"status", "sub_status", "task", "mc_version", "forge_version", "username", "pack_name", "pack_version"}) {
             s.declare(n, Type.STRING);
         }
         s.declare("reduced_motion", Type.BOOL);
+        s.declare("loading_done", Type.BOOL);
         s.define(Function.str("tip", false, a -> "tip"));
         s.define(Function.str("tip", false, a -> "tip", Type.NUMBER));
         s.define(Function.num("tip_count", false, a -> 1));

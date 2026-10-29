@@ -15,7 +15,9 @@ launcher that manages `settings.json` does not see it change.
 {
   "menu": { "enabled": true, "fade_in": 0.6, "themed_options": true, "themed_pause": true, "themed_world_loading": true },
   "loading": { "enabled": true, "fps": 60, "hold_seconds": 0 },
-  "photosensitivity_notice": { "enabled": false, "always": false, "seconds": 7 },
+  "logo_screen": { "enabled": true, "seconds": 3 },
+  "photosensitivity_notice": { "enabled": true, "always": true, "seconds": 5 },
+  "intro_skip": { "hold_seconds": 1.5 },
   "pack": { "name": "", "version": "" },
   "debug": false
 }
@@ -31,7 +33,7 @@ launcher that manages `settings.json` does not see it change.
 | `loading.enabled` | `true` | `false` leaves Forge's loading screen alone |
 | `loading.fps` | `60` | Loading-screen frame cap (10–240). Lower leaves more CPU for loading. |
 | `loading.hold_seconds` | `0` | With `debug`: keep the loading screen up this long after loading, to preview a theme |
-| `photosensitivity_notice.*` | off | See [Photosensitivity notice](../loading/notices.md) |
+| `logo_screen.*`, `photosensitivity_notice.*`, `intro_skip.*` | on | The logo card and notice before the loading screen; see [Logo card and notice](../loading/notices.md) |
 | `pack.name` | `""` | Your pack's name; themes show it as `pack_name` |
 | `pack.version` | `""` | Your pack's version; themes show it as `pack_version` |
 | `debug` | `false` | List every theme problem on the menu, outline elements, save loading-screen and world-loading screenshots, log world-loading frame pacing |

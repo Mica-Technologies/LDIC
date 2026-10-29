@@ -109,7 +109,7 @@ nav:
   - Loading screen:
       - Overview and themes: loading/index.md
       - Music: loading/music.md
-      - Photosensitivity notice: loading/notices.md
+      - Logo card and notice: loading/notices.md
   - Help:
       - Troubleshooting: help/troubleshooting.md
       - Settings: help/settings.md
