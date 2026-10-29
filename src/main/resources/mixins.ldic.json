@@ -1,0 +1,10 @@
+{
+  "package": "com.micatechnologies.minecraft.ldic.mixin",
+  "refmap": "mixins.ldic.refmap.json",
+  "target": "@env(DEFAULT)",
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [],
+  "client": [],
+  "server": []
+}

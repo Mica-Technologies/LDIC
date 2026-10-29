@@ -1,0 +1,18 @@
+[
+  {
+    "modid": "${modid}",
+    "name": "${modname}",
+    "description": "Client-side presentation for Minecraft 1.12.2 modpacks: a themeable loading screen and a fully customizable main menu.",
+    "version": "${version}",
+    "mcversion": "${mcversion}",
+    "credits": "Mica Technologies",
+    "logoFile": "",
+    "url": "https://github.com/Mica-Technologies/LDIC",
+    "updateUrl": "",
+    "authorList": ["Mica Technologies"],
+    "dependencies": [],
+    "dependants": [],
+    "requiredMods": [],
+    "useDependencyInformation": "true"
+  }
+]
