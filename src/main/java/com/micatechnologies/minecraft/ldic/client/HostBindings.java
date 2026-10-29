@@ -6,6 +6,7 @@ import static com.micatechnologies.minecraft.ldic.expr.Type.STRING;
 
 import com.micatechnologies.minecraft.ldic.expr.Function;
 import com.micatechnologies.minecraft.ldic.expr.Scope;
+import com.micatechnologies.minecraft.ldic.client.menu.GameOptions;
 import com.micatechnologies.minecraft.ldic.expr.Slot;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -49,6 +50,8 @@ public final class HostBindings {
     private final Slot memMax = scope.declare("mem.max", NUMBER);
     private final Slot memFree = scope.declare("mem.free", NUMBER);
     private final Slot screenId = scope.declare("screen", STRING);
+    private final Slot inWorld = scope.declare("in_world", BOOL);
+    private final Slot foreignButtons = scope.declare("foreign_buttons", NUMBER);
 
     private final Map<String, SimpleDateFormat> dateFormats = new HashMap<>();
     private String splash = "";
@@ -69,6 +72,12 @@ public final class HostBindings {
         scope.define(Function.str("translate", false, a -> I18n.format(a[0].str()), STRING));
         scope.define(Function.bool("has_translation", false, a -> I18n.hasKey(a[0].str()), STRING));
         scope.define(Function.str("splash", false, a -> splash));
+        // Game options, for the options screen (see GameOptions for the names).
+        scope.define(Function.num("option_value", false, a -> GameOptions.value(a[0].str()), STRING));
+        scope.define(Function.str("option_text", false, a -> GameOptions.text(a[0].str()), STRING));
+        scope.define(Function.bool("option_on", false, a -> GameOptions.value(a[0].str()) >= 0.5, STRING));
+        scope.define(Function.str("difficulty_text", false, a -> GameOptions.difficultyText()));
+        scope.define(Function.bool("can_change_difficulty", false, a -> GameOptions.canChangeDifficulty()));
         // Live server status, pinged in the background (see ServerStatus).
         scope.define(Function.bool("server_online", false, a -> servers.get(a[0].str()).online(), STRING));
         scope.define(Function.num("server_players", false, a -> servers.get(a[0].str()).players(), STRING));
@@ -104,6 +113,11 @@ public final class HostBindings {
         scope.define(Function.num("hour", false, a -> Calendar.getInstance().get(Calendar.HOUR_OF_DAY)));
     }
 
+    /** How many of other mods' buttons are showing on the current screen. */
+    public void setForeignButtons(int count) {
+        foreignButtons.set(count);
+    }
+
     public void setSplash(String splash) {
         this.splash = splash == null ? "" : splash;
     }
@@ -126,6 +140,7 @@ public final class HostBindings {
         uiScale.set(ui);
         mouseX.set(mx);
         mouseY.set(my);
+        inWorld.set(GameOptions.inWorld());
         Runtime rt = Runtime.getRuntime();
         double mib = 1024.0 * 1024.0;
         memTotal.set(Math.round(rt.totalMemory() / mib));

@@ -19,6 +19,8 @@ public final class LdicSettings {
 
     /** Replace the vanilla main menu with the LDIC theme. */
     public boolean menuEnabled = true;
+    /** Replace the vanilla options screen with the menu theme's "options" screen, when it has one. */
+    public boolean optionsEnabled = true;
     /** Seconds the first menu after loading fades in from black; 0 for none. */
     public double menuFadeIn = 0.6;
     /** Replace Forge's loading screen with the LDIC theme. */
@@ -111,6 +113,7 @@ public final class LdicSettings {
         if (menu != null) {
             menuEnabled = bool(menu, "enabled", menuEnabled);
             menuFadeIn = Math.max(0, num(menu, "fade_in", menuFadeIn));
+            optionsEnabled = bool(menu, "themed_options", optionsEnabled);
         }
         JsonObject loading = obj(o, "loading");
         if (loading != null) {
@@ -137,6 +140,7 @@ public final class LdicSettings {
         JsonObject menu = new JsonObject();
         menu.addProperty("enabled", menuEnabled);
         menu.addProperty("fade_in", menuFadeIn);
+        menu.addProperty("themed_options", optionsEnabled);
         o.add("menu", menu);
         JsonObject loading = new JsonObject();
         loading.addProperty("enabled", loadingEnabled);

@@ -50,15 +50,20 @@ Minecraft-facing (`client`):
   Tessellator) on the main thread, `RawGl` (plain GL11) on the loading thread. Never call
   GlStateManager or the Tessellator from loading-screen code. `ThemeRenderer` draws every element
   type for both screens.
-- `menu`: `MenuManager` (theme load, GuiOpenEvent swap, music, server ticks), `LdicMenuScreen`
-  (extends `GuiMainMenu` on purpose so other mods' button hooks keep working; theme elements never
-  enter `buttonList`), `Actions`.
+- `menu`: `MenuManager` (theme load, GuiOpenEvent swaps, music, server ticks).
+  `ThemeScreenDriver` runs a theme screen (drawing, input, slider drags, other mods' buttons,
+  links) inside a vanilla screen class: `LdicMenuScreen` extends `GuiMainMenu` and
+  `LdicOptionsScreen` extends `GuiOptions`, on purpose, so other mods' `instanceof` button hooks
+  keep working. Theme elements never enter `buttonList`; other mods' buttons are never hidden on
+  the options screen. `Actions` runs theme actions; `GameOptions` maps option names to
+  `GameSettings`.
 - `loading.LoadingScreen`: wraps Forge's splash runnable (via `MixinSplashProgress`), keeps
   Forge's lock/mutex/pause protocol, falls back to Forge's runnable on any failure.
 - `audio`: Ogg Vorbis via the JOrbis classes Minecraft ships, played through Java Sound (never
   OpenAL: a second AL context would break game audio).
 
-Mixins (`mixins.ldic.json`, all in `"client"`): `MixinSplashProgress` (thread takeover + null-safe
+Mixins (`mixins.ldic.json`, all in `"client"`): `AccessorGuiOptions` (the options screen's parent),
+`MixinSplashProgress` (thread takeover + null-safe
 texture deletes in `finish()`), `MixinMinecraft` (lifts vanilla's 30 fps menu cap for LDIC
 screens). `LdicCoreMod` registers the config through MixinBooter's `IEarlyMixinLoader`.
 

@@ -143,6 +143,9 @@ public final class ThemeRenderer implements NodeRenderer {
             case "panorama":
                 drawPanorama(n);
                 break;
+            case "slider":
+                drawSlider(n);
+                break;
             case "button":
                 drawButton(n);
                 break;
@@ -457,6 +460,56 @@ public final class ThemeRenderer implements NodeRenderer {
             long colour = n.enabled ? (long) Library.mixColour(tc, hc, ht) : colour(d, "disabled_text_colour", 0xFFA0A0A0L);
             double ty = y0 + (n.height - size * 8 / 9) / 2;
             font.draw(text, cx + iconSize + gap, ty, size, colour, d.bool("shadow", true), n.opacity);
+        }
+    }
+
+    /**
+     * A slider: {@code flat} draws a rounded track, the filled part and a knob; {@code vanilla}
+     * draws the resource pack's slider background and handle from widgets.png. The label is
+     * centred over it either way.
+     */
+    private void drawSlider(UiNode n) {
+        ElementDef d = n.def;
+        double x0 = n.x;
+        double y0 = n.y;
+        double x1 = n.x + n.width;
+        double y1 = n.y + n.height;
+        double value = Math.max(0, Math.min(1, d.num("value", 0)));
+        double ht = n.enabled ? n.hoverT : 0;
+        double knobW = Math.max(2, d.num("knob_width", 4));
+        double knobX = x0 + (n.width - knobW) * value;
+        if ("vanilla".equals(d.statik("style", "flat"))) {
+            Textures.Texture w = textures.get(WIDGETS, false);
+            if (w != null) {
+                Gfx.gl().enableTexture();
+                w.bind();
+                // Slider track: the disabled button row; handle: the normal / hover rows, 8 wide.
+                vanillaRow(x0, y0, x1, y1, 46, n.opacity);
+                double handle = 8;
+                double hx = x0 + (n.width - handle) * value;
+                vanillaRow(hx, y0, hx + handle, y1, 66, n.opacity * (1 - ht));
+                if (ht > 0) {
+                    vanillaRow(hx, y0, hx + handle, y1, 86, n.opacity * ht);
+                }
+            }
+        } else {
+            double radius = d.num("radius", 2);
+            long track = colour(d, "track_colour", 0x60000000L);
+            long fill = colour(d, "fill_colour", 0xFF4FC3F7L);
+            long knob = colour(d, "knob_colour", 0xFFFFFFFFL);
+            Gfx.roundedRect(x0, y0, x1, y1, radius, track, track, n.opacity);
+            if (value > 0) {
+                Gfx.roundedRect(x0, y0, knobX + knobW / 2, y1, radius, fill, fill, n.opacity * (0.75 + 0.25 * ht));
+            }
+            Gfx.roundedRect(knobX, y0 - 1, knobX + knobW, y1 + 1, Math.min(radius, knobW / 2), knob, knob, n.opacity);
+        }
+        String text = d.str("text", "");
+        if (!text.isEmpty()) {
+            double size = d.num("size", 9);
+            LdicFont font = font(d);
+            double tw = font.width(text, size);
+            font.draw(text, x0 + (n.width - tw) / 2, y0 + (n.height - size * 8 / 9) / 2, size,
+                    colour(d, "text_colour", 0xFFFFFFFFL), d.bool("shadow", true), n.opacity);
         }
     }
 

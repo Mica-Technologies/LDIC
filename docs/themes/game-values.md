@@ -28,6 +28,10 @@ Names LDIC provides to every menu theme, on top of the [built-in functions](expr
 | `pack_name`, `pack_version` | string | From [settings](../help/settings.md) |
 | `is_demo` | bool | Demo mode |
 | `reduced_motion` | bool | The player asked for less motion (`reduced_motion` in [`player.json`](../help/settings.md#playerjson)) |
+| `in_world` | bool | The screen was opened from the pause menu (a world is loaded) |
+| `foreign_buttons` | number | How many of other mods' buttons are showing on this screen |
+| `in_world` | bool | The screen was opened from the pause menu (a world is loaded) |
+| `foreign_buttons` | number | How many of other mods' buttons are showing on this screen |
 
 ## Functions
 
@@ -42,6 +46,8 @@ Names LDIC provides to every menu theme, on top of the [built-in functions](expr
 | `long_date()` | The date in the regional long format: `Thursday, October 29, 2026` |
 | `date('pattern')` | Date and time with a [Java pattern](https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html): `date('yyyy-MM-dd')` |
 | `month()`, `day()`, `hour()` | Numbers, for seasonal art: `"visible": "month() == 12"` |
+| `option_value(name)`, `option_text(name)`, `option_on(name)` | A game option: slider position or 1/0, vanilla's label, and on/off; see [Options screen](options.md#game-options-by-name) |
+| `difficulty_text()`, `can_change_difficulty()` | The world difficulty label, and whether this player may change it |
 | `server_online('host:port')` | Whether the server answers. Pinged in the background, every 30 s while a theme reads it. |
 | `server_players(address)`, `server_max_players(address)` | Player counts (0 while unknown) |
 | `server_motd(address)` | The server's message of the day, with its colours |

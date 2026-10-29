@@ -16,6 +16,7 @@ import net.minecraft.client.gui.GuiLanguage;
 import net.minecraft.client.gui.GuiMultiplayer;
 import net.minecraft.client.gui.GuiOptions;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.GuiScreenOptionsSounds;
 import net.minecraft.client.gui.GuiScreenResourcePacks;
 import net.minecraft.client.gui.GuiSnooper;
@@ -41,20 +42,43 @@ final class Actions {
     private Actions() {
     }
 
-    static void run(ActionDef a, LdicMenuScreen screen, MenuManager manager) {
+    static void run(ActionDef a, ThemeScreenDriver driver) {
         if (a == null) {
             return;
         }
         Minecraft mc = Minecraft.getMinecraft();
+        GuiScreen screen = driver.gui();
+        MenuManager manager = driver.manager();
         try {
             switch (a.type) {
                 case "chain":
                     for (ActionDef sub : a.chain) {
-                        run(sub, screen, manager);
+                        run(sub, driver);
                     }
                     break;
                 case "open_link":
-                    screen.openLink(a.str("url", ""), a.flag("confirm", true));
+                    driver.openLink(a.str("url", ""), a.flag("confirm", true));
+                    break;
+                case "option": {
+                    String name = a.str("name", "");
+                    if (!GameOptions.exists(name)) {
+                        Ldic.LOGGER.warn("LDIC: '{}' is not a game option ({})", name, a.path);
+                        break;
+                    }
+                    GameOptions.cycle(name);
+                    driver.markOptionsChanged();
+                    if (name.equalsIgnoreCase("GUI_SCALE")) {
+                        // As vanilla's video settings do: lay the screen out again at the new scale.
+                        ScaledResolution sr = new ScaledResolution(mc);
+                        screen.setWorldAndResolution(mc, sr.getScaledWidth(), sr.getScaledHeight());
+                    }
+                    break;
+                }
+                case "difficulty":
+                    GameOptions.cycleDifficulty();
+                    break;
+                case "classic_options":
+                    manager.openClassicOptions(driver.host() instanceof LdicOptionsScreen ? ((LdicOptionsScreen) driver.host()).parent() : screen);
                     break;
                 case "connect": {
                     String address = a.str("address", "");
@@ -69,7 +93,7 @@ final class Actions {
                     open(a.str("screen", ""), screen, manager, a);
                     break;
                 case "back":
-                    manager.back();
+                    driver.host().back();
                     break;
                 case "quit":
                     mc.shutdown();
@@ -112,9 +136,12 @@ final class Actions {
         }
     }
 
-    private static void open(String id, LdicMenuScreen screen, MenuManager manager, ActionDef a) {
+    private static void open(String id, GuiScreen screen, MenuManager manager, ActionDef a) {
         Minecraft mc = Minecraft.getMinecraft();
-        if (manager.hasScreen(id)) {
+        // "options" always goes through vanilla's options screen, even when the theme has an "options"
+        // screen: MenuManager swaps it for the themed one there, as a GuiOptions subclass, so other
+        // mods still add their settings buttons to it.
+        if (!id.equalsIgnoreCase("options") && manager.hasScreen(id)) {
             manager.open(id);
             return;
         }
@@ -174,7 +201,7 @@ final class Actions {
         mc.displayGuiScreen(next);
     }
 
-    private static void loadWorld(String folder, LdicMenuScreen screen) throws Exception {
+    private static void loadWorld(String folder, GuiScreen screen) throws Exception {
         Minecraft mc = Minecraft.getMinecraft();
         for (WorldSummary s : mc.getSaveLoader().getSaveList()) {
             if (s.getFileName().equals(folder)) {
@@ -186,7 +213,7 @@ final class Actions {
         mc.displayGuiScreen(new GuiWorldSelection(screen));
     }
 
-    private static void modConfig(String modid, LdicMenuScreen screen) {
+    private static void modConfig(String modid, GuiScreen screen) {
         ModContainer mod = Loader.instance().getIndexedModList().get(modid);
         if (mod == null) {
             Ldic.LOGGER.warn("LDIC: mod_config: no mod '{}' is loaded", modid);

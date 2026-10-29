@@ -101,6 +101,7 @@ nav:
       - Layout: themes/layout.md
       - Elements: themes/elements.md
       - Actions: themes/actions.md
+      - Options screen: themes/options.md
       - Expressions: themes/expressions.md
       - Game values: themes/game-values.md
   - Loading screen:

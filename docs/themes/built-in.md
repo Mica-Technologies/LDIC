@@ -77,3 +77,11 @@ The repository has complete themes in
 the City of Alto menu converted one-to-one from Custom Main Menu (`alto/menu-classic.json`), a
 modern version built on `horizon` with live server status (`alto/menu.json`), and the loading screen
 and menu the pack actually ships (`alto/ldic/`, see the [showcase](../loading/index.md#showcase-city-of-alto)).
+
+## Options screens
+
+`horizon` (and themes that extend it, such as the City of Alto menu) restyles the Options screen
+too: categories on the left, quick settings on the right, and other mods' settings buttons below
+them. See [Options screen](options.md).
+
+![horizon options](../assets/screenshots/options-menu.png){ .shot }

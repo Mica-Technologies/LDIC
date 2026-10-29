@@ -11,6 +11,7 @@ import com.micatechnologies.minecraft.ldic.client.WebText;
 import com.micatechnologies.minecraft.ldic.client.audio.MusicPlayer;
 import com.micatechnologies.minecraft.ldic.client.render.Fonts;
 import com.micatechnologies.minecraft.ldic.client.render.Textures;
+import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiOptions;
 import com.micatechnologies.minecraft.ldic.theme.Problems;
 import com.micatechnologies.minecraft.ldic.theme.ThemeCompiler;
 import com.micatechnologies.minecraft.ldic.theme.ThemeDef;
@@ -30,6 +31,8 @@ import java.util.List;
 import java.util.Random;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.gui.GuiOptions;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResource;
 import net.minecraft.client.resources.IResourceManager;
@@ -120,6 +123,18 @@ public final class MenuManager {
         return (System.nanoTime() - startNs) / 1e9;
     }
 
+    ThemeDef theme() {
+        return theme;
+    }
+
+    private boolean classicOptionsOnce;
+
+    /** Opens vanilla's options screen, skipping the themed one this one time. */
+    void openClassicOptions(GuiScreen parent) {
+        classicOptionsOnce = true;
+        Minecraft.getMinecraft().displayGuiScreen(new GuiOptions(parent, Minecraft.getMinecraft().gameSettings));
+    }
+
     boolean hasScreen(String id) {
         return theme != null && theme.screen(id) != null;
     }
@@ -131,6 +146,17 @@ public final class MenuManager {
         if (!settings.menuEnabled) {
             return;
         }
+        if (event.getGui() instanceof GuiOptions && !(event.getGui() instanceof LdicOptionsScreen)) {
+            if (classicOptionsOnce) {
+                classicOptionsOnce = false;
+                return;
+            }
+            if (settings.optionsEnabled && theme != null && theme.screen("options") != null) {
+                GuiScreen parent = ((AccessorGuiOptions) event.getGui()).ldic$getLastScreen();
+                event.setGui(new LdicOptionsScreen(this, theme, parent));
+            }
+            return;
+        }
         if (event.getGui() instanceof GuiMainMenu && !(event.getGui() instanceof LdicMenuScreen)) {
             if (!loadAttempted) {
                 load();
@@ -140,6 +166,18 @@ public final class MenuManager {
                 event.setGui(new LdicMenuScreen(this, theme, "main"));
                 startMusic();
             }
+        }
+    }
+
+    /**
+     * With debug on, adds a sample button to LDIC's screens the way another mod would (in
+     * InitGuiEvent.Post), so a theme author can see where other mods' buttons will go, and so
+     * the pass-through can be checked without installing such a mod.
+     */
+    @SubscribeEvent
+    public void onInitGui(net.minecraftforge.client.event.GuiScreenEvent.InitGuiEvent.Post event) {
+        if (settings.debug && (event.getGui() instanceof LdicOptionsScreen || event.getGui() instanceof LdicMenuScreen)) {
+            event.getButtonList().add(new net.minecraft.client.gui.GuiButton(0x4C4400, 0, 0, 150, 20, "Sample mod button"));
         }
     }
 

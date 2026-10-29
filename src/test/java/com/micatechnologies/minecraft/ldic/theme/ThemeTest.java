@@ -71,6 +71,40 @@ class ThemeTest {
     }
 
     @Test
+    void includeCopiesAnotherScreensElements() {
+        Problems p = new Problems();
+        ThemeDef t = compile("{ldic:1, screens:{"
+                + "main:{elements:[{id:'bg', type:'rect', colour:'#123456'}, {id:'logo', type:'rect'}, {id:'play', type:'button'}]},"
+                + "options:{elements:[{type:'include', screen:'main', ids:['bg', 'logo'], id:'background', visible:'time < 5'}, {id:'done', type:'button'}]}}}", p);
+        assertTrue(p.isEmpty(), p.all().toString());
+        ScreenDef options = t.screen("options");
+        assertEquals(2, options.elements.size());
+        ElementDef group = options.elements.get(0);
+        assertEquals("rect", group.type);
+        assertEquals("background", group.id);
+        assertEquals(2, group.children.size());
+        assertEquals(0xFF123456L, (long) group.children.get(0).num("colour", 0));
+    }
+
+    @Test
+    void sliderDefaultsToItsOption() {
+        Scope s = host();
+        s.define(com.micatechnologies.minecraft.ldic.expr.Function.num("option_value", false, a -> 0.25, Type.STRING));
+        s.define(com.micatechnologies.minecraft.ldic.expr.Function.str("option_text", false, a -> "FOV: 70", Type.STRING));
+        Problems p = new Problems();
+        ThemeDef t = ThemeCompiler.compile(Json.parse("{ldic:1, elements:[{type:'slider', option:'FOV'}]}").getAsJsonObject(), s, p);
+        assertTrue(p.isEmpty(), p.all().toString());
+        ElementDef slider = t.screen("main").elements.get(0);
+        assertEquals(0.25, slider.num("value", -1));
+        assertEquals("FOV: 70", slider.str("text", ""));
+        assertTrue(slider.isInteractive());
+        // Without the option functions (a loading screen) it is reported, not fatal.
+        Problems q = new Problems();
+        compile("{ldic:1, elements:[{type:'slider', option:'FOV'}]}", q);
+        assertTrue(q.hasErrors());
+    }
+
+    @Test
     void aChangedTypeReplacesInsteadOfMerging() {
         JsonObject parent = Json.parse("{elements:[{id:'b', type:'button', text:'A', action:{type:'open', screen:'mods'}}]}").getAsJsonObject();
         JsonObject child = Json.parse("{elements:[{id:'b', action:{type:'connect', address:'x'}}]}").getAsJsonObject();

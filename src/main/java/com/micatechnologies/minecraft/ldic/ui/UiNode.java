@@ -68,6 +68,17 @@ public final class UiNode {
         return sx >= left && sy >= top && sx < left + width * screenScale && sy < top + height * screenScale;
     }
 
+    /** Where a screen-space x falls across this node's (scaled) box: 0 at the left edge, 1 at the right, clamped. */
+    public double fractionX(double sx) {
+        double left = screenX + x * screenScale;
+        double w = width * screenScale;
+        if (w <= 0) {
+            return 0;
+        }
+        double f = (sx - left) / w;
+        return f < 0 ? 0 : (f > 1 ? 1 : f);
+    }
+
     /** True when hovered or focused: the state an author styles as "highlighted". */
     public boolean isHot() {
         return hover || focused;

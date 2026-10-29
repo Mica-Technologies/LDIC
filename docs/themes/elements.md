@@ -151,3 +151,28 @@ the mod put them. Without this element they also stay where the mod put them, an
 To put your own button over a specific mod button, give it `"wrap": "<id or class name>"`. The mod's
 button is hidden, and clicking yours clicks it, firing the mod's event handlers exactly once. The
 id or class shows in the log when a wrap target is not found.
+
+## slider
+
+Drag to set a value. Bound to a game option with `option`, it reads and sets that option; see
+[Options screen](options.md#game-options-by-name) for the names. Default size 200×20.
+
+| Property | Type | Default | Meaning |
+| --- | --- | --- | --- |
+| `option` | name | | The game option to set, such as `FOV` or `sound:music` |
+| `value` | number *expr* | the option's | Knob position 0–1 |
+| `text` | text | the option's label | Centred over the slider |
+| `style` | `flat` / `vanilla` | `flat` | `vanilla` draws the resource pack's slider |
+| `track_colour`, `fill_colour`, `knob_colour` | colour *expr* | | `flat` colours |
+| `knob_width`, `radius` | number *expr* | `4`, `2` | |
+| `font`, `size`, `text_colour`, `shadow` | | | As for text |
+
+## include
+
+Not drawn itself: it is replaced by a group holding copies of another screen's elements, all of
+them or those listed in `ids`. Its own keys (anchor, size, `visible`, `opacity`, …) apply to that
+group.
+
+```json
+{ "type": "include", "screen": "main", "ids": ["panorama", "shade"], "visible": "!in_world" }
+```

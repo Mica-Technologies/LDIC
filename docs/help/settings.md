@@ -13,7 +13,7 @@ launcher that manages `settings.json` does not see it change.
 
 ```json
 {
-  "menu": { "enabled": true, "fade_in": 0.6 },
+  "menu": { "enabled": true, "fade_in": 0.6, "themed_options": true },
   "loading": { "enabled": true, "fps": 60, "hold_seconds": 0 },
   "photosensitivity_notice": { "enabled": false, "always": false, "seconds": 7 },
   "pack": { "name": "", "version": "" },
@@ -25,6 +25,7 @@ launcher that manages `settings.json` does not see it change.
 | --- | --- | --- |
 | `menu.enabled` | `true` | `false` leaves the vanilla main menu alone |
 | `menu.fade_in` | `0.6` | Seconds the first menu after loading fades in from black; `0` for none |
+| `menu.themed_options` | `true` | Use the menu theme's `options` screen in place of vanilla's, when the theme has one |
 | `loading.enabled` | `true` | `false` leaves Forge's loading screen alone |
 | `loading.fps` | `60` | Loading-screen frame cap (10–240). Lower leaves more CPU for loading. |
 | `loading.hold_seconds` | `0` | With `debug`: keep the loading screen up this long after loading, to preview a theme |

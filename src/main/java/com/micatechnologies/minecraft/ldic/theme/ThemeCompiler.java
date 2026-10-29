@@ -59,6 +59,9 @@ public final class ThemeCompiler {
         action("set", "name", Kind.STATIC, "value", Kind.STATIC);
         action("toggle", "name", Kind.STATIC);
         action("chain", "actions", Kind.STATIC);
+        action("option", "name", Kind.TEXT);
+        action("difficulty");
+        action("classic_options");
     }
 
     private static void action(String type, Object... argKinds) {
@@ -344,8 +347,23 @@ public final class ThemeCompiler {
         }
     }
 
+    /** Raw screen JSON by id, for {@code include} elements to copy from. */
+    private final Map<String, JsonObject> rawScreens = new HashMap<>();
+
     private void screens(JsonObject root, Scope scope) {
         JsonObject screens = object(root, "screens");
+        if (screens != null) {
+            for (Map.Entry<String, JsonElement> e : screens.entrySet()) {
+                if (e.getValue().isJsonObject()) {
+                    rawScreens.put(e.getKey(), e.getValue().getAsJsonObject());
+                }
+            }
+        }
+        if (root.has("elements") && !rawScreens.containsKey("main")) {
+            JsonObject main = new JsonObject();
+            main.add("elements", root.get("elements"));
+            rawScreens.put("main", main);
+        }
         if (screens != null) {
             for (Map.Entry<String, JsonElement> e : screens.entrySet()) {
                 String path = "screens." + e.getKey();
@@ -379,7 +397,7 @@ public final class ThemeCompiler {
         }
         JsonArray elements = array(o, "elements", prefix + "elements");
         if (elements != null) {
-            compileElements(elements, scope, prefix + "elements", screen.elements);
+            compileElements(expandIncludes(elements, prefix + "elements", 0), scope, prefix + "elements", screen.elements);
         }
         if (o.has("on_open")) {
             screen.onOpen = action(o.get("on_open"), scope, prefix + "on_open");
@@ -388,6 +406,79 @@ public final class ThemeCompiler {
             screen.onEscape = action(o.get("on_escape"), scope, prefix + "on_escape");
         }
         return screen;
+    }
+
+    /**
+     * Replaces each {@code include} element with a group holding copies of another screen's
+     * elements: all of them, or those listed in {@code ids}. The include's own keys (anchor,
+     * visible, opacity, ...) apply to the group. This is how an options screen reuses the main
+     * screen's background, and keeps doing so when a theme that extends it changes that background.
+     */
+    private JsonArray expandIncludes(JsonArray array, String path, int depth) {
+        JsonArray out = new JsonArray();
+        for (int i = 0; i < array.size(); i++) {
+            JsonElement el = array.get(i);
+            if (!el.isJsonObject()) {
+                out.add(el);
+                continue;
+            }
+            JsonObject o = el.getAsJsonObject();
+            String p = path + "[" + i + "]";
+            if (!"include".equals(string(o, "type", null))) {
+                JsonElement children = o.get("children");
+                if (children != null && children.isJsonArray()) {
+                    JsonObject copy = Json.copy(o);
+                    copy.add("children", expandIncludes(children.getAsJsonArray(), p + ".children", depth));
+                    out.add(copy);
+                } else {
+                    out.add(o);
+                }
+                continue;
+            }
+            String from = string(o, "screen", null);
+            JsonObject source = from == null ? null : rawScreens.get(from);
+            JsonElement sourceElements = source == null ? null : source.get("elements");
+            if (sourceElements == null || !sourceElements.isJsonArray()) {
+                problems.error(p + ".screen", "include needs \"screen\": the id of a screen of this theme with elements");
+                continue;
+            }
+            if (depth >= 4) {
+                problems.error(p, "includes nested more than 4 deep (does a screen include itself?)");
+                continue;
+            }
+            java.util.Set<String> ids = null;
+            JsonElement idList = o.get("ids");
+            if (idList != null && idList.isJsonArray()) {
+                ids = new java.util.LinkedHashSet<>();
+                for (JsonElement id : idList.getAsJsonArray()) {
+                    ids.add(id.getAsString());
+                }
+            }
+            JsonArray picked = new JsonArray();
+            for (JsonElement s : sourceElements.getAsJsonArray()) {
+                if (!s.isJsonObject()) {
+                    continue;
+                }
+                JsonObject so = s.getAsJsonObject();
+                String sid = string(so, "id", null);
+                if (ids == null || (sid != null && ids.contains(sid))) {
+                    picked.add(Json.copy(so));
+                }
+            }
+            if (ids != null && picked.size() < ids.size()) {
+                problems.warn(p + ".ids", "some ids were not found at the top level of screen '" + from + "'");
+            }
+            JsonObject group = new JsonObject();
+            for (Map.Entry<String, JsonElement> e : o.entrySet()) {
+                if (!e.getKey().equals("type") && !e.getKey().equals("screen") && !e.getKey().equals("ids")) {
+                    group.add(e.getKey(), e.getValue());
+                }
+            }
+            group.addProperty("type", "group");
+            group.add("children", expandIncludes(picked, p + "(" + from + ")", depth + 1));
+            out.add(group);
+        }
+        return out;
     }
 
     private void compileElements(JsonArray array, Scope scope, String path, List<ElementDef> out) {
@@ -447,7 +538,7 @@ public final class ThemeCompiler {
         d.y = length(o.get("y"), scope, path + ".y", Length.units(Expr.constant(0)));
         d.width = length(o.get("width"), scope, path + ".width", null);
         d.height = length(o.get("height"), scope, path + ".height", null);
-        if (type.equals("button")) {
+        if (type.equals("button") || type.equals("slider")) {
             if (d.width == null) {
                 d.width = Length.units(Expr.constant(200));
             }
@@ -486,6 +577,9 @@ public final class ThemeCompiler {
             }
         } else {
             props(d, o, scope, path);
+            if (type.equals("slider")) {
+                sliderDefaults(d, scope, path);
+            }
         }
 
         if (o.has("action")) {
@@ -614,6 +708,31 @@ public final class ThemeCompiler {
             }
             default:
                 break;
+        }
+    }
+
+    /** A slider bound to a game option reads that option for any value or text it does not set. */
+    private void sliderDefaults(ElementDef d, Scope scope, String path) {
+        String option = d.statik("option", null);
+        if (option == null) {
+            if (!d.has("value")) {
+                problems.error(path, "a slider needs \"option\" (a game option to set) or a \"value\"");
+            }
+            return;
+        }
+        if (!option.matches("[A-Za-z0-9_:]+")) {
+            problems.error(path + ".option", "'" + option + "' is not an option name such as FOV or sound:master");
+            return;
+        }
+        try {
+            if (!d.has("value")) {
+                d.props.put("value", Parser.parse("option_value('" + option + "')", scope, Type.NUMBER));
+            }
+            if (!d.has("text")) {
+                d.props.put("text", Template.compile("{option_text('" + option + "')}", scope));
+            }
+        } catch (ExprException e) {
+            problems.error(path + ".option", "game options are only available on menu and options screens: " + e.getMessage());
         }
     }
 
@@ -802,6 +921,9 @@ public final class ThemeCompiler {
                 break;
             case "open_folder":
                 require(a, "path");
+                break;
+            case "option":
+                require(a, "name");
                 break;
             case "mod_config":
                 require(a, "modid");

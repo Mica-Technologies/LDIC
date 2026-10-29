@@ -105,7 +105,7 @@ public final class ElementDef {
 
     /** Whether the element reacts to the pointer: it has an action, a tooltip or wraps a button. */
     public boolean isInteractive() {
-        return action != null || tooltip != null || statics.containsKey("wrap");
+        return action != null || tooltip != null || statics.containsKey("wrap") || type.equals("slider");
     }
 
     @Override

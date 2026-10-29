@@ -140,6 +140,23 @@ public final class ElementSchema {
                 new Prop("shadow", Kind.BOOL, true),
                 new Prop("wrap", Kind.STATIC, null));
 
+        // Drag to set a value. With "option" it is bound to a game option ("FOV",
+        // "RENDER_DISTANCE", "sound:master", ...), and value and text default to that option's.
+        type("slider",
+                new Prop("option", Kind.STATIC, null),
+                new Prop("value", Kind.NUMBER, null),
+                new Prop("text", Kind.TEXT, null),
+                new Prop("style", Kind.ENUM, "flat", "flat", "vanilla"),
+                new Prop("font", Kind.STATIC, "minecraft"),
+                new Prop("size", Kind.NUMBER, 9),
+                new Prop("text_colour", Kind.COLOUR, 0xFFFFFFFFL),
+                new Prop("track_colour", Kind.COLOUR, 0x60000000L),
+                new Prop("fill_colour", Kind.COLOUR, 0xFF4FC3F7L),
+                new Prop("knob_colour", Kind.COLOUR, 0xFFFFFFFFL),
+                new Prop("knob_width", Kind.NUMBER, 4),
+                new Prop("radius", Kind.NUMBER, 2),
+                new Prop("shadow", Kind.BOOL, true));
+
         // Factories are compiled specially (trigger/count/keep/template); listed for validation.
         type("factory",
                 new Prop("trigger", Kind.STATIC, null),

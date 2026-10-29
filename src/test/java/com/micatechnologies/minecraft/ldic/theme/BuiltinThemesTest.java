@@ -25,13 +25,19 @@ class BuiltinThemesTest {
         Scope s = Scope.withLibrary().child();
         for (String n : new String[] {"time", "delta", "frame", "fps", "screen_time", "screen_width", "screen_height",
                 "gui_width", "gui_height", "gui_scale", "ui_scale", "mouse_x", "mouse_y",
-                "mem.used", "mem.total", "mem.max", "mem.free", "mod_count"}) {
+                "mem.used", "mem.total", "mem.max", "mem.free", "mod_count", "foreign_buttons"}) {
             s.declare(n, Type.NUMBER);
         }
         for (String n : new String[] {"screen", "mc_version", "forge_version", "username", "pack_name", "pack_version"}) {
             s.declare(n, Type.STRING);
         }
         s.declare("is_demo", Type.BOOL);
+        s.declare("in_world", Type.BOOL);
+        s.define(Function.num("option_value", false, a -> 0.5, Type.STRING));
+        s.define(Function.str("option_text", false, a -> "FOV: 70", Type.STRING));
+        s.define(Function.bool("option_on", false, a -> true, Type.STRING));
+        s.define(Function.str("difficulty_text", false, a -> "Difficulty: Easy"));
+        s.define(Function.bool("can_change_difficulty", false, a -> true));
         s.declare("reduced_motion", Type.BOOL);
         s.define(Function.bool("mod_loaded", false, a -> false, Type.STRING));
         s.define(Function.str("translate", false, a -> a[0].str(), Type.STRING));

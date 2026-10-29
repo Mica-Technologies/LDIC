@@ -21,14 +21,18 @@ Arguments marked *text* accept `{expression}` parts.
 | `set` | `name`, `value` *expr* | Sets a [`state`](theme-files.md#top-level-keys) value |
 | `toggle` | `name` | Flips a bool `state` value |
 | `reload` | | Reloads the theme from disk |
+| `option` | `name` *text* | Cycles a toggle or choice game option (`VIEW_BOBBING`, `GUI_SCALE`, ...) and saves it |
+| `difficulty` | | Cycles the world difficulty (only the singleplayer host, while it is not locked) |
+| `classic_options` | | Opens vanilla's own options screen instead of the themed one |
 | `quit` | | Quits the game |
 
 ## Built-in screens for `open`
 
-`singleplayer`, `create_world`, `multiplayer`, `options`, `video`, `controls`, `sounds`, `skin`,
-`chat`, `language`, `resource_packs`, `mods`, `snooper`, `credits`, `realms`, plus `main` (this
+`singleplayer`, `create_world`, `multiplayer`, `video`, `controls`, `sounds`, `skin`, `chat`,
+`language`, `resource_packs`, `mods`, `snooper`, `credits`, `realms`, and `options` (the
+[themed options screen](options.md) if the theme has one, else vanilla's), plus `main` (this
 theme's title screen) and any screen your theme defines. A theme screen with the same name as a
-built-in one wins.
+built-in one wins, except `options`, which always opens as the options screen.
 
 ## Tabs with state
 
