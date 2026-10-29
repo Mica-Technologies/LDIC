@@ -2,8 +2,8 @@
 
 A menu theme can also restyle Minecraft's **Options** screen, from the title screen and from the
 pause menu. Give the theme a screen named `options` and LDIC uses it in place of vanilla's. Themes
-without one keep vanilla's options screen. `builtin:horizon`, and every theme that extends it,
-has one.
+without one keep vanilla's options screen. The built-in `horizon`, `launcher` and `premiere`, and
+every theme that extends them, have one.
 
 ![Themed options](../assets/screenshots/options-menu.png){ .shot }
 

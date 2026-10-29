@@ -9,7 +9,8 @@
   "fonts": { "ui": "sans", "ui_bold": "sans:bold" },
   "constants": {
     "accent": "#E8D8A0",
-    "item_w": 104
+    "item_w": 104,
+    "cat_w": 84
   },
   "variables": {
     "bar_h": "screen_height * 0.13"
@@ -66,6 +67,82 @@
 
         { "id": "mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "start",
           "anchor": "top_right", "x": -12, "y": "bar_h + 12", "width": 200, "height": 140 }
+      ]
+    },
+
+    "options": {
+      "elements": [
+        { "id": "options_background", "type": "include", "screen": "main", "ids": ["backdrop", "scenes", "grade"], "visible": "!in_world" },
+        { "id": "world_dim", "type": "rect", "colour": "#B0000000", "visible": "in_world" },
+
+        { "id": "options_bar_top", "type": "rect", "anchor": "top", "height": "bar_h", "colour": "#000000", "children": [
+          { "id": "options_back", "type": "button", "style": "none", "anchor": "left", "x": 12, "width": 90, "height": 24,
+            "font": "ui_bold", "size": 9, "shadow": false, "text_colour": "#B0FFFFFF", "hover_text_colour": "accent",
+            "text": "{upper(translate('gui.done'))}", "action": "back",
+            "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+          { "id": "options_title", "type": "text", "anchor": "center", "align": "center", "font": "ui_bold", "size": 16, "colour": "#FFFFFF", "shadow": false,
+            "text": "{upper(translate('options.title'))}", "opacity": "reveal(0)" },
+          { "id": "options_classic", "type": "button", "style": "none", "anchor": "right", "x": -12, "width": 110, "height": 24,
+            "font": "ui_bold", "size": 9, "shadow": false, "text_colour": "#B0FFFFFF", "hover_text_colour": "accent",
+            "text": "CLASSIC OPTIONS", "tooltip": "Open Minecraft's own options screen", "action": "classic_options",
+            "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] }
+        ] },
+
+        { "id": "quick", "type": "rect", "anchor": "center", "width": 300, "height": "foreign_buttons > 0 ? 196 : 138", "radius": 2,
+          "colour": "#A0000000", "opacity": "reveal(2)", "children": [
+          { "id": "fov", "type": "slider", "option": "FOV", "x": 14, "y": 14, "width": "pw - 28", "height": 18, "radius": 1, "knob_width": 2,
+            "font": "ui", "size": 9, "shadow": false, "track_colour": "#30FFFFFF", "fill_colour": "with_alpha(accent, 0.35)", "knob_colour": "accent" },
+          { "id": "render_distance", "type": "slider", "option": "RENDER_DISTANCE", "x": 14, "y": 38, "width": "pw - 28", "height": 18, "radius": 1, "knob_width": 2,
+            "font": "ui", "size": 9, "shadow": false, "track_colour": "#30FFFFFF", "fill_colour": "with_alpha(accent, 0.35)", "knob_colour": "accent" },
+          { "id": "volume_master", "type": "slider", "option": "sound:master", "x": 14, "y": 62, "width": "pw - 28", "height": 18, "radius": 1, "knob_width": 2,
+            "font": "ui", "size": 9, "shadow": false, "track_colour": "#30FFFFFF", "fill_colour": "with_alpha(accent, 0.35)", "knob_colour": "accent" },
+          { "id": "volume_music", "type": "slider", "option": "sound:music", "x": 14, "y": 86, "width": "pw - 28", "height": 18, "radius": 1, "knob_width": 2,
+            "font": "ui", "size": 9, "shadow": false, "track_colour": "#30FFFFFF", "fill_colour": "with_alpha(accent, 0.35)", "knob_colour": "accent" },
+          { "id": "gui_scale", "type": "button", "style": "none", "x": 14, "y": 110, "width": "(pw - 28) / 2", "height": 18,
+            "font": "ui", "size": 9, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+            "text": "{option_text('GUI_SCALE')}", "action": { "type": "option", "name": "GUI_SCALE" } },
+          { "id": "difficulty", "type": "button", "style": "none", "x": "14 + (pw - 28) / 2", "y": 110, "width": "(pw - 28) / 2", "height": 18,
+            "font": "ui", "size": 9, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+            "text": "{difficulty_text()}", "visible": "in_world", "enabled": "can_change_difficulty()", "action": "difficulty" },
+          { "id": "fullscreen", "type": "button", "style": "none", "x": "14 + (pw - 28) / 2", "y": 110, "width": "(pw - 28) / 2", "height": 18,
+            "font": "ui", "size": 9, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+            "text": "{option_text('USE_FULLSCREEN')}", "visible": "!in_world", "action": { "type": "option", "name": "USE_FULLSCREEN" } },
+          { "id": "options_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "center",
+            "x": 14, "y": 138, "width": "pw - 28", "height": 50 }
+        ] },
+
+        { "id": "options_bar_bottom", "type": "rect", "anchor": "bottom", "height": "bar_h", "colour": "#000000", "children": [
+          { "id": "categories", "type": "group", "anchor": "center", "width": "cat_w * 7", "height": 24, "children": [
+            { "id": "cat_video", "type": "button", "style": "none", "x": "cat_w * 0", "width": "cat_w", "height": 24,
+              "font": "ui_bold", "size": 8, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('options.video'))}", "opacity": "reveal(3)", "action": { "type": "open", "screen": "video" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "cat_controls", "type": "button", "style": "none", "x": "cat_w * 1", "width": "cat_w", "height": 24,
+              "font": "ui_bold", "size": 8, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('options.controls'))}", "opacity": "reveal(4)", "action": { "type": "open", "screen": "controls" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "cat_sounds", "type": "button", "style": "none", "x": "cat_w * 2", "width": "cat_w", "height": 24,
+              "font": "ui_bold", "size": 8, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('options.sounds'))}", "opacity": "reveal(5)", "action": { "type": "open", "screen": "sounds" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "cat_language", "type": "button", "style": "none", "x": "cat_w * 3", "width": "cat_w", "height": 24,
+              "font": "ui_bold", "size": 8, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('options.language'))}", "opacity": "reveal(6)", "action": { "type": "open", "screen": "language" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "cat_packs", "type": "button", "style": "none", "x": "cat_w * 4", "width": "cat_w", "height": 24,
+              "font": "ui_bold", "size": 8, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('options.resourcepack'))}", "opacity": "reveal(7)", "action": { "type": "open", "screen": "resource_packs" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "cat_skin", "type": "button", "style": "none", "x": "cat_w * 5", "width": "cat_w", "height": 24,
+              "font": "ui_bold", "size": 8, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('options.skinCustomisation'))}", "opacity": "reveal(8)", "action": { "type": "open", "screen": "skin" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] },
+            { "id": "cat_chat", "type": "button", "style": "none", "x": "cat_w * 6", "width": "cat_w", "height": 24,
+              "font": "ui_bold", "size": 8, "shadow": false, "text_colour": "#D0FFFFFF", "hover_text_colour": "accent",
+              "text": "{upper(translate('options.chat.title'))}", "opacity": "reveal(9)", "action": { "type": "open", "screen": "chat" },
+              "children": [ { "id": "line", "type": "rect", "anchor": "bottom", "height": 1, "width": "pw * 0.6 * parent_hover_t", "colour": "accent" } ] }
+          ] }
+        ] }
       ]
     }
   }

@@ -99,6 +99,93 @@
         { "id": "mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end",
           "anchor": "bottom_right", "x": -24, "y": -32, "width": 200, "height": 120 }
       ]
+    },
+
+    "options": {
+      "elements": [
+        { "id": "options_background", "type": "include", "screen": "main", "ids": ["backdrop", "art", "shade"], "visible": "!in_world" },
+        { "id": "world_dim", "type": "rect", "colour": "#C80B0D12", "visible": "in_world" },
+
+        { "id": "options_bar", "type": "rect", "height": 34, "colour": "#E0080A0F", "children": [
+          { "id": "options_mark", "type": "rect", "anchor": "left", "x": 16, "width": 4, "height": 16, "colour": "accent" },
+          { "id": "options_title", "type": "text", "anchor": "left", "x": 26, "font": "ui_bold", "size": 13, "shadow": false,
+            "text": "{upper(translate('options.title'))}" },
+          { "id": "options_back", "type": "button", "style": "none", "anchor": "right", "x": -12, "width": 70, "height": 34,
+            "font": "ui", "size": 10, "shadow": false, "text_colour": "#B0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "{translate('gui.done')}", "action": "back",
+            "children": [ { "id": "underline", "type": "rect", "anchor": "bottom", "height": 2, "width": "pw * parent_hover_t", "colour": "accent" } ] },
+          { "id": "options_classic", "type": "button", "style": "none", "anchor": "right", "x": -86, "width": 110, "height": 34,
+            "font": "ui", "size": 10, "shadow": false, "text_colour": "#B0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "text": "Classic options", "tooltip": "Open Minecraft's own options screen", "action": "classic_options",
+            "children": [ { "id": "underline", "type": "rect", "anchor": "bottom", "height": 2, "width": "pw * parent_hover_t", "colour": "accent" } ] }
+        ] },
+
+        { "id": "options_body", "type": "group", "anchor": "center", "y": 17, "width": 560, "height": 320, "opacity": "enter(1)", "children": [
+          { "id": "categories", "type": "rect", "width": 250, "height": 320, "radius": 6, "colour": "#D0101319", "border_colour": "#18FFFFFF", "children": [
+            { "id": "categories_label", "type": "text", "x": 16, "y": 14, "font": "ui", "size": 9, "colour": "#80FFFFFF", "shadow": false, "text": "SETTINGS" },
+            { "id": "cat_video", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+              "font": "ui_bold", "size": 11, "shadow": false, "text_align": "left", "padding": 12, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{translate('options.video')}", "x": 16, "y": 32, "width": "pw - 32", "height": 30, "action": { "type": "open", "screen": "video" } },
+            { "id": "cat_controls", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+              "font": "ui_bold", "size": 11, "shadow": false, "text_align": "left", "padding": 12, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{translate('options.controls')}", "x": 16, "y": 66, "width": "pw - 32", "height": 30, "action": { "type": "open", "screen": "controls" } },
+            { "id": "cat_sounds", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+              "font": "ui_bold", "size": 11, "shadow": false, "text_align": "left", "padding": 12, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{translate('options.sounds')}", "x": 16, "y": 100, "width": "pw - 32", "height": 30, "action": { "type": "open", "screen": "sounds" } },
+            { "id": "cat_language", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+              "font": "ui_bold", "size": 11, "shadow": false, "text_align": "left", "padding": 12, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{translate('options.language')}", "x": 16, "y": 134, "width": "pw - 32", "height": 30, "action": { "type": "open", "screen": "language" } },
+            { "id": "cat_packs", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+              "font": "ui_bold", "size": 11, "shadow": false, "text_align": "left", "padding": 12, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{translate('options.resourcepack')}", "x": 16, "y": 168, "width": "pw - 32", "height": 30, "action": { "type": "open", "screen": "resource_packs" } },
+            { "id": "cat_skin", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+              "font": "ui_bold", "size": 11, "shadow": false, "text_align": "left", "padding": 12, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{translate('options.skinCustomisation')}", "x": 16, "y": 202, "width": "pw - 32", "height": 30, "action": { "type": "open", "screen": "skin" } },
+            { "id": "cat_chat", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+              "font": "ui_bold", "size": 11, "shadow": false, "text_align": "left", "padding": 12, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{translate('options.chat.title')}", "x": 16, "y": 236, "width": "pw - 32", "height": 30, "action": { "type": "open", "screen": "chat" } },
+            { "id": "cat_snooper", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+              "font": "ui_bold", "size": 11, "shadow": false, "text_align": "left", "padding": 12, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{translate('options.snooper.view')}", "x": 16, "y": 270, "width": "pw - 32", "height": 30, "action": { "type": "open", "screen": "snooper" } }
+          ] },
+
+          { "id": "quick", "type": "rect", "x": 262, "width": 298, "height": 320, "radius": 6, "colour": "#D0101319", "border_colour": "#18FFFFFF", "children": [
+            { "id": "quick_label", "type": "text", "x": 16, "y": 14, "font": "ui", "size": 9, "colour": "#80FFFFFF", "shadow": false, "text": "QUICK SETTINGS" },
+            { "id": "fov", "type": "slider", "option": "FOV", "x": 16, "y": 32, "width": "pw - 32", "height": 22, "radius": 4,
+              "font": "ui", "size": 10, "shadow": false, "fill_colour": "with_alpha(accent, 0.6)", "knob_colour": "#FFFFFF" },
+            { "id": "render_distance", "type": "slider", "option": "RENDER_DISTANCE", "x": 16, "y": 60, "width": "pw - 32", "height": 22, "radius": 4,
+              "font": "ui", "size": 10, "shadow": false, "fill_colour": "with_alpha(accent, 0.6)", "knob_colour": "#FFFFFF" },
+            { "id": "volume_master", "type": "slider", "option": "sound:master", "x": 16, "y": 88, "width": "pw - 32", "height": 22, "radius": 4,
+              "font": "ui", "size": 10, "shadow": false, "fill_colour": "with_alpha(accent, 0.6)", "knob_colour": "#FFFFFF" },
+            { "id": "volume_music", "type": "slider", "option": "sound:music", "x": 16, "y": 116, "width": "pw - 32", "height": 22, "radius": 4,
+              "font": "ui", "size": 10, "shadow": false, "fill_colour": "with_alpha(accent, 0.6)", "knob_colour": "#FFFFFF" },
+            { "id": "gui_scale", "type": "button", "style": "flat", "radius": 4, "colour": "#20FFFFFF", "hover_colour": "#40FFFFFF",
+              "font": "ui", "size": 10, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{option_text('GUI_SCALE')}", "x": 16, "y": 148, "width": "(pw - 40) / 2", "height": 22,
+              "action": { "type": "option", "name": "GUI_SCALE" } },
+            { "id": "fullscreen", "type": "button", "style": "flat", "radius": 4, "colour": "#20FFFFFF", "hover_colour": "#40FFFFFF",
+              "font": "ui", "size": 10, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{option_text('USE_FULLSCREEN')}", "x": "24 + (pw - 40) / 2", "y": 148, "width": "(pw - 40) / 2", "height": 22,
+              "action": { "type": "option", "name": "USE_FULLSCREEN" } },
+            { "id": "graphics", "type": "button", "style": "flat", "radius": 4, "colour": "#20FFFFFF", "hover_colour": "#40FFFFFF",
+              "font": "ui", "size": 10, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{option_text('GRAPHICS')}", "x": 16, "y": 176, "width": "(pw - 40) / 2", "height": 22,
+              "action": { "type": "option", "name": "GRAPHICS" } },
+            { "id": "difficulty", "type": "button", "style": "flat", "radius": 4, "colour": "#20FFFFFF", "hover_colour": "#40FFFFFF",
+              "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{difficulty_text()}", "x": "24 + (pw - 40) / 2", "y": 176, "width": "(pw - 40) / 2", "height": 22,
+              "visible": "in_world", "enabled": "can_change_difficulty()", "action": "difficulty" },
+            { "id": "vsync", "type": "button", "style": "flat", "radius": 4, "colour": "#20FFFFFF", "hover_colour": "#40FFFFFF",
+              "font": "ui", "size": 10, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+              "text": "{option_text('ENABLE_VSYNC')}", "x": "24 + (pw - 40) / 2", "y": 176, "width": "(pw - 40) / 2", "height": 22,
+              "visible": "!in_world", "action": { "type": "option", "name": "ENABLE_VSYNC" } },
+            { "id": "mods_label", "type": "text", "x": 16, "y": 212, "font": "ui", "size": 9, "colour": "#80FFFFFF", "shadow": false,
+              "text": "MOD SETTINGS", "visible": "foreign_buttons > 0" },
+            { "id": "options_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "start",
+              "x": 16, "y": 226, "width": "pw - 32", "height": 84 }
+          ] }
+        ] }
+      ]
     }
   }
 }

@@ -80,8 +80,19 @@ and menu the pack actually ships (`alto/ldic/`, see the [showcase](../loading/in
 
 ## Options screens
 
-`horizon` (and themes that extend it, such as the City of Alto menu) restyles the Options screen
-too: categories on the left, quick settings on the right, and other mods' settings buttons below
-them. See [Options screen](options.md).
+`horizon`, `launcher` and `premiere` (and themes that extend them, such as the City of Alto menu)
+restyle the Options screen too, each in its own style: the categories, quick settings (FOV,
+render distance, volumes, GUI scale and more) and other mods' settings buttons. `classic` keeps
+vanilla's. See [Options screen](options.md).
 
 ![horizon options](../assets/screenshots/options-menu.png){ .shot }
+
+*horizon, with the City of Alto scenes.*
+
+![launcher options](../assets/screenshots/options-launcher.png){ .shot }
+
+*launcher, with `debug` on: element outlines and LDIC's sample mod button.*
+
+![premiere options](../assets/screenshots/options-premiere.png){ .shot }
+
+*premiere: the categories run along the bottom bar.*
