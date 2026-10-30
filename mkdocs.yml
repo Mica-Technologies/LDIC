@@ -110,6 +110,10 @@ nav:
       - Overview and themes: loading/index.md
       - Music: loading/music.md
       - Logo card and notice: loading/notices.md
+  - Inventory:
+      - Creative search and sort: inventory/creative.md
+      - Full-screen inventory: inventory/full-screen.md
+      - Hotbar: inventory/hotbar.md
   - Help:
       - Troubleshooting: help/troubleshooting.md
       - Settings: help/settings.md

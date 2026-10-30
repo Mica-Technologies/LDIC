@@ -44,6 +44,8 @@ Pure Java (no Minecraft types, fully unit-tested):
 - `ui`: `UiTree` evaluates and draws a screen in one pass per frame (factories share one template
   definition, so evaluation and drawing must stay in the same pass).
 - `loading.ProgressModel`: Forge's bar stack to a weighted, monotonic percentage and ETA.
+- `inventory`: `ItemQuery` (creative search syntax), `ItemSort` (stable tab orders),
+  `HotbarVisibility` (auto-hide state), `CreativeLayout` (full-screen creative rectangles).
 
 Minecraft-facing (`client`):
 - `render`: all drawing goes through `Gfx.gl()`, a per-thread `GlBackend`: `McGl` (GlStateManager +
@@ -62,13 +64,24 @@ Minecraft-facing (`client`):
   Forge's lock/mutex/pause protocol, falls back to Forge's runnable on any failure.
 - `audio`: Ogg Vorbis via the JOrbis classes Minecraft ships, played through Java Sound (never
   OpenAL: a second AL context would break game audio).
+- `inventory`: `CreativeSearch` (filter + sort pass over a creative tab's list), `LdicCreativeScreen`
+  + `LdicCreativeContainer` (full-screen creative; player-slot clicks go through
+  `player.inventoryContainer` with a `CreativeCrafting` listener, as vanilla's Inventory tab does),
+  `InventoryScreens` (full-screen toggle, creative swap, survival scaling by shrinking the screen's
+  width/height at init), `InventoryStyle` (shared look; accent from the menu theme's `accent`).
+- `hud.HotbarHud`: modern hotbar, size and auto-hide. One GL transform per bottom-group element,
+  pushed in its overlay `Pre` and popped in `Post`; nothing pushed at size 1 and fully shown.
+- `LdicConfigScreen` (Mods list Config): hotbar and inventory settings, saved to `player.json`.
 
 Mixins (`mixins.ldic.json`, all in `"client"`): `Accessor*` (vanilla screen fields LDIC reads),
 `MixinSplashProgress` (thread takeover + null-safe texture deletes in `finish()`), `MixinMinecraft`
 (lifts vanilla's 30 fps menu cap for LDIC screens; redirects the world start/stop sleeps so the
 themed world-loading screen keeps drawing), `MixinLoadingScreenRenderer` (draws `menu.WorldLoading`
-in place of the dirt progress screen). `LdicCoreMod` registers the config through MixinBooter's
-`IEarlyMixinLoader`.
+in place of the dirt progress screen), `MixinGuiContainerCreative` (tab search box + sort button),
+`MixinGuiContainer` (full-screen toggle click, before the screen's own), `MixinForgeHooksClient`
+(scales a full-screen inventory's drawing and converts the mouse for it and both draw events),
+`MixinGuiIngameForge` (held-item name follows the hotbar's size and slide). `LdicCoreMod`
+registers the config through MixinBooter's `IEarlyMixinLoader`.
 
 Plans and decisions live in `docs/AGENT-PLANS/MASTER_PLAN.md` (gitignored by design).
 
