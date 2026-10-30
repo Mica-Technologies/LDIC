@@ -8,6 +8,7 @@ import cc.polyfrost.oneconfig.hud.SingleTextHud;
 import cc.polyfrost.oneconfig.hud.TextHud;
 import com.micatechnologies.minecraft.ldic.client.hud.presets.HudLayout.Column;
 import com.micatechnologies.minecraft.ldic.client.hud.presets.HudLayout.Direction;
+import com.micatechnologies.minecraft.ldic.client.hud.HudThemeColours;
 import com.micatechnologies.minecraft.ldic.client.hud.LdicOneConfig;
 import net.minecraftforge.fml.common.Loader;
 import java.lang.reflect.Field;
@@ -52,77 +53,120 @@ public final class HudPresets {
         "Compact Light",
         "Retro Terminal",
         "Realistic Game HUD",
-        "High Contrast"
+        "High Contrast",
+        "Theme",
+        "Compact Glass",
+        "Compact Pill"
     };
 
+    /** "Theme": built from the menu theme's HUD colours each time it is applied (see {@link #styleAt}). */
+    public static final int THEME_STYLE = 8;
+
+    // Sizes: every style sits in the compact 0.4-0.6x range (2026-10-30; they were 0.75-1.1x,
+    // which players found impractically big). New styles are appended, never inserted, because
+    // OneConfig saves the selection by index. Text shadow is 0 (none) or 1 (plain): full shadow
+    // (2) draws every string five times and was a large share of the frame in an FPS audit.
     public static final HudStyle[] STYLES = {
-        // Default — match the stock OneConfig look (semi-transparent gray bg, medium
-        // font, no brackets) so "Default" is a real reset rather than an LDIC opinion.
-        new HudStyle("Default", 1.0f,
-            true, false, 2f, 5f, 5f, new OneColor(0, 0, 0, 120),
+        // Default — the stock OneConfig look (semi-transparent grey background, no brackets)
+        // at compact size.
+        new HudStyle("Default", 0.55f,
+            true, false, 2f, 5f, 4f, new OneColor(0, 0, 0, 120),
             false, 2f, new OneColor(0, 0, 0),
             new OneColor(255, 255, 255), 0,
             false, new OneColor(255, 255, 255)),
 
-        // Minimal Brackets — the look in the explorer screenshot the user shared: no
-        // background, tiny font with full shadow, white brackets around each value.
-        new HudStyle("Minimal Brackets", 0.5f,
+        // Minimal Brackets — no background, tiny font with a shadow, white brackets around
+        // each value.
+        new HudStyle("Minimal Brackets", 0.45f,
             false, false, 2f, 3f, 3f, new OneColor(0, 0, 0, 0),
             false, 2f, new OneColor(0, 0, 0),
-            new OneColor(255, 255, 255), 2,
+            new OneColor(255, 255, 255), 1,
             true, new OneColor(255, 255, 255)),
 
         // Clean Professional — opaque navy background, soft cyan text, rounded corners.
-        // Reads well on bright screenshots; the dropped-shadow rendering keeps text
-        // crisp against the bg.
-        new HudStyle("Clean Professional", 1.0f,
+        new HudStyle("Clean Professional", 0.5f,
             true, true, 3f, 6f, 4f, new OneColor(20, 30, 50, 220),
             false, 2f, new OneColor(0, 0, 0),
             new OneColor(200, 230, 255), 1,
             false, new OneColor(255, 255, 255)),
 
-        // Stylish Glass — frosted-glass look with a soft white border, larger text. Best
-        // on darker scenes (caves, nighttime).
-        new HudStyle("Stylish Glass", 1.1f,
-            true, true, 8f, 8f, 6f, new OneColor(255, 255, 255, 60),
+        // Stylish Glass — frosted glass with a soft white border. Best on darker scenes.
+        new HudStyle("Stylish Glass", 0.55f,
+            true, true, 6f, 7f, 5f, new OneColor(255, 255, 255, 60),
             true, 1f, new OneColor(255, 255, 255, 200),
             new OneColor(255, 255, 255), 1,
             false, new OneColor(255, 255, 255)),
 
-        // Compact Light — small text with no chrome at all. Good middle-ground between
-        // Default and Realistic.
-        new HudStyle("Compact Light", 0.75f,
+        // Compact Light — small text with no chrome at all.
+        new HudStyle("Compact Light", 0.5f,
             false, false, 2f, 3f, 3f, new OneColor(0, 0, 0, 0),
             false, 2f, new OneColor(0, 0, 0),
-            new OneColor(255, 255, 255), 2,
+            new OneColor(255, 255, 255), 1,
             false, new OneColor(255, 255, 255)),
 
-        // Retro Terminal — green-on-black CRT vibe. Background plus a thin green border
-        // makes each HUD look like its own console window.
-        new HudStyle("Retro Terminal", 0.9f,
+        // Retro Terminal — green on black; a thin green border makes each HUD a console window.
+        new HudStyle("Retro Terminal", 0.5f,
             true, false, 1f, 5f, 4f, new OneColor(0, 8, 0, 230),
             true, 1f, new OneColor(0, 200, 0, 255),
             new OneColor(80, 255, 80), 0,
             true, new OneColor(0, 200, 0)),
 
-        // Realistic Game HUD — the explicitly-requested option. Tiny font, no bg, a plain
-        // drop shadow. It was full shadow (2) until 2026-10-18: OneConfig draws a full-shadow
-        // string five times, and with the Alto layout's ~25 lines (through SmoothFont) that
-        // was 26-35% of the client thread in an FPS audit. One shadow keeps it legible.
+        // Realistic Game HUD — tiny font, no background, a plain drop shadow.
         new HudStyle("Realistic Game HUD", 0.4f,
             false, false, 2f, 2f, 2f, new OneColor(0, 0, 0, 0),
             false, 2f, new OneColor(0, 0, 0),
             new OneColor(255, 255, 255), 1,
             false, new OneColor(255, 255, 255)),
 
-        // High Contrast — yellow on solid black, no anti-shenanigans. Accessibility
-        // option for users on bright scenes or low-vision contexts.
-        new HudStyle("High Contrast", 1.0f,
+        // High Contrast — yellow on solid black, a little larger than the rest, for bright
+        // scenes and low vision.
+        new HudStyle("High Contrast", 0.6f,
             true, false, 2f, 5f, 4f, new OneColor(0, 0, 0, 255),
             false, 2f, new OneColor(0, 0, 0),
-            new OneColor(255, 255, 0), 2,
+            new OneColor(255, 255, 0), 1,
+            false, new OneColor(255, 255, 255)),
+
+        // Theme — placeholder colours; styleAt() fills in the menu theme's HUD colours.
+        new HudStyle("Theme", 0.45f,
+            true, true, 3f, 4f, 2f, new OneColor(16, 20, 24, 160),
+            false, 1f, new OneColor(0, 0, 0),
+            new OneColor(232, 236, 240), 1,
+            false, new OneColor(79, 195, 247)),
+
+        // Compact Glass — Stylish Glass at Realistic Game HUD size, with a fainter border.
+        new HudStyle("Compact Glass", 0.42f,
+            true, true, 4f, 4f, 2f, new OneColor(255, 255, 255, 45),
+            true, 1f, new OneColor(255, 255, 255, 110),
+            new OneColor(255, 255, 255), 1,
+            false, new OneColor(255, 255, 255)),
+
+        // Compact Pill — tight dark rounded pills, one per value, no shadow needed.
+        new HudStyle("Compact Pill", 0.42f,
+            true, true, 6f, 5f, 2f, new OneColor(10, 12, 16, 190),
+            false, 1f, new OneColor(0, 0, 0),
+            new OneColor(235, 238, 242), 0,
             false, new OneColor(255, 255, 255))
     };
+
+    /** The style at {@code index}; for {@link #THEME_STYLE}, filled in with the menu theme's HUD colours. */
+    public static HudStyle styleAt(int index) {
+        HudStyle s = STYLES[clamp(index, STYLES.length)];
+        if (index != THEME_STYLE) {
+            return s;
+        }
+        int[] c = themeColours();
+        return new HudStyle(s.name, s.scale, s.background, s.rounded, s.cornerRadius, s.paddingX, s.paddingY,
+                colour(c[0]), s.border, s.borderSize, colour(c[2]), colour(c[1]), s.textType, s.brackets, colour(c[2]));
+    }
+
+    /** ARGB {background, text, accent} from the menu theme (see HudThemeColours). */
+    private static int[] themeColours() {
+        return HudThemeColours.colours();
+    }
+
+    private static OneColor colour(int argb) {
+        return new OneColor((argb >> 16) & 0xFF, (argb >> 8) & 0xFF, argb & 0xFF, (argb >>> 24) & 0xFF);
+    }
 
     /** Index of {@code name} in {@link #STYLE_NAMES}, or 0 (Default) if missing.
      *  Lets callers pin a default preset by name instead of a brittle index literal. */
@@ -167,7 +211,8 @@ public final class HudPresets {
         "Architect",
         "Cityscape Photographer",
         "Explorer 2 (SUM)",
-        "Combat Pro"
+        "Combat Pro",
+        "Visual Compact"
     };
 
     /** Coordinates are in 1080p reference space; OneConfig anchors by thirds at apply. */
@@ -330,6 +375,16 @@ public final class HudPresets {
             .column(1920f, 1077f, Direction.UP,
                 "cpsHud", "saturationHud", "directionHud")
             .column(1920f, 1f, Direction.DOWN, "pingHud", "fpsHud")
+            .build(),
+
+        // Visual Compact — the drawn HUDs instead of text lines: compass tape top-centre,
+        // vitals top-left, effects and the frame-time graph top-right, gear bottom-left.
+        // SUM owns none of these, so in SUM this layout hides SUM's HUDs.
+        HudLayout.builder("Visual Compact")
+            .place("compassHud", 960f, 1f)
+            .column(0f, 1f, Direction.DOWN, "vitalsHud", "coordsHud")
+            .column(1920f, 1f, Direction.DOWN, "perfGraphHud", "effectsHud")
+            .place("gearHud", 0f, 1077f)
             .build()
     };
 
@@ -354,7 +409,15 @@ public final class HudPresets {
     // -----------------------------------------------------------------------------
 
     public static void applyStyle(int index, LdicOneConfig cfg) {
-        HudStyle s = STYLES[clamp(index, STYLES.length)];
+        applyStyle(index, cfg, true);
+    }
+
+    /**
+     * Applies a style; with {@code reflow} the current layout is re-applied so row spacing
+     * matches. Without it nothing moves: for the Theme style following a theme reload.
+     */
+    public static void applyStyle(int index, LdicOneConfig cfg, boolean reflow) {
+        HudStyle s = styleAt(index);
         for (Hud hud : collectHuds(cfg).values()) {
             setField(hud, "scale", s.scale);
             if (hud instanceof BasicHud) {
@@ -384,7 +447,7 @@ public final class HudPresets {
         // Skip when the active layout is "Off" (index 0) — re-applying that would
         // force-disable every HUD the user might be relying on, which is surprising
         // behaviour for a style-change action.
-        if (cfg.layoutPresetIndex > 0) {
+        if (reflow && cfg.layoutPresetIndex > 0) {
             applyLayout(cfg.layoutPresetIndex, cfg);
         }
     }
@@ -590,7 +653,7 @@ public final class HudPresets {
 
     /** The row pitch a default text HUD has under the selected style, for a partner's row. */
     private static float stylePitch(LdicOneConfig cfg) {
-        HudStyle s = STYLES[clamp(cfg.stylePresetIndex, STYLES.length)];
+        HudStyle s = styleAt(cfg.stylePresetIndex);
         float box = 12f + 2f;
         if (s.background) {
             box += s.paddingY * 2f + (s.border ? s.borderSize * 2f : 0f);

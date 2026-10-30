@@ -71,6 +71,7 @@ public final class MenuManager {
     private final Deque<String> history = new ArrayDeque<>();
 
     private ThemeDef theme;
+    private final java.util.List<Runnable> themeListeners = new java.util.ArrayList<>();
     private Problems problems;
     private double loadedAt;
     private boolean loadAttempted;
@@ -137,7 +138,15 @@ public final class MenuManager {
      * so LDIC's in-game screens match the menu; {@code fallback} when it has none.
      */
     public int themeAccent(int fallback) {
-        com.micatechnologies.minecraft.ldic.expr.Slot slot = theme == null || theme.scope == null ? null : theme.scope.lookup("accent");
+        return themeColour("accent", fallback);
+    }
+
+    /**
+     * A colour constant of the menu theme ({@code accent}, {@code hud_background}, ...): a colour
+     * number or a {@code #RRGGBB} string; {@code fallback} when the theme has none.
+     */
+    public int themeColour(String name, int fallback) {
+        com.micatechnologies.minecraft.ldic.expr.Slot slot = theme == null || theme.scope == null ? null : theme.scope.lookup(name);
         if (slot == null) {
             return fallback;
         }
@@ -150,6 +159,11 @@ public final class MenuManager {
             default:
                 return fallback;
         }
+    }
+
+    /** Runs after every theme load or reload (the HUD's Theme style follows the theme). */
+    public void addThemeListener(Runnable listener) {
+        themeListeners.add(listener);
     }
 
     private boolean classicOptionsOnce;
@@ -370,6 +384,9 @@ public final class MenuManager {
         }
         theme = t;
         problems = p;
+        for (Runnable r : themeListeners) {
+            r.run();
+        }
     }
 
     /** Loads and compiles one document; null if it is unusable (bad JSON or no main screen). */

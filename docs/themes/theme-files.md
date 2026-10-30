@@ -33,7 +33,7 @@ trailing commas: in an array they read as an extra empty entry.
 | `extends` | Another theme to build on: `builtin:<name>`, or `<name>` for `config/ldic/themes/<name>/theme.json`. See [Extending](#extending-a-theme). |
 | `design` | How layout units map to the screen. See [Layout](layout.md#design-size-and-scaling). |
 | `fonts` | Short names for fonts: `"title": "fonts/Display.ttf"`, then `"font": "title"` on elements. |
-| `constants` | Values computed **once** when the theme loads. |
+| `constants` | Values computed **once** when the theme loads. A few names mean something to LDIC outside the theme: `accent` colours its inventory screens and hotbar, and `hud_background`, `hud_text` and `hud_accent` colour the [HUD](../inventory/hud.md#theme-colours) under its Theme style. |
 | `state` | Values that actions can change (`set`, `toggle`). Initial values are JSON literals. |
 | `functions` | Your own functions. See [Expressions](expressions.md#your-own-functions). |
 | `variables` | Values recomputed **every frame**, in order; each can use the ones above it. |

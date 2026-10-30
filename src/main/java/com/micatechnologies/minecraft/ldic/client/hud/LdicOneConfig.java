@@ -21,21 +21,25 @@ import com.micatechnologies.minecraft.ldic.client.hud.elements.ArmourHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.BiomeHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.BlockAboveHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.ClickCounterHud;
+import com.micatechnologies.minecraft.ldic.client.hud.elements.CompassHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.CoordsHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.CpsHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.CustomTextHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.DayCounterHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.DirectionHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.DurabilityHud;
+import com.micatechnologies.minecraft.ldic.client.hud.elements.EffectsHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.FpsHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.FtiHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.GameModeHud;
+import com.micatechnologies.minecraft.ldic.client.hud.elements.GearHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.HealthHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.HeightLimitHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.HungerHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.LightLevelHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.LookingAtBlockHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.MemoryHud;
+import com.micatechnologies.minecraft.ldic.client.hud.elements.PerfGraphHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.PingHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.PitchHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.PlaceCountHud;
@@ -47,6 +51,7 @@ import com.micatechnologies.minecraft.ldic.client.hud.elements.ServerIpHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.SpeedHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.TimeHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.TpsHud;
+import com.micatechnologies.minecraft.ldic.client.hud.elements.VitalsHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.XpHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.YawHud;
 import com.micatechnologies.minecraft.ldic.client.hud.presets.HudPresets;
@@ -222,6 +227,24 @@ public class LdicOneConfig extends Config {
     // substitution, ten slots cover ~all realistic use cases since one slot can render
     // arbitrarily many live values.
 
+    // Drawn HUDs: the same information, more visual and more compact. Colours follow the menu
+    // theme's HUD colours.
+
+    @HUD(name = "Compass Tape", category = "HUDs", subcategory = "Visual")
+    public CompassHud compassHud = new CompassHud();
+
+    @HUD(name = "Vitals Bars", category = "HUDs", subcategory = "Visual")
+    public VitalsHud vitalsHud = new VitalsHud();
+
+    @HUD(name = "Gear Durability", category = "HUDs", subcategory = "Visual")
+    public GearHud gearHud = new GearHud();
+
+    @HUD(name = "Effect Rings", category = "HUDs", subcategory = "Visual")
+    public EffectsHud effectsHud = new EffectsHud();
+
+    @HUD(name = "Frame Time Graph", category = "HUDs", subcategory = "Visual")
+    public PerfGraphHud perfGraphHud = new PerfGraphHud();
+
     @HUD(name = "Custom Text 1", category = "HUDs", subcategory = "Custom Text")
     public CustomTextHud customText1 = new CustomTextHud();
 
@@ -259,7 +282,8 @@ public class LdicOneConfig extends Config {
     @Dropdown(name = "Style Preset", category = "HUD Presets", subcategory = "Style",
             options = {
                 "Default", "Minimal Brackets", "Clean Professional", "Stylish Glass",
-                "Compact Light", "Retro Terminal", "Realistic Game HUD", "High Contrast"
+                "Compact Light", "Retro Terminal", "Realistic Game HUD", "High Contrast",
+                "Theme", "Compact Glass", "Compact Pill"
             })
     public int stylePresetIndex = HudPresets.styleIndexOf("Realistic Game HUD");
 
@@ -273,7 +297,7 @@ public class LdicOneConfig extends Config {
                 "Off (All Hidden)", "Vanilla+", "Survival Essentials", "Speedrunner",
                 "PvP Focus", "Builder", "Explorer", "Performance Watcher", "Time Tracker",
                 "Minimal Top", "Server Op", "Urban Builder", "City Explorer", "Architect",
-                "Cityscape Photographer", "Explorer 2 (SUM)", "Combat Pro"
+                "Cityscape Photographer", "Explorer 2 (SUM)", "Combat Pro", "Visual Compact"
             })
     public int layoutPresetIndex = HudPresets.layoutIndexOf("Explorer 2 (SUM)");
 

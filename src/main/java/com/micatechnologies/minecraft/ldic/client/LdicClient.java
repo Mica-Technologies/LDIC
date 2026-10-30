@@ -31,6 +31,7 @@ public final class LdicClient {
         MinecraftForge.EVENT_BUS.register(new InventoryScreens(settings));
         MinecraftForge.EVENT_BUS.register(new SurvivalSearch());
         OneConfigSupport.start();
+        menu.addThemeListener(OneConfigSupport::themeChanged);
     }
 
     public static MenuManager menu() {

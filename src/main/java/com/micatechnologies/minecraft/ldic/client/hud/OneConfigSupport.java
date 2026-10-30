@@ -1,7 +1,9 @@
 package com.micatechnologies.minecraft.ldic.client.hud;
 
 import com.micatechnologies.minecraft.ldic.Ldic;
+import com.micatechnologies.minecraft.ldic.client.hud.elements.EffectsHud;
 import com.micatechnologies.minecraft.ldic.client.hud.elements.HudStateTracker;
+import com.micatechnologies.minecraft.ldic.client.hud.presets.HudPresets;
 import net.minecraftforge.common.MinecraftForge;
 
 /**
@@ -44,11 +46,24 @@ public final class OneConfigSupport {
         refresh.run();
     }
 
+    /** After a menu theme load: the "Theme" HUD style takes the new theme's colours, nothing moves. */
+    public static void themeChanged() {
+        themeChanged.run();
+    }
+
+    private static Runnable themeChanged = () -> { };
+
     /** The only place that touches OneConfig types; loaded on first use. */
     private static final class Hooks {
         static void start() {
             LdicOneConfig config = new LdicOneConfig();
             refresh = config::pullFromSettings;
+            MinecraftForge.EVENT_BUS.register(new EffectsHud.VanillaIcons(config.effectsHud));
+            themeChanged = () -> {
+                if (config.stylePresetIndex == HudPresets.THEME_STYLE) {
+                    HudPresets.applyStyle(config.stylePresetIndex, config, false);
+                }
+            };
         }
     }
 }

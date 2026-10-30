@@ -9,6 +9,9 @@
   "fonts": { "ui": "sans", "ui_bold": "sans:bold" },
   "constants": {
     "accent": "#4FC3F7",
+    "hud_background": "#A00C1218",
+    "hud_text": "#E8ECF0",
+    "hud_accent": "accent",
     "menu_x": 48,
     "menu_y": 86,
     "row": 30

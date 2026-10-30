@@ -9,6 +9,9 @@
   "fonts": { "ui": "sans", "ui_bold": "sans:bold" },
   "constants": {
     "accent": "#7C4DFF",
+    "hud_background": "#A8161026",
+    "hud_text": "#EDE7FF",
+    "hud_accent": "accent",
     "server_address": "''",
     "server_name": "'Featured server'",
     "news_url": "''"

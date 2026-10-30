@@ -79,10 +79,13 @@ See the wiki: [creative search and sort](https://mica-technologies.github.io/LDI
 
 ### HUD (with OneConfig)
 
+- Five **visual HUDs**: a compass tape, vitals bars, gear durability, effect rings and a frame-time
+  graph, coloured by the menu theme.
 - 32 information HUDs (coordinates, facing, biome, clock, day, health, food, armour, effects,
   tool durability, FPS, frame time, TPS, memory, ping, speed, light level, counters and more)
   plus ten custom-text slots with `%placeholders%`, each dragged into place in OneConfig's
-  editor; style and layout presets apply in one click.
+  editor; eleven compact styles (one follows the menu theme's HUD colours) and layout presets
+  apply in one click.
 - LDIC's OneConfig page also holds the hotbar and inventory settings.
 - These HUDs moved here from SUM; a player's saved layout comes with them. SUM keeps the HUDs
   that read its own server data, and the shared presets leave room for each other's rows.
