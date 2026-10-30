@@ -4,11 +4,15 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.micatechnologies.minecraft.ldic.Ldic;
+import com.micatechnologies.minecraft.ldic.expr.Library;
+import com.micatechnologies.minecraft.ldic.inventory.ItemSort;
 import com.micatechnologies.minecraft.ldic.theme.Json;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * {@code config/ldic/settings.json} (the pack's switches) and {@code config/ldic/player.json}
@@ -55,6 +59,23 @@ public final class LdicSettings {
     public double musicVolume = 1;
     /** Player choice: the loading screen's F3 details panel is open (remembered between launches). */
     public boolean loadingDetails = false;
+    /** Player choice: each creative tab's item order, by tab label (remembered between launches). */
+    public final Map<String, ItemSort.Pref> creativeSort = new LinkedHashMap<>();
+
+    // Hotbar and inventory: the pack sets defaults in settings.json; the player's player.json wins.
+    /** "modern" (LDIC's hotbar) or "vanilla". */
+    public String hotbarStyle = "modern";
+    /** Size of the hotbar and the bars above it, relative to the GUI scale (0.5 to 2). */
+    public double hotbarScale = 1;
+    /** Slide the hotbar away once the player has been moving for {@link #hotbarHideDelay} seconds. */
+    public boolean hotbarAutoHide = false;
+    public double hotbarHideDelay = 2;
+    /** Open inventories full screen: creative's grid fills the screen, other inventories scale up. */
+    public boolean inventoryFullScreen = false;
+    /** Also scale up other mods' inventory screens in full-screen mode (off: some draw their own overlays). */
+    public boolean inventoryScaleModScreens = false;
+    /** Accent for LDIC's inventory and hotbar when the menu theme has no "accent" constant. */
+    public int inventoryAccent = 0xFF4FC3F7;
 
     /** Shown to themes as {@code pack_name} / {@code pack_version}; launchers can set these. */
     public String packName = "";
@@ -105,6 +126,15 @@ public final class LdicSettings {
         reducedMotion = bool(player, "reduced_motion", reducedMotion);
         musicVolume = Math.max(0, Math.min(1, num(player, "music_volume", musicVolume)));
         loadingDetails = bool(player, "loading_details", loadingDetails);
+        readHotbarAndInventory(player);
+        JsonObject sorts = obj(player, "creative_sort");
+        for (Map.Entry<String, JsonElement> e : sorts == null ? new JsonObject().entrySet() : sorts.entrySet()) {
+            if (e.getValue().isJsonObject()) {
+                JsonObject s = e.getValue().getAsJsonObject();
+                creativeSort.put(e.getKey(), new ItemSort.Pref(ItemSort.Order.byKey(str(s, "order", "default")),
+                        bool(s, "descending", false)));
+            }
+        }
     }
 
     /**
@@ -119,6 +149,29 @@ public final class LdicSettings {
             o = new JsonObject();
         }
         o.addProperty("loading_details", on);
+        write(file, o);
+    }
+
+    /** Remembers a creative tab's item order in {@code player.json}, keeping whatever else it holds. */
+    public void saveCreativeSort(File dir, String tab, ItemSort.Pref pref) {
+        if (pref.isDefault()) {
+            creativeSort.remove(tab);
+        } else {
+            creativeSort.put(tab, pref);
+        }
+        File file = new File(dir, "player.json");
+        JsonObject o = file.isFile() ? readObject(file) : null;
+        if (o == null) {
+            o = new JsonObject();
+        }
+        JsonObject sorts = new JsonObject();
+        for (Map.Entry<String, ItemSort.Pref> e : creativeSort.entrySet()) {
+            JsonObject s = new JsonObject();
+            s.addProperty("order", e.getValue().order.key);
+            s.addProperty("descending", e.getValue().descending);
+            sorts.add(e.getKey(), s);
+        }
+        o.add("creative_sort", sorts);
         write(file, o);
     }
 
@@ -175,6 +228,50 @@ public final class LdicSettings {
             packVersion = str(pack, "version", packVersion);
         }
         debug = bool(o, "debug", debug);
+        readHotbarAndInventory(o);
+    }
+
+    private void readHotbarAndInventory(JsonObject o) {
+        JsonObject hotbar = obj(o, "hotbar");
+        if (hotbar != null) {
+            String style = str(hotbar, "style", hotbarStyle);
+            hotbarStyle = "vanilla".equalsIgnoreCase(style) ? "vanilla" : "modern";
+            hotbarScale = Math.max(0.5, Math.min(2, num(hotbar, "scale", hotbarScale)));
+            hotbarAutoHide = bool(hotbar, "auto_hide", hotbarAutoHide);
+            hotbarHideDelay = Math.max(0, Math.min(30, num(hotbar, "hide_delay", hotbarHideDelay)));
+        }
+        JsonObject inventory = obj(o, "inventory");
+        if (inventory != null) {
+            inventoryFullScreen = bool(inventory, "full_screen", inventoryFullScreen);
+            inventoryScaleModScreens = bool(inventory, "scale_mod_screens", inventoryScaleModScreens);
+            Long accent = Library.parseHexColour(str(inventory, "accent", null));
+            if (accent != null) {
+                inventoryAccent = (int) (long) accent;
+            }
+        }
+    }
+
+    /** Saves the player's hotbar and inventory choices in {@code player.json}, keeping the rest. */
+    public void saveHotbarAndInventory(File dir) {
+        File file = new File(dir, "player.json");
+        JsonObject o = file.isFile() ? readObject(file) : null;
+        if (o == null) {
+            o = new JsonObject();
+        }
+        JsonObject hotbar = new JsonObject();
+        hotbar.addProperty("style", hotbarStyle);
+        hotbar.addProperty("scale", hotbarScale);
+        hotbar.addProperty("auto_hide", hotbarAutoHide);
+        hotbar.addProperty("hide_delay", hotbarHideDelay);
+        o.add("hotbar", hotbar);
+        JsonObject inventory = obj(o, "inventory");
+        if (inventory == null) {
+            inventory = new JsonObject();
+        }
+        inventory.addProperty("full_screen", inventoryFullScreen);
+        inventory.addProperty("scale_mod_screens", inventoryScaleModScreens);
+        o.add("inventory", inventory);
+        write(file, o);
     }
 
     private void save(File file) {
@@ -207,6 +304,17 @@ public final class LdicSettings {
         pack.addProperty("name", packName);
         pack.addProperty("version", packVersion);
         o.add("pack", pack);
+        JsonObject hotbar = new JsonObject();
+        hotbar.addProperty("style", hotbarStyle);
+        hotbar.addProperty("scale", hotbarScale);
+        hotbar.addProperty("auto_hide", hotbarAutoHide);
+        hotbar.addProperty("hide_delay", hotbarHideDelay);
+        o.add("hotbar", hotbar);
+        JsonObject inventory = new JsonObject();
+        inventory.addProperty("full_screen", inventoryFullScreen);
+        inventory.addProperty("scale_mod_screens", inventoryScaleModScreens);
+        inventory.addProperty("accent", String.format("#%06X", inventoryAccent & 0xFFFFFF));
+        o.add("inventory", inventory);
         o.addProperty("debug", debug);
         write(file, o);
     }

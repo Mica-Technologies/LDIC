@@ -132,6 +132,26 @@ public final class MenuManager {
         return theme;
     }
 
+    /**
+     * The menu theme's {@code accent} constant (a colour number or a {@code #RRGGBB} string),
+     * so LDIC's in-game screens match the menu; {@code fallback} when it has none.
+     */
+    public int themeAccent(int fallback) {
+        com.micatechnologies.minecraft.ldic.expr.Slot slot = theme == null || theme.scope == null ? null : theme.scope.lookup("accent");
+        if (slot == null) {
+            return fallback;
+        }
+        switch (slot.type()) {
+            case NUMBER:
+                return (int) (long) slot.getNumber();
+            case STRING:
+                Long parsed = com.micatechnologies.minecraft.ldic.expr.Library.parseHexColour(slot.getString());
+                return parsed == null ? fallback : (int) (long) parsed;
+            default:
+                return fallback;
+        }
+    }
+
     private boolean classicOptionsOnce;
     private boolean classicPauseOnce;
 

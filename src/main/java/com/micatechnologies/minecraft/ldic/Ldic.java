@@ -23,7 +23,8 @@ import org.apache.logging.log4j.Logger;
      name = Tags.MODNAME,
      acceptedMinecraftVersions = "[1.12.2]",
      clientSideOnly = true,
-     acceptableRemoteVersions = "*")
+     acceptableRemoteVersions = "*",
+     guiFactory = "com.micatechnologies.minecraft.ldic.client.LdicGuiFactory")
 public class Ldic {
 
     public static final Logger LOGGER = LogManager.getLogger(Tags.MODID);

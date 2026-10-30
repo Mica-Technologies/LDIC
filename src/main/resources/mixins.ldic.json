@@ -7,10 +7,15 @@
   "mixins": [],
   "client": [
     "AccessorGuiConnecting",
+    "AccessorGuiContainer",
     "AccessorGuiOptions",
     "AccessorGuiScreen",
     "AccessorGuiScreenWorking",
     "AccessorMinecraft",
+    "MixinForgeHooksClient",
+    "MixinGuiContainer",
+    "MixinGuiContainerCreative",
+    "MixinGuiIngameForge",
     "MixinLoadingScreenRenderer",
     "MixinMinecraft",
     "MixinSplashProgress"

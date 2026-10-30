@@ -1,5 +1,7 @@
 package com.micatechnologies.minecraft.ldic.client;
 
+import com.micatechnologies.minecraft.ldic.client.hud.HotbarHud;
+import com.micatechnologies.minecraft.ldic.client.inventory.InventoryScreens;
 import com.micatechnologies.minecraft.ldic.client.menu.MenuManager;
 import java.io.File;
 import net.minecraftforge.common.MinecraftForge;
@@ -11,20 +13,33 @@ import net.minecraftforge.common.MinecraftForge;
 public final class LdicClient {
 
     private static MenuManager menu;
+    private static LdicSettings settings;
+    private static File dir;
 
     private LdicClient() {
     }
 
     public static void preInit(File modConfigDir) {
-        File dir = new File(modConfigDir, "ldic");
-        LdicSettings settings = LdicSettings.load(ensureDir(dir));
+        dir = new File(modConfigDir, "ldic");
+        settings = LdicSettings.load(ensureDir(dir));
         menu = new MenuManager(dir, settings);
         MinecraftForge.EVENT_BUS.register(menu);
         MinecraftForge.EVENT_BUS.register(menu.worldLoading());
+        MinecraftForge.EVENT_BUS.register(new HotbarHud(settings));
+        MinecraftForge.EVENT_BUS.register(new InventoryScreens(settings));
     }
 
     public static MenuManager menu() {
         return menu;
+    }
+
+    public static LdicSettings settings() {
+        return settings;
+    }
+
+    /** {@code config/ldic}. */
+    public static File configDir() {
+        return dir;
     }
 
     private static File ensureDir(File dir) {
