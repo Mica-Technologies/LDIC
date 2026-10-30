@@ -175,7 +175,9 @@ sets the size), turning to look at the pointer unless `follow_mouse` is `false`.
 
 [Skinned screens](skins.md) only. One of the screen's own buttons, by `button` (its id), moved into
 this box and drawn with every [button](#button) property except `text`: the label, enabled state
-and what a click does stay the screen's. Not drawn while the screen hides the button.
+and what a click does stay the screen's. Not drawn while the screen hides the button. A slider shows
+its position as a bar in `slider_colour`, and a check box (Forge's Apply globally) a small box at
+its left, filled in `slider_colour` when ticked (leave room with `padding` and `text_align: "left"`).
 
 ## vanilla_grid
 
@@ -193,6 +195,8 @@ the vanilla buttons inside its rows (video settings, key bindings) with this ele
 [button](#button) properties instead of vanilla's look.
 
 `list: "shown"` is the list a screen that swaps between several is showing now (statistics).
+`gui_pixels: true` keeps the list at GUI scale (its rows are
+not scaled with the theme), for lists whose rows place their own controls (Forge config entries).
 
 ## vanilla_field
 

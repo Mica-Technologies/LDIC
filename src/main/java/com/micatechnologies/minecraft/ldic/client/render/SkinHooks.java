@@ -41,6 +41,9 @@ public interface SkinHooks {
      */
     String vanillaButton(UiNode n);
 
+    /** Whether the check box named by a vanilla_button node is ticked (1) or not (0); -1 for other buttons. */
+    int vanillaChecked(UiNode n);
+
     /** The position (0 to 1) of the slider named by a vanilla_button node, or -1. */
     double vanillaSlider(UiNode n);
 

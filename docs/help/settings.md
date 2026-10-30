@@ -35,7 +35,7 @@ launcher that manages `settings.json` does not see it change.
 | `menu.themed_worlds` | `true` | Use the menu theme's `worlds` screen in place of vanilla's world selection, when the theme has one |
 | `menu.themed_servers` | `true` | Use the menu theme's `servers` screen in place of vanilla's server list, when the theme has one |
 | `menu.themed_mods` | `true` | Use the menu theme's `mod_list` screen in place of Forge's mod list, when the theme has one |
-| `menu.themed_screens` | `true` | Draw other vanilla screens (Create New World, Edit World, settings pages, confirmations, statistics, advancements and more) with the menu theme's [skins](../themes/skins.md) for them, when it has them |
+| `menu.themed_screens` | `true` | Draw other vanilla screens (Create New World, Edit World, settings pages, confirmations, statistics, advancements, chat, Forge config screens and more) with the menu theme's [skins](../themes/skins.md) for them, when it has them |
 | `loading.enabled` | `true` | `false` leaves Forge's loading screen alone |
 | `loading.fps` | `60` | Loading-screen frame cap (10–240). Lower leaves more CPU for loading. |
 | `loading.hold_seconds` | `0` | With `debug`: keep the loading screen up this long after loading, to preview a theme |

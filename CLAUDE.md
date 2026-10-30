@@ -97,7 +97,8 @@ screen's own), `MixinForgeHooksClient`
 `MixinGuiIngameForge` (held-item name follows the hotbar's size and slide), `MixinGuiSlot` and
 `MixinGuiListExtended` (skinned lists: no dirt, theme-scale clicks), `MixinGuiAdvancementTab` and
 `MixinGuiAdvancement` (an advancement tab's 234x113 view sized to the skin's box, via
-`menu.AdvancementMap`), `MixinGuiScreenAdvancements` (skin tab clicks). `LdicCoreMod`
+`menu.AdvancementMap`), `MixinGuiScreenAdvancements` (skin tab clicks), `MixinGuiButtonExt` (Forge
+config buttons in skinned lists; named for dev and obfuscated, as a Forge class). `LdicCoreMod`
 registers the config through MixinBooter's `IEarlyMixinLoader`.
 
 Plans and decisions live in `docs/AGENT-PLANS/MASTER_PLAN.md` (gitignored by design).

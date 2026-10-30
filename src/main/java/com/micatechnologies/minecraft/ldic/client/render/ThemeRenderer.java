@@ -168,6 +168,7 @@ public final class ThemeRenderer implements NodeRenderer {
                     if (label != null) {
                         drawButton(n, label);
                         drawSliderFill(n, skin.vanillaSlider(n));
+                        drawCheck(n, skin.vanillaChecked(n));
                     }
                 }
                 break;
@@ -181,7 +182,16 @@ public final class ThemeRenderer implements NodeRenderer {
                     skin.vanillaList(n, Boolean.parseBoolean(n.def.statik("style_buttons", "false")) ? c -> {
                         // Inside the list's own drawing: set up for ours and hand it back.
                         Gfx.beginUi();
-                        drawCell(n, c);
+                        if (Boolean.parseBoolean(n.def.statik("gui_pixels", "false"))) {
+                            // The list draws at GUI scale; the cell is drawn back in layout units (crisp text).
+                            double u = uiScale;
+                            Gfx.gl().pushMatrix();
+                            Gfx.gl().scale(u, u, 1);
+                            drawCell(n, new SkinHooks.Cell(c.x / u, c.y / u, c.width / u, c.height / u, c.label, c.enabled, c.hoverT, c.value));
+                            Gfx.gl().popMatrix();
+                        } else {
+                            drawCell(n, c);
+                        }
                         Gfx.endUi();
                     } : null);
                     Gfx.beginUi();
@@ -225,6 +235,33 @@ public final class ThemeRenderer implements NodeRenderer {
                 break;
             default:
                 break;
+        }
+    }
+
+    /** Text cut to {@code max} wide with "..." (a vanilla button's label longer than its cell). */
+    private static String fit(LdicFont font, String s, double size, double max) {
+        if (s == null || font.width(s, size) <= max) {
+            return s;
+        }
+        int end = s.length();
+        while (end > 0 && font.width(s.substring(0, end) + "...", size) > max) {
+            end--;
+        }
+        return s.substring(0, end).trim() + "...";
+    }
+
+    /** A skinned check box's state: a small box at the left of its button, filled when ticked. */
+    private void drawCheck(UiNode n, int state) {
+        if (state < 0) {
+            return;
+        }
+        long colour = (long) n.def.num("slider_colour", 0xFF4FC3F7L);
+        double s = Math.min(10, n.height - 8);
+        double x = n.x + (n.height - s) / 2;
+        double y = n.y + (n.height - s) / 2;
+        Gfx.roundedBorder(x, y, x + s, y + s, 2, 1, state == 1 ? colour : 0xA0FFFFFFL, n.opacity);
+        if (state == 1) {
+            Gfx.roundedRect(x + 2, y + 2, x + s - 2, y + s - 2, 1, colour, colour, n.opacity);
         }
     }
 
@@ -323,7 +360,7 @@ public final class ThemeRenderer implements NodeRenderer {
         n.height = c.height;
         n.enabled = c.enabled;
         n.hoverT = c.hoverT;
-        drawButton(n, c.label);
+        drawButton(n, fit(font(n.def), c.label, n.def.num("size", 9), c.width - 2 * Math.min(n.def.num("padding", 6), c.width / 4)));
         drawSliderFill(n, c.value);
         n.x = x;
         n.y = y;

@@ -830,6 +830,31 @@
       ]
     },
 
+    "forge_config": {
+      "elements": [
+        { "id": "forge_config_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "forge_config_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "forge_config_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "forge_config_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "forge_config_panel", "type": "group", "anchor": "center", "width": "screen_width - 30", "height": "screen_height - 24", "children": [
+          { "id": "forge_config_title", "type": "text", "font": "ui_bold", "size": 20, "colour": "#FFFFFF", "shadow": false,
+            "text": "{screen_text('title')}" },
+          { "id": "forge_config_rule", "type": "rect", "colour": "accent", "y": 27, "width": 48, "height": 2 },
+          { "id": "forge_config_title2", "type": "text", "font": "ui", "size": 9, "colour": "#A0FFFFFF", "shadow": false,
+            "anchor": "top_right", "align": "right", "y": 10, "text": "{screen_text('title2')}" },
+          { "id": "forge_config_list_bg", "type": "rect", "colour": "#50000000", "radius": 3, "y": 36, "width": "pw", "height": "ph - 70" },
+          { "id": "forge_config_list", "type": "vanilla_list", "list": "0", "gui_pixels": true, "style_buttons": true,
+            "style": "flat", "radius": 2, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": "8.5 / ui_scale", "shadow": false,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "y": 38, "width": "pw", "height": "ph - 74" },
+          { "id": "forge_config_undo", "type": "vanilla_button", "button": "2002", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "anchor": "bottom_left", "width": 140, "height": 24 },
+          { "id": "forge_config_reset", "type": "vanilla_button", "button": "2001", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "anchor": "bottom_left", "x": 146, "width": 140, "height": 24 },
+          { "id": "forge_config_global", "type": "vanilla_button", "button": "2003", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "text_align": "left", "padding": 24, "slider_colour": "accent",
+            "anchor": "bottom_left", "x": 292, "width": 150, "height": 24 },
+          { "id": "forge_config_done", "type": "vanilla_button", "button": "2000", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_right", "width": 150, "height": 24 }
+        ] }
+      ]
+    },
+
     "options_video": {
       "elements": [
         { "id": "options_video_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },

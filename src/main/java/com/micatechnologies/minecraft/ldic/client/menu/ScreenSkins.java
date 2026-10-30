@@ -50,6 +50,9 @@ import net.minecraft.client.gui.GuiScreenAddServer;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiWorldEdit;
 import net.minecraft.client.gui.GuiChat;
+import net.minecraftforge.fml.client.config.GuiCheckBox;
+import net.minecraftforge.fml.client.config.GuiConfig;
+import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiConfig;
 import net.minecraft.client.gui.GuiSleepMP;
 import net.minecraft.client.gui.advancements.GuiScreenAdvancements;
 import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiScreenAdvancements;
@@ -367,11 +370,16 @@ public final class ScreenSkins {
             }
             // The list is laid out and drawn in the theme's units (so its rows match the theme's
             // scale); the clicks the screen forwards to it are converted (MixinGuiListExtended).
+            // With gui_pixels it stays at GUI scale: lists whose rows place their own widgets from
+            // the screen's size and take clicks the mixin never sees (Forge config entries).
             double ui = ui();
-            int x = (int) Math.round(n.x);
-            int y = (int) Math.round(n.y);
-            int w = (int) Math.round(n.width);
-            int h = (int) Math.round(n.height);
+            boolean guiPixels = Boolean.parseBoolean(n.def.statik("gui_pixels", "false"));
+            double k = guiPixels ? ui : 1;
+            double unit = guiPixels ? 1 : ui;
+            int x = (int) Math.round(n.x * k);
+            int y = (int) Math.round(n.y * k);
+            int w = (int) Math.round(n.width * k);
+            int h = (int) Math.round(n.height * k);
             // Vanilla centres most lists on width / 2 from x 0 (clicks assume it); lists that
             // vanilla itself placed from a left edge (resource packs) keep that convention.
             if (LEFT_ALIGNED.computeIfAbsent(list, l -> l.left != 0)) {
@@ -384,7 +392,7 @@ public final class ScreenSkins {
             list.right = x + w;
             list.top = y;
             list.bottom = y + h;
-            SKINNED.put(list, ui);
+            SKINNED.put(list, unit);
             if (list instanceof GuiOptionsRowList) {
                 // Option rows place their buttons once, from the screen's centre; follow the list.
                 GuiOptionsRowList rows = (GuiOptionsRowList) list;
@@ -402,19 +410,32 @@ public final class ScreenSkins {
                 }
             }
             Minecraft mc = Minecraft.getMinecraft();
-            double s = new ScaledResolution(mc).getScaleFactor() * ui;
+            double s = new ScaledResolution(mc).getScaleFactor() * unit;
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
             GL11.glScissor((int) Math.floor(x * s), (int) Math.floor(mc.displayHeight - (y + h) * s),
                     (int) Math.ceil(w * s), (int) Math.ceil(h * s));
             drawingList = true;
             listButtons = buttons;
+            if (guiPixels) {
+                GlStateManager.pushMatrix();
+                GlStateManager.scale(1 / ui, 1 / ui, 1);
+            }
             try {
-                list.drawScreen((int) (mouseX / ui), (int) (mouseY / ui), mc.getRenderPartialTicks());
+                list.drawScreen((int) (mouseX / unit), (int) (mouseY / unit), mc.getRenderPartialTicks());
             } finally {
+                if (guiPixels) {
+                    GlStateManager.popMatrix();
+                }
                 drawingList = false;
                 listButtons = null;
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
             }
+        }
+
+        @Override
+        public int vanillaChecked(UiNode n) {
+            GuiButton b = button(id(n.def.statik("button", "-1")));
+            return b instanceof GuiCheckBox ? ((GuiCheckBox) b).isChecked() ? 1 : 0 : -1;
         }
 
         @Override
@@ -471,6 +492,9 @@ public final class ScreenSkins {
             this.mouseX = mouseX;
             this.mouseY = mouseY;
             Minecraft mc = Minecraft.getMinecraft();
+            if (gui instanceof GuiConfig) {
+                configBeforeDraw((GuiConfig) gui);
+            }
             // Vanilla's own per-frame button code (hover, slider drags), drawing nothing.
             GlStateManager.colorMask(false, false, false, false);
             try {
@@ -484,7 +508,7 @@ public final class ScreenSkins {
             }
             Map<String, String> text = new HashMap<>();
             Map<String, Boolean> flags = new HashMap<>();
-            Function<GuiScreen, Map<String, Object>> extras = EXTRAS.get(gui.getClass());
+            Function<GuiScreen, Map<String, Object>> extras = gui instanceof GuiConfig ? ScreenSkins::configExtras : EXTRAS.get(gui.getClass());
             if (extras != null) {
                 for (Map.Entry<String, Object> e : extras.apply(gui).entrySet()) {
                     if (e.getValue() instanceof Boolean) {
@@ -502,6 +526,9 @@ public final class ScreenSkins {
             if (advancements != null) {
                 advancements.drawTooltip();
             }
+            if (gui instanceof GuiConfig) {
+                configTooltips((GuiConfig) gui, mouseX, mouseY, partialTicks);
+            }
             if (gui instanceof GuiChat) {
                 // As vanilla's chat screen: the hover box of the chat text under the mouse.
                 ITextComponent hovered = mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
@@ -512,9 +539,70 @@ public final class ScreenSkins {
         }
     }
 
-    /** Buttons of Minecraft's own classes (vanilla screens' buttons), not other mods'. */
+    /** Buttons of Minecraft's and Forge's config screens' own classes (the screens' buttons), not other mods'. */
     private static boolean isVanillaButton(GuiButton b) {
-        return b.getClass().getName().startsWith("net.minecraft.");
+        String c = b.getClass().getName();
+        return c.startsWith("net.minecraft.") || c.startsWith("net.minecraftforge.fml.client.config.");
+    }
+
+    /**
+     * The theme screen for a vanilla screen: its exact class in {@link #SKINS}, or
+     * {@code forge_config} for a Forge config screen (mods subclass GuiConfig to fill it in) whose
+     * classes leave its drawing alone; one that draws itself is left as it is.
+     */
+    private static String screenFor(GuiScreen gui) {
+        String screen = SKINS.get(gui.getClass());
+        if (screen != null || !(gui instanceof GuiConfig)) {
+            return screen;
+        }
+        for (Class<?> c = gui.getClass(); c != GuiConfig.class; c = c.getSuperclass()) {
+            for (java.lang.reflect.Method m : c.getDeclaredMethods()) {
+                String name = m.getName();
+                if (name.equals("drawScreen") || name.equals("func_73863_a")) {
+                    return null;
+                }
+            }
+        }
+        return "forge_config";
+    }
+
+    /** A Forge config screen's titles, for screen_text. */
+    private static Map<String, Object> configExtras(GuiScreen s) {
+        GuiConfig c = (GuiConfig) s;
+        Map<String, Object> m = new HashMap<>();
+        m.put("title", c.title == null ? "" : c.title);
+        m.put("title2", c.titleLine2 == null ? "" : c.titleLine2);
+        return m;
+    }
+
+    /** What GuiConfig's own drawScreen does before drawing: Undo and Reset follow the entries. */
+    private static void configBeforeDraw(GuiConfig c) {
+        AccessorGuiConfig a = (AccessorGuiConfig) c;
+        if (c.entryList == null || a.ldic$getApplyGlobally() == null) {
+            return;
+        }
+        boolean global = a.ldic$getApplyGlobally().isChecked();
+        boolean any = c.entryList.areAnyEntriesEnabled(global);
+        a.ldic$getUndoAll().enabled = any && c.entryList.hasChangedEntry(global);
+        a.ldic$getDefaultAll().enabled = any && !c.entryList.areAllEntriesDefault(global);
+    }
+
+    /** What GuiConfig's own drawScreen does after drawing: the entries' and buttons' tooltips. */
+    private static void configTooltips(GuiConfig c, int mouseX, int mouseY, float partialTicks) {
+        AccessorGuiConfig a = (AccessorGuiConfig) c;
+        if (c.entryList == null) {
+            return;
+        }
+        c.entryList.drawScreenPost(mouseX, mouseY, partialTicks);
+        if (a.ldic$getUndoHover() != null && a.ldic$getUndoHover().checkHover(mouseX, mouseY)) {
+            c.drawToolTip(java.util.Arrays.asList(I18n.format("fml.configgui.tooltip.undoAll").split("\n")), mouseX, mouseY);
+        }
+        if (a.ldic$getResetHover() != null && a.ldic$getResetHover().checkHover(mouseX, mouseY)) {
+            c.drawToolTip(java.util.Arrays.asList(I18n.format("fml.configgui.tooltip.resetAll").split("\n")), mouseX, mouseY);
+        }
+        if (a.ldic$getCheckBoxHover() != null && a.ldic$getCheckBoxHover().checkHover(mouseX, mouseY)) {
+            c.drawToolTip(java.util.Arrays.asList(I18n.format("fml.configgui.tooltip.applyGlobally").split("\n")), mouseX, mouseY);
+        }
     }
 
     /** A button or field number from a theme; MIN_VALUE when it is not one. */
@@ -629,7 +717,7 @@ public final class ScreenSkins {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onInit(GuiScreenEvent.InitGuiEvent.Post event) {
         GuiScreen gui = event.getGui();
-        String screen = SKINS.get(gui.getClass());
+        String screen = screenFor(gui);
         ThemeDef theme = manager.theme();
         if (screen == null || theme == null || !manager.settings().menuEnabled || !manager.settings().skinsEnabled) {
             return;

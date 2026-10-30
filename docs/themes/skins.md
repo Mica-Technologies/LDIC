@@ -40,6 +40,7 @@ A vanilla button a skin does not place is not lost: it appears in the theme's
 | `player_stats` | Statistics | 0 Done, 1 General, 2 Blocks, 3 Items, 4 Mobs | list `shown` (the list the screen is showing) |
 | `chat_bar` | Chat (the typing bar) | none; the bar is field 0 | 0 message |
 | `chat_bed` | Chat while in bed | 1 Leave Bed | 0 message |
+| `forge_config` | Forge config screens (mods' Config screens and their categories) | 2000 Done, 2001 Reset to Default, 2002 Undo Changes, 2003 Apply globally (a check box) | list 0 entries (use `gui_pixels`) |
 
 Only the exact vanilla class is skinned: another mod's screen built on one of these stays as it is.
 Screens that can open in a world (death, LAN, settings) should cover the world lightly rather than
@@ -74,3 +75,10 @@ server sends the stats (the screen has no buttons or lists until then).
 The chat skins draw only the bar (and Leave Bed); the chat lines above it stay vanilla's, and a
 chat link's hover box still shows. Size the bar in GUI pixels (`16 / ui_scale`) so it keeps clear
 of the chat lines, which start 48 GUI pixels above the bottom.
+
+Forge config screens are skinned whether a mod uses Forge's screen as it is or a subclass of it
+that only fills it in; a mod whose config screen draws itself keeps it. Their entry list stays at
+GUI scale (`"gui_pixels": true`), because each entry places its own controls from the screen's
+size; `style_buttons` still draws the entries' buttons in the theme's style. Values:
+`screen_text('title')` and `screen_text('title2')` (the config file or category). The entries'
+and buttons' tooltips show as in Forge's screen.

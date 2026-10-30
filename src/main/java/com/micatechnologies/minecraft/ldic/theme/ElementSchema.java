@@ -243,6 +243,7 @@ public final class ElementSchema {
         vanillaList.remove("button");
         vanillaList.put("list", new Prop("list", Kind.STATIC, "0"));
         vanillaList.put("style_buttons", new Prop("style_buttons", Kind.FLAG, false));
+        vanillaList.put("gui_pixels", new Prop("gui_pixels", Kind.FLAG, false));
         TYPES.put("vanilla_list", vanillaList);
 
         // The advancements skin only: the selected tab's map (dragged and wheel-scrolled as in
@@ -251,6 +252,7 @@ public final class ElementSchema {
         Map<String, Prop> advancementTabs = new LinkedHashMap<>(vanillaList);
         advancementTabs.remove("list");
         advancementTabs.remove("style_buttons");
+        advancementTabs.remove("gui_pixels");
         advancementTabs.put("row_height", new Prop("row_height", Kind.NUMBER, 22));
         advancementTabs.put("gap", new Prop("gap", Kind.NUMBER, 3));
         advancementTabs.put("icon_size", new Prop("icon_size", Kind.NUMBER, 16));
