@@ -5,5 +5,9 @@
 // buildscript.properties), so most mod dependencies need nothing here.
 
 repositories {
-    // Intentionally empty for now.
+    // Polyfrost: OneConfig, which LDIC's HUD and settings page are built on (see dependencies.gradle).
+    maven {
+        name 'Polyfrost'
+        url 'https://repo.polyfrost.org/releases'
+    }
 }

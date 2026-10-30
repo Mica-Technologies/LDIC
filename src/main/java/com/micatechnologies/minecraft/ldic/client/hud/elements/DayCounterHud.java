@@ -1,0 +1,28 @@
+package com.micatechnologies.minecraft.ldic.client.hud.elements;
+
+import cc.polyfrost.oneconfig.hud.SingleTextHud;
+import net.minecraft.client.Minecraft;
+import net.minecraft.world.World;
+
+/**
+ * Day counter — shows the in-game day number (world ticks / 24000 + 1). Modeled on
+ * EvergreenHUD's day-counter element.
+ */
+public class DayCounterHud extends SingleTextHud {
+
+    public DayCounterHud() {
+        super("Day", false, 5, 5);
+    }
+
+    @Override
+    protected String getText(boolean example) {
+        if (example) {
+            return "42";
+        }
+        World world = Minecraft.getMinecraft().world;
+        if (world == null) {
+            return "—";
+        }
+        return Long.toString(HudFormat.dayNumber(world.getWorldTime()));
+    }
+}

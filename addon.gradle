@@ -143,3 +143,13 @@ tasks.matching { it.name == 'reobfJar' }.configureEach {
         }
     }
 }
+
+// OneConfig in dev runs (see dependencies.gradle). The bootstrap's own manifest is empty, so
+// name its tweaker here; it downloads OneConfig into run/OneConfig on the first launch. Client
+// only: OneConfig is a client mod, and cascading it into runServer crashes the server.
+boolean isDevServerRun = project.gradle.startParameter.taskNames.any { it.contains('runServer') }
+if (!isDevServerRun) {
+    minecraft {
+        extraTweakClasses.add('cc.polyfrost.oneconfig.loader.stage0.LaunchWrapperTweaker')
+    }
+}

@@ -77,9 +77,17 @@ See the wiki: [creative search and sort](https://mica-technologies.github.io/LDI
 [hotbar](https://mica-technologies.github.io/LDIC/inventory/hotbar/),
 [inventory theme screens](https://mica-technologies.github.io/LDIC/themes/inventory/).
 
-### On the way
+### HUD (with OneConfig)
 
-- **HUD:** SUM's general-purpose HUD elements move into LDIC, with a OneConfig settings page.
+- 32 information HUDs (coordinates, facing, biome, clock, day, health, food, armour, effects,
+  tool durability, FPS, frame time, TPS, memory, ping, speed, light level, counters and more)
+  plus ten custom-text slots with `%placeholders%`, each dragged into place in OneConfig's
+  editor; style and layout presets apply in one click.
+- LDIC's OneConfig page also holds the hotbar and inventory settings.
+- These HUDs moved here from SUM; a player's saved layout comes with them. SUM keeps the HUDs
+  that read its own server data, and the shared presets leave room for each other's rows.
+- Needs [OneConfig](https://polyfrost.org/projects/oneconfig/) in the pack (Alto ships it). Without
+  it, LDIC works as before with these two parts off.
 
 ## Installing
 
@@ -132,6 +140,14 @@ unit-tested on a plain JVM.
 - **Push to `main`:** builds and publishes a pre-release with checksums. A manual dispatch cuts a
   full `YYYY.MM.DD` release.
 - The wiki in `docs/` is built with MkDocs (`--strict`) and published to GitHub Pages.
+
+## Credits
+
+| Project | License | How LDIC uses it |
+| --- | --- | --- |
+| [OneConfig](https://github.com/Polyfrost/OneConfig) by Polyfrost | LGPL-3.0 + Additional Terms | The HUD elements and LDIC's settings page are built on it (compile-only; the pack provides it). The loading screen and menu do not use it. |
+| [EvergreenHUD](https://github.com/Polyfrost/EvergreenHUD) by Polyfrost | GPL-3.0 | Design reference for the HUD-element catalog (one OneConfig HUD per piece of information), by way of SUM, where these HUDs started. No code reused. |
+| Custom Main Menu (lumien231), Custom Loading Screen (AlexIIL) | MIT, GPL-3.0 | Behaviour and config shapes studied; LDIC is a clean-room replacement with none of their code, samples or textures. |
 
 ## License
 

@@ -1,6 +1,7 @@
 package com.micatechnologies.minecraft.ldic.client;
 
 import com.micatechnologies.minecraft.ldic.client.hud.HotbarHud;
+import com.micatechnologies.minecraft.ldic.client.hud.OneConfigSupport;
 import com.micatechnologies.minecraft.ldic.client.inventory.InventoryScreens;
 import com.micatechnologies.minecraft.ldic.client.inventory.SurvivalSearch;
 import com.micatechnologies.minecraft.ldic.client.menu.MenuManager;
@@ -29,6 +30,7 @@ public final class LdicClient {
         MinecraftForge.EVENT_BUS.register(new HotbarHud(settings));
         MinecraftForge.EVENT_BUS.register(new InventoryScreens(settings));
         MinecraftForge.EVENT_BUS.register(new SurvivalSearch());
+        OneConfigSupport.start();
     }
 
     public static MenuManager menu() {

@@ -38,15 +38,28 @@
  * For more details, see https://docs.gradle.org/8.4/userguide/java_library_plugin.html#sec:java_library_configurations_graph
  */
 dependencies {
-    // LDIC has no third-party mod dependencies, and that is deliberate. It replaces the
-    // loading screen and title screen that every modpack sees first, so it must load in any
-    // pack without dragging a library mod in after it.
+    // The loading screen and title screen stay free of third-party mods: they replace what every
+    // modpack sees first, so they must work in any pack without dragging a library mod in after
+    // them. (The loading screen runs before any mod is constructed, so it can only use plain
+    // LWJGL2/GL11; the title screen shares its rendering core.)
     //
     // Notably NOT depended on:
     //   - Custom Main Menu (lumien231) and Custom Loading Screen (AlexIIL). LDIC replaces them;
     //     their code was read to understand the behaviour and config formats packs rely on, and
     //     none of it is copied. See docs/AGENT-PLANS/.
-    //   - Any GUI framework (MalisisCore, ModularUI, ...). The loading screen runs before any
-    //     mod is constructed, so it can only use plain LWJGL2/GL11; the title screen follows
-    //     the same rendering core so themes look identical on both.
+    //   - Any GUI framework (MalisisCore, ModularUI, ...).
+    //
+    // OneConfig (Polyfrost) is the exception, for the in-game parts only: the HUD elements
+    // (moved here from SUM) and LDIC's OneConfig settings page are built on it. LDIC checks it is
+    // present before touching any of it, so without OneConfig those two are simply off and
+    // everything else works. The same 0.2.x line SUM and EvergreenHUD pin.
+    //   - oneconfig-1.12.2-forge: the API, compileOnly ONLY. Its manifest names a tweaker class
+    //     the jar does not contain, so on the dev runtime classpath GradleStart would crash.
+    //   - oneconfig-wrapper-launchwrapper: the stage0 bootstrap that downloads OneConfig.
+    //     Dev runs only (see addon.gradle's extraTweakClasses). It is NOT embedded in the jar:
+    //     without a TweakClass manifest entry it would never run, and a TweakClass entry removes
+    //     the jar from FML 1.12.2 mod discovery (see the manifest guard in addon.gradle). Players
+    //     get OneConfig from the pack (Alto ships it; OneConfig-Bootstrap works on its own).
+    compileOnly 'cc.polyfrost:oneconfig-1.12.2-forge:0.2.2-alpha+'
+    devOnlyNonPublishable 'cc.polyfrost:oneconfig-wrapper-launchwrapper:1.0.0-beta+'
 }

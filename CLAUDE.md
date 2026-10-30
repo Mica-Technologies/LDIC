@@ -72,6 +72,13 @@ Minecraft-facing (`client`):
 - `hud.HotbarHud`: modern hotbar, size and auto-hide. One GL transform per bottom-group element,
   pushed in its overlay `Pre` and popped in `Post`; nothing pushed at size 1 and fully shown.
 - `LdicConfigScreen` (Mods list Config): hotbar and inventory settings, saved to `player.json`.
+- `hud` (OneConfig, compileOnly; the pack provides it): `OneConfigSupport` starts `LdicOneConfig`
+  only when OneConfig's classes exist (nothing else may reference OneConfig types).
+  `LdicOneConfig` mirrors the hotbar/inventory settings to and from `LdicSettings`, owns the HUD
+  elements moved from SUM (`hud.elements`, field names kept so `migrateFromSum` can copy a
+  player's `sum.json` entries) and the presets (`hud.presets`; SUM has a copy for its own HUDs:
+  keep names, order and positions in step, and both leave room for the other mod's rows).
+  OneConfig's own GUI polls the real mouse, so MCMCP cannot click inside it.
 - `menu.InventoryTheme`: the menu theme's `inventory`/`crafting`/`container`/`creative` screens drawn
   in place of an inventory's background and labels (the screen keeps all its logic), at one layout
   unit per GUI pixel. Slot groups and named areas reach the theme through `area_x(name)` etc. and

@@ -116,6 +116,7 @@ nav:
       - Survival search and sort: inventory/survival.md
       - Full-screen inventory: inventory/full-screen.md
       - Hotbar: inventory/hotbar.md
+      - HUD (OneConfig): inventory/hud.md
   - Help:
       - Troubleshooting: help/troubleshooting.md
       - Settings: help/settings.md

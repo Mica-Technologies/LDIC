@@ -1,5 +1,6 @@
 package com.micatechnologies.minecraft.ldic.client;
 
+import com.micatechnologies.minecraft.ldic.client.hud.OneConfigSupport;
 import java.io.IOException;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -96,6 +97,7 @@ public final class LdicConfigScreen extends GuiScreen {
         settings.hotbarScale = Math.round(scale.getValue()) / 100.0;
         settings.hotbarHideDelay = Math.round(delay.getValue() * 10) / 10.0;
         settings.saveHotbarAndInventory(LdicClient.configDir());
+        OneConfigSupport.refresh();
     }
 
     @Override

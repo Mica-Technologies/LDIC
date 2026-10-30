@@ -2,6 +2,7 @@ package com.micatechnologies.minecraft.ldic.client.inventory;
 
 import com.micatechnologies.minecraft.ldic.client.LdicClient;
 import com.micatechnologies.minecraft.ldic.client.LdicSettings;
+import com.micatechnologies.minecraft.ldic.client.hud.OneConfigSupport;
 import com.micatechnologies.minecraft.ldic.inventory.CreativeLayout;
 import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiContainer;
 import java.util.Arrays;
@@ -162,6 +163,7 @@ public final class InventoryScreens {
         Minecraft mc = Minecraft.getMinecraft();
         settings.inventoryFullScreen = !settings.inventoryFullScreen;
         settings.saveHotbarAndInventory(LdicClient.configDir());
+        OneConfigSupport.refresh();
         mc.getSoundHandler().playSound(PositionedSoundRecord.getMasterRecord(SoundEvents.UI_BUTTON_CLICK, 1.0F));
         if (gui instanceof LdicCreativeScreen || gui instanceof GuiContainerCreative) {
             // GuiOpenEvent picks the right creative screen for the new setting.
