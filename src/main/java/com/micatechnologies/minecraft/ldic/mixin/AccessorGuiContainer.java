@@ -3,8 +3,9 @@ package com.micatechnologies.minecraft.ldic.mixin;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Accessor;
+import org.spongepowered.asm.mixin.gen.Invoker;
 
-/** An inventory screen's panel size and position, for full-screen scaling and its toggle button. */
+/** An inventory screen's panel size and position (full-screen scaling, its toggle, themes) and its layer drawing. */
 @Mixin(GuiContainer.class)
 public interface AccessorGuiContainer {
 
@@ -19,4 +20,10 @@ public interface AccessorGuiContainer {
 
     @Accessor("guiTop")
     int ldic$getGuiTop();
+
+    @Invoker("drawGuiContainerBackgroundLayer")
+    void ldic$drawBackgroundLayer(float partialTicks, int mouseX, int mouseY);
+
+    @Invoker("drawGuiContainerForegroundLayer")
+    void ldic$drawForegroundLayer(int mouseX, int mouseY);
 }

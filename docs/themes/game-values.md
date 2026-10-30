@@ -56,6 +56,11 @@ Names LDIC provides to every menu theme, on top of the [built-in functions](expr
 | `server_ping(address)` | Round trip in ms, -1 while unknown |
 | `web_text(url)` | A text file from the web, cached (also offline) and refreshed every 10 minutes; empty until it arrives |
 | `web_line(url, i)`, `web_line_count(url)` | Its paragraphs (separated by blank lines), wrapping: `web_line(url, floor(time / 8))` rotates them |
+| `area_x(name)`, `area_y(name)`, `area_w(name)`, `area_h(name)`, `has_area(name)` | On [inventory screens](inventory.md): where a named area is, in GUI pixels (0 when it is absent) |
+
+On inventory screens there are also `container_title` (string: "Chest", "Large Chest", a renamed
+shulker box's name) and the player's `player_health`, `player_max_health`, `player_food`,
+`player_armor`, `player_level` and `player_xp` (0–1 through the level).
 
 Every element also has its own values (`hover`, `hover_t`, `pw`, …); see
 [Elements](elements.md#common-properties).

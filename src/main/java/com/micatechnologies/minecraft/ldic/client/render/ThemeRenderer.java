@@ -30,6 +30,8 @@ public final class ThemeRenderer implements NodeRenderer {
     /** The rectangle (layout units) of the theme's foreign_buttons element this frame, or null. */
     public double[] foreignArea;
     public UiNode foreignNode;
+    /** The open inventory screen, for {@code slots} and {@code player_model}; null elsewhere. */
+    public InventoryHooks inventory;
     private final List<PanoramaRenderer> panoramas = new ArrayList<>();
 
     public ThemeRenderer(Textures textures, Fonts fonts, java.util.function.Consumer<UiNode> hoverStarted) {
@@ -153,9 +155,66 @@ public final class ThemeRenderer implements NodeRenderer {
                 foreignArea = new double[] {n.x, n.y, n.width, n.height};
                 foreignNode = n;
                 break;
+            case "slots":
+                drawSlots(n);
+                break;
+            case "player_model":
+                if (inventory != null) {
+                    inventory.drawPlayer(n.x, n.y, n.width, n.height, n.def.bool("follow_mouse", true));
+                    Gfx.beginUi();
+                }
+                break;
             default:
                 break;
         }
+    }
+
+    /** A cell behind each slot of the group; the node's own box is not used. */
+    private void drawSlots(UiNode n) {
+        if (inventory == null) {
+            return;
+        }
+        ElementDef d = n.def;
+        String group = d.statik("group", "all");
+        int[] at = inventory.slots(group);
+        int selected = inventory.selected(group);
+        double size = d.num("size", 18);
+        double inset = (size - 16) / 2;
+        long fill = colour(d, "colour", 0x50000000L);
+        long selectedFill = d.has("selected_colour") ? colour(d, "selected_colour", fill) : fill;
+        boolean border = d.has("border_colour");
+        long edge = colour(d, "border_colour", 0);
+        long selectedEdge = d.has("selected_border_colour") ? colour(d, "selected_border_colour", edge) : edge;
+        double radius = d.num("radius", 0);
+        double width = d.num("border_width", 1);
+        String image = d.str("image", null);
+        Textures.Texture t = image == null ? null : textures.get(image, "linear".equals(d.statik("filter", "nearest")));
+        long tint = colour(d, "tint", 0xFFFFFFFFL);
+        double bx = n.x;
+        double by = n.y;
+        double bw = n.width;
+        double bh = n.height;
+        for (int i = 0; i * 2 + 1 < at.length; i++) {
+            double x0 = at[i * 2] - inset;
+            double y0 = at[i * 2 + 1] - inset;
+            boolean sel = i == selected;
+            long c = sel ? selectedFill : fill;
+            Gfx.roundedRect(x0, y0, x0 + size, y0 + size, radius, c, c, n.opacity);
+            if (t != null) {
+                n.x = x0;
+                n.y = y0;
+                n.width = size;
+                n.height = size;
+                drawTexture(n, t, tint, n.opacity);
+            }
+            if (border || sel && d.has("selected_border_colour")) {
+                Gfx.roundedBorder(x0, y0, x0 + size, y0 + size, radius, width, sel ? selectedEdge : edge, n.opacity);
+            }
+        }
+        n.x = bx;
+        n.y = by;
+        n.width = bw;
+        n.height = bh;
     }
 
     // -------------------------------------------------------------------------------------

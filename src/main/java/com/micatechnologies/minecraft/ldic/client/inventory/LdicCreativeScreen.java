@@ -2,13 +2,16 @@ package com.micatechnologies.minecraft.ldic.client.inventory;
 
 import com.micatechnologies.minecraft.ldic.client.inventory.LdicCreativeContainer.GridSlot;
 import com.micatechnologies.minecraft.ldic.client.inventory.LdicCreativeContainer.PlayerSlot;
+import com.micatechnologies.minecraft.ldic.client.menu.InventoryTheme;
 import com.micatechnologies.minecraft.ldic.inventory.CreativeLayout;
 import com.micatechnologies.minecraft.ldic.inventory.CreativeLayout.Rect;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Nullable;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.Gui;
@@ -245,16 +248,64 @@ public final class LdicCreativeScreen extends GuiContainer {
         CreativeLayout l = layout;
         int accent = InventoryStyle.accent();
         GlStateManager.color(1, 1, 1, 1);
+        InventoryTheme theme = InventoryTheme.of(this);
+        if (theme == null || !theme.draw(mouseX, mouseY, areas())) {
+            drawChrome(mouseX, mouseY, accent);
+        }
+        drawControls(mouseX, mouseY, accent);
+    }
+
+    /** The named areas a {@code creative} theme screen lays itself out by. */
+    private Map<String, double[]> areas() {
+        CreativeLayout l = layout;
+        Map<String, double[]> areas = new HashMap<>();
+        areas.put("panel", new double[] {0, 0, width, height});
+        for (Map.Entry<String, Rect> e : namedRects().entrySet()) {
+            Rect r = e.getValue();
+            areas.put(e.getKey(), new double[] {r.x, r.y, r.w, r.h});
+        }
+        areas.put("model", new double[] {l.armorX + 19, l.armorY - 1, l.offhandX - 3 - (l.armorX + 19), 4 * CreativeLayout.CELL - 2});
+        areas.put("trash", new double[] {l.trashX - 1, l.trashY - 1, 18, 18});
+        return areas;
+    }
+
+    private Map<String, Rect> namedRects() {
+        Map<String, Rect> m = new HashMap<>();
+        m.put("top", layout.top);
+        m.put("sidebar", layout.sidebar);
+        m.put("browser", layout.grid);
+        m.put("inventory", layout.player);
+        m.put("search", layout.search);
+        m.put("scrollbar", layout.scrollbar);
+        return m;
+    }
+
+    /** LDIC's own look, when the theme has no {@code creative} screen: panels, cells, labels, model. */
+    private void drawChrome(int mouseX, int mouseY, int accent) {
+        CreativeLayout l = layout;
         panel(l.top);
         panel(l.sidebar);
         panel(l.grid);
         panel(l.player);
-
-        // Top bar: title, search, sort, toggle.
         if (!l.compact) {
             String title = fontRenderer.trimStringToWidth(I18n.format(tab.getTranslationKey()), l.sidebar.w - 10);
             fontRenderer.drawString(title, l.top.x + 6, l.top.y + 6, InventoryStyle.TEXT);
         }
+        for (Slot slot : container.inventorySlots) {
+            InventoryStyle.cell(slot.xPos, slot.yPos);
+        }
+        fontRenderer.drawString(I18n.format("container.inventory"), l.player.x + 6, l.player.y + 5, InventoryStyle.TEXT_DIM);
+        int selected = mc.player.inventory.currentItem;
+        int hx = l.hotbarX + selected * CreativeLayout.CELL;
+        InventoryStyle.outline(hx - 1, l.hotbarY - 1, hx + 17, l.hotbarY + 17, accent);
+        Gui.drawRect(l.armorX + 19, l.armorY - 1, l.offhandX - 3, l.armorY + 4 * CreativeLayout.CELL - 3, 0x30000000);
+        GlStateManager.color(1, 1, 1, 1);
+        GuiInventory.drawEntityOnScreen(l.modelX, l.modelY, 30, l.modelX - mouseX, l.modelY - 50 - mouseY, mc.player);
+    }
+
+    /** What works the screen, themed or not: search, sort, toggle, tabs, scrollbar, trash. */
+    private void drawControls(int mouseX, int mouseY, int accent) {
+        CreativeLayout l = layout;
         Rect s = l.search;
         boolean searchHover = s.contains(mouseX, mouseY);
         InventoryStyle.panel(s.x, s.y, s.right(), s.bottom(), 0xA0000000,
@@ -271,34 +322,12 @@ public final class LdicCreativeScreen extends GuiContainer {
         InventoryScreens.drawToggle(l.toggle.x, l.toggle.y, l.toggle.w, l.toggle.contains(mouseX, mouseY), true);
 
         drawSidebar(mouseX, mouseY, accent);
-
-        // Item grid.
-        for (Slot slot : container.inventorySlots) {
-            if (slot instanceof GridSlot) {
-                InventoryStyle.cell(slot.xPos, slot.yPos);
-            }
-        }
         if (container.items.isEmpty()) {
             String none = I18n.format("ldic.creative.search.none");
             fontRenderer.drawString(none, l.grid.x + (l.grid.w - fontRenderer.getStringWidth(none)) / 2, l.grid.y + 30, InventoryStyle.TEXT_DIM);
         }
         drawScrollbar(mouseX, mouseY, accent);
-
-        // Player inventory.
-        fontRenderer.drawString(I18n.format("container.inventory"), l.player.x + 6, l.player.y + 5, InventoryStyle.TEXT_DIM);
-        for (Slot slot : container.inventorySlots) {
-            if (slot instanceof PlayerSlot) {
-                InventoryStyle.cell(slot.xPos, slot.yPos);
-            }
-        }
-        int selected = mc.player.inventory.currentItem;
-        int hx = l.hotbarX + selected * CreativeLayout.CELL;
-        InventoryStyle.outline(hx - 1, l.hotbarY - 1, hx + 17, l.hotbarY + 17, accent);
         drawTrash(mouseX, mouseY);
-        int modelTop = l.armorY;
-        Gui.drawRect(l.armorX + 19, modelTop - 1, l.offhandX - 3, l.armorY + 4 * CreativeLayout.CELL - 3, 0x30000000);
-        GlStateManager.color(1, 1, 1, 1);
-        GuiInventory.drawEntityOnScreen(l.modelX, l.modelY, 30, l.modelX - mouseX, l.modelY - 50 - mouseY, mc.player);
     }
 
     private static void panel(Rect r) {

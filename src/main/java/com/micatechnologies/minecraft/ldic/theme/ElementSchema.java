@@ -166,6 +166,26 @@ public final class ElementSchema {
                 new Prop("destroy_when", Kind.STATIC, null),
                 new Prop("template", Kind.STATIC, null));
 
+        // Inventory screens only. A cell behind every slot of a group, at the slot's own position
+        // (slots belong to the game; a theme decorates around them, it cannot move them).
+        type("slots",
+                new Prop("group", Kind.ENUM, "all", "all", "player", "main", "hotbar", "armor", "offhand",
+                        "crafting", "result", "container", "grid"),
+                new Prop("size", Kind.NUMBER, 18),
+                new Prop("colour", Kind.COLOUR, 0x50000000L),
+                new Prop("border_colour", Kind.COLOUR, null),
+                new Prop("border_width", Kind.NUMBER, 1),
+                new Prop("radius", Kind.NUMBER, 0),
+                new Prop("selected_colour", Kind.COLOUR, null),
+                new Prop("selected_border_colour", Kind.COLOUR, null),
+                new Prop("image", Kind.TEXT, null),
+                new Prop("tint", Kind.COLOUR, 0xFFFFFFFFL),
+                new Prop("filter", Kind.ENUM, "nearest", "linear", "nearest"));
+
+        // Inventory screens only: the player, standing in the element's box, looking at the pointer.
+        type("player_model",
+                new Prop("follow_mouse", Kind.BOOL, true));
+
         type("foreign_buttons",
                 new Prop("layout", Kind.ENUM, "column", "keep", "row", "column"),
                 new Prop("spacing", Kind.NUMBER, 4),

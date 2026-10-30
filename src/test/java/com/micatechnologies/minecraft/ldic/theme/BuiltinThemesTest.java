@@ -64,6 +64,15 @@ class BuiltinThemesTest {
         s.define(Function.num("month", false, a -> 1));
         s.define(Function.num("day", false, a -> 1));
         s.define(Function.num("hour", false, a -> 12));
+        s.declare("container_title", Type.STRING);
+        for (String n : new String[] {"player_health", "player_max_health", "player_food", "player_armor",
+                "player_level", "player_xp"}) {
+            s.declare(n, Type.NUMBER);
+        }
+        for (String f : new String[] {"area_x", "area_y", "area_w", "area_h"}) {
+            s.define(Function.num(f, false, a -> 10, Type.STRING));
+        }
+        s.define(Function.bool("has_area", false, a -> true, Type.STRING));
         return s;
     }
 

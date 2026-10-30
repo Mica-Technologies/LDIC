@@ -152,6 +152,25 @@ To put your own button over a specific mod button, give it `"wrap": "<id or clas
 button is hidden, and clicking yours clicks it, firing the mod's event handlers exactly once. The
 id or class shows in the log when a wrap target is not found.
 
+## slots
+
+[Inventory screens](inventory.md) only. Draws a cell behind every slot of a group, at the slot's
+own position: the game decides where slots are, the theme decides how they look. The element's
+own box is not used.
+
+| Property | Type | Default | Meaning |
+| --- | --- | --- | --- |
+| `group` | `all` / `player` / `main` / `hotbar` / `armor` / `offhand` / `crafting` / `result` / `container` / `grid` | `all` | Which slots; `player` is main + hotbar + armour + offhand, `grid` the full-screen creative item grid |
+| `size` | number *expr* | `18` | Cell size, centred on the 16-pixel item |
+| `colour`, `border_colour`, `border_width`, `radius` | | `#50000000`, none, `1`, `0` | As for rect |
+| `selected_colour`, `selected_border_colour` | colour *expr* | as unselected | For the player's selected hotbar slot |
+| `image`, `tint`, `filter` | | | An image drawn in each cell (`nearest` by default, for pixel art) |
+
+## player_model
+
+[Inventory screens](inventory.md) only. The player, standing in the element's box (the box height
+sets the size), turning to look at the pointer unless `follow_mouse` is `false`.
+
 ## slider
 
 Drag to set a value. Bound to a game option with `option`, it reads and sets that option; see

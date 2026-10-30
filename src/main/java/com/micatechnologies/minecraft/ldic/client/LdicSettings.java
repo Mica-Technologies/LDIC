@@ -74,6 +74,8 @@ public final class LdicSettings {
     public boolean inventoryFullScreen = false;
     /** Also scale up other mods' inventory screens in full-screen mode (off: some draw their own overlays). */
     public boolean inventoryScaleModScreens = false;
+    /** Draw inventories with the menu theme's inventory screens, when it has them. */
+    public boolean inventoryThemed = true;
     /** Accent for LDIC's inventory and hotbar when the menu theme has no "accent" constant. */
     public int inventoryAccent = 0xFF4FC3F7;
 
@@ -244,6 +246,7 @@ public final class LdicSettings {
         if (inventory != null) {
             inventoryFullScreen = bool(inventory, "full_screen", inventoryFullScreen);
             inventoryScaleModScreens = bool(inventory, "scale_mod_screens", inventoryScaleModScreens);
+            inventoryThemed = bool(inventory, "themed", inventoryThemed);
             Long accent = Library.parseHexColour(str(inventory, "accent", null));
             if (accent != null) {
                 inventoryAccent = (int) (long) accent;
@@ -313,6 +316,7 @@ public final class LdicSettings {
         JsonObject inventory = new JsonObject();
         inventory.addProperty("full_screen", inventoryFullScreen);
         inventory.addProperty("scale_mod_screens", inventoryScaleModScreens);
+        inventory.addProperty("themed", inventoryThemed);
         inventory.addProperty("accent", String.format("#%06X", inventoryAccent & 0xFFFFFF));
         o.add("inventory", inventory);
         o.addProperty("debug", debug);

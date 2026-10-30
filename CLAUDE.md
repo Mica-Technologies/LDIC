@@ -72,13 +72,19 @@ Minecraft-facing (`client`):
 - `hud.HotbarHud`: modern hotbar, size and auto-hide. One GL transform per bottom-group element,
   pushed in its overlay `Pre` and popped in `Post`; nothing pushed at size 1 and fully shown.
 - `LdicConfigScreen` (Mods list Config): hotbar and inventory settings, saved to `player.json`.
+- `menu.InventoryTheme`: the menu theme's `inventory`/`crafting`/`container`/`creative` screens drawn
+  in place of an inventory's background and labels (the screen keeps all its logic), at one layout
+  unit per GUI pixel. Slot groups and named areas reach the theme through `area_x(name)` etc. and
+  the `slots`/`player_model` elements (`render.InventoryHooks`; null on other screens). Furnaces,
+  brewing, enchanting, anvils and mod screens are never themed (their backgrounds hold logic).
 
 Mixins (`mixins.ldic.json`, all in `"client"`): `Accessor*` (vanilla screen fields LDIC reads),
 `MixinSplashProgress` (thread takeover + null-safe texture deletes in `finish()`), `MixinMinecraft`
 (lifts vanilla's 30 fps menu cap for LDIC screens; redirects the world start/stop sleeps so the
 themed world-loading screen keeps drawing), `MixinLoadingScreenRenderer` (draws `menu.WorldLoading`
 in place of the dirt progress screen), `MixinGuiContainerCreative` (tab search box + sort button),
-`MixinGuiContainer` (full-screen toggle click, before the screen's own), `MixinForgeHooksClient`
+`MixinGuiContainer` (theme in place of background + labels; full-screen toggle click before the
+screen's own), `MixinForgeHooksClient`
 (scales a full-screen inventory's drawing and converts the mouse for it and both draw events),
 `MixinGuiIngameForge` (held-item name follows the hotbar's size and slide). `LdicCoreMod`
 registers the config through MixinBooter's `IEarlyMixinLoader`.

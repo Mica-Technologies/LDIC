@@ -59,6 +59,16 @@ public final class HostBindings {
     private final Slot statusDetail = scope.declare("status_detail", STRING);
     private final Slot statusProgress = scope.declare("status_progress", NUMBER);
 
+    // Inventory screens: the container's title, the player's state, and named areas (see setInventory).
+    private final Slot containerTitle = scope.declare("container_title", STRING);
+    private final Slot playerHealth = scope.declare("player_health", NUMBER);
+    private final Slot playerMaxHealth = scope.declare("player_max_health", NUMBER);
+    private final Slot playerFood = scope.declare("player_food", NUMBER);
+    private final Slot playerArmor = scope.declare("player_armor", NUMBER);
+    private final Slot playerLevel = scope.declare("player_level", NUMBER);
+    private final Slot playerXp = scope.declare("player_xp", NUMBER);
+    private Map<String, double[]> areas = new HashMap<>();
+
     private final Map<String, SimpleDateFormat> dateFormats = new HashMap<>();
     private String splash = "";
     private int frames;
@@ -117,6 +127,23 @@ public final class HostBindings {
         scope.define(Function.num("month", false, a -> Calendar.getInstance().get(Calendar.MONTH) + 1));
         scope.define(Function.num("day", false, a -> Calendar.getInstance().get(Calendar.DAY_OF_MONTH)));
         scope.define(Function.num("hour", false, a -> Calendar.getInstance().get(Calendar.HOUR_OF_DAY)));
+        // Inventory screens: a named rectangle ("panel", "player", "container", ...), 0 when absent.
+        scope.define(Function.num("area_x", false, a -> area(a[0].str(), 0), STRING));
+        scope.define(Function.num("area_y", false, a -> area(a[0].str(), 1), STRING));
+        scope.define(Function.num("area_w", false, a -> area(a[0].str(), 2), STRING));
+        scope.define(Function.num("area_h", false, a -> area(a[0].str(), 3), STRING));
+        scope.define(Function.bool("has_area", false, a -> areas.containsKey(a[0].str()), STRING));
+    }
+
+    private double area(String name, int i) {
+        double[] r = areas.get(name);
+        return r == null ? 0 : r[i];
+    }
+
+    /** What an inventory screen shows this frame: its title and named areas (x, y, w, h). */
+    public void setInventory(String title, Map<String, double[]> areas) {
+        containerTitle.set(title == null ? "" : title);
+        this.areas = areas;
     }
 
     /** How many of other mods' buttons are showing on the current screen. */
@@ -158,6 +185,14 @@ public final class HostBindings {
         singleplayer.set(mcNow.isSingleplayer());
         lanOpen.set(mcNow.isSingleplayer() && mcNow.getIntegratedServer() != null && mcNow.getIntegratedServer().getPublic());
         cheats.set(mcNow.player != null && mcNow.player.canUseCommand(2, ""));
+        if (mcNow.player != null) {
+            playerHealth.set(mcNow.player.getHealth());
+            playerMaxHealth.set(mcNow.player.getMaxHealth());
+            playerFood.set(mcNow.player.getFoodStats().getFoodLevel());
+            playerArmor.set(mcNow.player.getTotalArmorValue());
+            playerLevel.set(mcNow.player.experienceLevel);
+            playerXp.set(mcNow.player.experience);
+        }
         Runtime rt = Runtime.getRuntime();
         double mib = 1024.0 * 1024.0;
         memTotal.set(Math.round(rt.totalMemory() / mib));

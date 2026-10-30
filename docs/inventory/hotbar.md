@@ -3,13 +3,13 @@
 LDIC redraws the hotbar in its own style and lets each player choose its size and whether it
 hides itself.
 
-![The modern hotbar at 1.5 times its size](../assets/screenshots/hotbar-modern.png){ .shot }
+![The modern hotbar at its normal size, the same as vanilla's](../assets/screenshots/hotbar-modern.png){ .shot }
 
 ## Style
 
-The **modern** style (the default) is a translucent dark bar with an accent outline on the
-selected slot that glides from slot to slot. The accent comes from the menu theme's `accent`
-constant, so the game matches the menu. **Vanilla** keeps Minecraft's own textures and still
+The **modern** style (the default) is a translucent dark bar, exactly the size of vanilla's,
+with an accent outline on the selected slot that glides from slot to slot. The accent comes
+from the menu theme's `accent` constant, so the game matches the menu. **Vanilla** keeps Minecraft's own textures and still
 honours size and auto-hide.
 
 ## Size

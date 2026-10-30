@@ -238,6 +238,73 @@
       ]
     },
 
+    "inventory": {
+      "elements": [
+        { "id": "inv_panel", "type": "rect", "radius": 6, "colour": "#EC161026", "border_colour": "#507C4DFF",
+          "x": "area_x('panel') - 6", "y": "area_y('panel') - 6", "width": "area_w('panel') + 12", "height": "area_h('panel') + 12" },
+        { "id": "inv_rule", "type": "rect", "colour": "accent", "height": 2,
+          "x": "area_x('panel') + 8", "y": "area_y('panel') - 6", "width": "28" },
+        { "id": "inv_model_box", "type": "rect", "radius": 3, "colour": "#40000000",
+          "x": "area_x('panel') + 26", "y": "area_y('panel') + 8", "width": 49, "height": 70 },
+        { "id": "inv_model", "type": "player_model",
+          "x": "area_x('panel') + 26", "y": "area_y('panel') + 8", "width": 49, "height": 70 },
+        { "id": "inv_slots", "type": "slots", "radius": 3, "colour": "#48000000", "border_colour": "#1CFFFFFF",
+          "selected_colour": "#30FFFFFF", "selected_border_colour": "accent" },
+        { "id": "inv_crafting_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false,
+          "text": "{translate('container.crafting')}", "x": "area_x('crafting')", "y": "area_y('crafting') - 11" },
+        { "id": "inv_arrow", "type": "text", "font": "ui_bold", "size": 12, "colour": "accent", "shadow": false, "text": "\u2192",
+          "x": "area_x('crafting') + area_w('crafting') + 5", "y": "area_y('result') + 3" }
+      ]
+    },
+
+    "crafting": {
+      "elements": [
+        { "id": "craft_frame", "type": "include", "screen": "inventory", "ids": ["inv_panel", "inv_rule", "inv_slots"] },
+        { "id": "craft_title", "type": "text", "font": "ui_bold", "size": 9, "colour": "#F0FFFFFF", "shadow": false,
+          "text": "{translate('container.crafting')}", "x": "area_x('panel') + 8", "y": "area_y('panel') + 5" },
+        { "id": "craft_arrow", "type": "text", "font": "ui_bold", "size": 16, "colour": "accent", "shadow": false, "text": "\u2192",
+          "x": "(area_x('crafting') + area_w('crafting') + area_x('result')) / 2 - 7", "y": "area_y('result') + 1" },
+        { "id": "craft_inventory_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false,
+          "text": "{translate('container.inventory')}", "x": "area_x('main')", "y": "area_y('main') - 11" }
+      ]
+    },
+
+    "container": {
+      "elements": [
+        { "id": "chest_frame", "type": "include", "screen": "inventory", "ids": ["inv_panel", "inv_rule", "inv_slots"] },
+        { "id": "chest_title", "type": "text", "font": "ui_bold", "size": 9, "colour": "#F0FFFFFF", "shadow": false,
+          "text": "{container_title}", "x": "area_x('container')", "y": "area_y('container') - 11" },
+        { "id": "chest_inventory_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false,
+          "text": "{translate('container.inventory')}", "x": "area_x('main')", "y": "area_y('main') - 11" }
+      ]
+    },
+
+    "creative": {
+      "elements": [
+        { "id": "cr_top", "type": "rect", "radius": 6, "colour": "#EC161026", "border_colour": "#507C4DFF",
+          "x": "area_x('top')", "y": "area_y('top')", "width": "area_w('top')", "height": "area_h('top')" },
+        { "id": "cr_rule", "type": "rect", "colour": "accent", "height": 2,
+          "x": "area_x('top') + 8 + 6", "y": "area_y('top')", "width": "28" },
+        { "id": "cr_sidebar", "type": "rect", "radius": 6, "colour": "#EC161026", "border_colour": "#507C4DFF",
+          "x": "area_x('sidebar')", "y": "area_y('sidebar')", "width": "area_w('sidebar')", "height": "area_h('sidebar')" },
+        { "id": "cr_browser", "type": "rect", "radius": 6, "colour": "#EC161026", "border_colour": "#507C4DFF",
+          "x": "area_x('browser')", "y": "area_y('browser')", "width": "area_w('browser')", "height": "area_h('browser')" },
+        { "id": "cr_inventory", "type": "rect", "radius": 6, "colour": "#EC161026", "border_colour": "#507C4DFF",
+          "x": "area_x('inventory')", "y": "area_y('inventory')", "width": "area_w('inventory')", "height": "area_h('inventory')" },
+        { "id": "cr_title", "type": "text", "font": "ui_bold", "size": 10, "colour": "#F0FFFFFF", "shadow": false,
+          "text": "{translate('selectWorld.gameMode.creative')}",
+          "visible": "area_w('sidebar') > 60", "x": "area_x('top') + 7", "y": "area_y('top') + 6" },
+        { "id": "cr_inventory_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false,
+          "text": "{translate('container.inventory')}", "x": "area_x('inventory') + 6", "y": "area_y('inventory') + 5" },
+        { "id": "cr_model_box", "type": "rect", "radius": 3, "colour": "#40000000",
+          "x": "area_x('model')", "y": "area_y('model')", "width": "area_w('model')", "height": "area_h('model')" },
+        { "id": "cr_model", "type": "player_model",
+          "x": "area_x('model')", "y": "area_y('model')", "width": "area_w('model')", "height": "area_h('model')" },
+        { "id": "cr_slots", "type": "slots", "radius": 3, "colour": "#48000000", "border_colour": "#1CFFFFFF",
+          "selected_colour": "#30FFFFFF", "selected_border_colour": "accent" }
+      ]
+    },
+
     "world_loading": {
       "elements": [
         { "id": "loading_background", "type": "include", "screen": "main", "ids": ["backdrop", "art", "shade"] },

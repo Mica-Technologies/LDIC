@@ -54,11 +54,14 @@ studied, but none of their code, config samples or textures were copied.
 - Richer search everywhere: several words in any order, `@mod`, `#tooltip`, `-exclude`.
 - Sort any tab by tab order, name, mod or item id, ascending or descending. Each tab
   remembers its choice. Useful in modpacks, where registration order leaves tabs in disarray.
-- Styled to match: LDIC's inventory and hotbar take their accent colour from the menu theme.
+- **Themed inventories**: the menu theme can draw the survival inventory, crafting table, chests
+  and the full-screen creative inventory (panels, slot cells, labels, the player) as theme
+  screens, while the game keeps all their behaviour. The built-in modern themes include them.
 
 ### Hotbar
 
-- A **modern** hotbar (translucent, with a gliding accent selection), or vanilla's.
+- A **modern** hotbar (translucent, with a gliding accent selection, the same size as vanilla's),
+  or vanilla's.
 - **Size** from 50% to 200%, independent of GUI scale. Health, food, armour, air, experience and
   the held item's name scale with it and keep their places.
 - **Auto-hide**: once you have been moving for a moment, the hotbar group slides away; changing
@@ -68,12 +71,12 @@ studied, but none of their code, config samples or textures were copied.
 
 See the wiki: [creative search and sort](https://mica-technologies.github.io/LDIC/inventory/creative/),
 [full-screen inventory](https://mica-technologies.github.io/LDIC/inventory/full-screen/),
-[hotbar](https://mica-technologies.github.io/LDIC/inventory/hotbar/).
+[hotbar](https://mica-technologies.github.io/LDIC/inventory/hotbar/),
+[inventory theme screens](https://mica-technologies.github.io/LDIC/themes/inventory/).
 
 ### On the way
 
-- **Theme-styled inventories:** inventory backgrounds and slots drawn from the theme, plus
-  search highlighting in survival.
+- **Survival search:** highlighting matching items in survival inventories and chests.
 - **HUD:** SUM's general-purpose HUD elements move into LDIC, with a OneConfig settings page.
 
 ## Installing

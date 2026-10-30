@@ -20,7 +20,7 @@ launcher that manages `settings.json` does not see it change.
   "intro_skip": { "hold_seconds": 1.5 },
   "pack": { "name": "", "version": "" },
   "hotbar": { "style": "modern", "scale": 1.0, "auto_hide": false, "hide_delay": 2.0 },
-  "inventory": { "full_screen": false, "scale_mod_screens": false, "accent": "#4FC3F7" },
+  "inventory": { "full_screen": false, "scale_mod_screens": false, "themed": true, "accent": "#4FC3F7" },
   "debug": false
 }
 ```
@@ -41,6 +41,7 @@ launcher that manages `settings.json` does not see it change.
 | `hotbar.*` | modern, 1, off, 2 | The pack's defaults for the [hotbar](../inventory/hotbar.md): `style` (`modern` or `vanilla`), `scale` (0.5–2), `auto_hide`, `hide_delay` (seconds of movement before it hides). Players change them in game. |
 | `inventory.full_screen` | `false` | Open inventories [full screen](../inventory/full-screen.md) by default |
 | `inventory.scale_mod_screens` | `false` | Also scale up other mods' inventory screens in full-screen mode |
+| `inventory.themed` | `true` | Draw the survival inventory, crafting table, chests and the full-screen creative inventory with the menu theme's [inventory screens](../themes/inventory.md), when it has them |
 | `inventory.accent` | `#4FC3F7` | Accent for LDIC's inventory and hotbar when the menu theme has no `accent` constant |
 | `debug` | `false` | List every theme problem on the menu, outline elements, save loading-screen and world-loading screenshots, log world-loading frame pacing |
 
