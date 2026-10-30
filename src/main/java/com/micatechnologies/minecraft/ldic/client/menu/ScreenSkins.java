@@ -1,9 +1,7 @@
 package com.micatechnologies.minecraft.ldic.client.menu;
 
 import com.micatechnologies.minecraft.ldic.Ldic;
-import com.micatechnologies.minecraft.ldic.client.render.Gfx;
 import com.micatechnologies.minecraft.ldic.client.render.SkinHooks;
-import com.micatechnologies.minecraft.ldic.expr.Expr;
 import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiButton;
 import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiCreateWorld;
 import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiDisconnected;
@@ -51,6 +49,10 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiScreenAddServer;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiWorldEdit;
+import net.minecraft.client.gui.advancements.GuiScreenAdvancements;
+import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiScreenAdvancements;
+import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiStats;
+import net.minecraft.client.gui.achievement.GuiStats;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.resources.I18n;
@@ -76,8 +78,9 @@ import org.lwjgl.opengl.GL11;
  * always stays usable. Vanilla's buttons are still "drawn" each frame with colour writes off,
  * which keeps their hover state and slider dragging working.</p>
  *
- * <p>Screens: {@link GuiCreateWorld} ({@code world_create}) and {@link GuiWorldEdit}
- * ({@code world_edit}); more follow the same pattern (see {@link #SKINS}).</p>
+ * <p>Screens: {@link GuiCreateWorld} ({@code world_create}), {@link GuiWorldEdit}
+ * ({@code world_edit}) and the others in {@link #SKINS}; the advancement screen draws its map and
+ * tabs through {@link AdvancementMap}.</p>
  */
 public final class ScreenSkins {
 
@@ -102,6 +105,21 @@ public final class ScreenSkins {
         SKINS.put(GuiVideoSettings.class, "options_video");
         SKINS.put(GuiControls.class, "options_controls");
         SKINS.put(GuiScreenResourcePacks.class, "packs");
+        SKINS.put(GuiScreenAdvancements.class, "advancement_tree");
+        SKINS.put(GuiStats.class, "player_stats");
+        EXTRAS.put(GuiStats.class, s -> {
+            Map<String, Object> m = new HashMap<>();
+            m.put("loading", ((AccessorGuiStats) s).ldic$isLoading());
+            return m;
+        });
+        EXTRAS.put(GuiScreenAdvancements.class, s -> {
+            AccessorGuiScreenAdvancements a = (AccessorGuiScreenAdvancements) s;
+            Map<String, Object> m = new HashMap<>();
+            m.put("empty", a.ldic$getSelectedTab() == null);
+            m.put("tab", a.ldic$getSelectedTab() == null ? "" : a.ldic$getSelectedTab().getTitle());
+            m.put("tabs", Integer.toString(a.ldic$getTabs().size()));
+            return m;
+        });
         EXTRAS.put(GuiGameOver.class, s -> {
             Map<String, Object> m = new HashMap<>();
             ITextComponent cause = ((AccessorGuiGameOver) s).ldic$getCause();
@@ -159,11 +177,15 @@ public final class ScreenSkins {
         /** Widths the screen gave its buttons, before the skin moved them (wide ones span a grid row). */
         final Map<GuiButton, Integer> initialWidths = new IdentityHashMap<>();
         final Map<GuiButton, Double> hover = new IdentityHashMap<>();
+        final Map<GuiTextField, SkinHooks.Field> fieldStates = new IdentityHashMap<>();
+        /** The advancement screen's map and tabs; null on other screens. */
+        final AdvancementMap advancements;
         int mouseX;
         int mouseY;
 
         Skin(GuiScreen gui, ThemeDef theme, String screen) {
             this.gui = gui;
+            this.advancements = gui instanceof GuiScreenAdvancements ? new AdvancementMap((GuiScreenAdvancements) gui) : null;
             this.theme = theme;
             this.driver = new ThemeScreenDriver(manager, theme, screen, this, false);
             collectPlaced(theme.screen(screen).elements);
@@ -173,6 +195,7 @@ public final class ScreenSkins {
         /** After the screen (re)built its widgets. */
         void refresh() {
             fields.clear();
+            fieldStates.clear();
             fields.addAll(declared(gui, GuiTextField.class));
             lists.clear();
             lists.addAll(declared(gui, GuiSlot.class));
@@ -326,11 +349,18 @@ public final class ScreenSkins {
 
         @Override
         public void vanillaList(UiNode n, Consumer<Cell> buttons) {
-            int i = id(n.def.statik("list", "0"));
-            if (i < 0 || i >= lists.size()) {
+            String which = n.def.statik("list", "0");
+            GuiSlot list;
+            if ("shown".equals(which)) {
+                // A screen that swaps between lists (statistics): the one it shows now.
+                list = gui instanceof GuiStats ? ((AccessorGuiStats) gui).ldic$getShownList() : null;
+            } else {
+                int i = id(which);
+                list = i >= 0 && i < lists.size() ? lists.get(i) : null;
+            }
+            if (list == null) {
                 return;
             }
-            GuiSlot list = lists.get(i);
             // The list is laid out and drawn in the theme's units (so its rows match the theme's
             // scale); the clicks the screen forwards to it are converted (MixinGuiListExtended).
             double ui = ui();
@@ -384,30 +414,53 @@ public final class ScreenSkins {
         }
 
         @Override
-        public void vanillaField(UiNode n) {
+        public SkinHooks.Field vanillaField(UiNode n) {
             int i = id(n.def.statik("field", "0"));
             if (i < 0 || i >= fields.size() || !fields.get(i).getVisible()) {
-                return;
+                return null;
             }
             GuiTextField f = fields.get(i);
-            ElementDef d = n.def;
-            double radius = d.num("radius", 2);
-            long fill = colour(d, "colour", 0x80000000L);
-            long edge = f.isFocused() ? colour(d, "focus_colour", 0xFF4FC3F7L) : colour(d, "border_colour", 0x30FFFFFFL);
-            Gfx.roundedRect(n.x, n.y, n.x + n.width, n.y + n.height, radius, fill, fill, n.opacity);
-            Gfx.roundedBorder(n.x, n.y, n.x + n.width, n.y + n.height, radius, f.isFocused() ? 1 : 0.5, edge, n.opacity);
+            SkinHooks.Field s = fieldStates.computeIfAbsent(f, k -> new SkinHooks.Field());
+            // Vanilla's box covers the theme's, so its own click handling takes the focus.
             double ui = ui();
-            double pad = d.num("padding", 5);
             f.setEnableBackgroundDrawing(false);
-            f.setTextColor((int) colour(d, "text_colour", 0xFFE0E0E0L));
-            f.x = (int) Math.round((n.x + pad) * ui);
-            f.width = (int) Math.round((n.width - 2 * pad) * ui);
+            f.x = (int) Math.round(n.x * ui);
+            f.y = (int) Math.round(n.y * ui);
+            f.width = (int) Math.round(n.width * ui);
             f.height = (int) Math.round(n.height * ui);
-            f.y = (int) Math.round(n.y * ui + (n.height * ui - 8) / 2);
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(1 / ui, 1 / ui, 1);
-            f.drawTextBox();
-            GlStateManager.popMatrix();
+            s.text = f.getText();
+            s.cursor = f.getCursorPosition();
+            s.selection = f.getSelectionEnd();
+            s.focused = f.isFocused();
+            return s;
+        }
+
+        @Override
+        public void advancementMap(UiNode n) {
+            if (advancements != null) {
+                advancements.drawMap(n, ui(), mouseX, mouseY);
+            }
+        }
+
+        @Override
+        public void advancementTabs(UiNode n, Consumer<Cell> paint) {
+            if (advancements != null) {
+                advancements.drawTabs(n, ui(), mouseX, mouseY, paint);
+            }
+        }
+
+        /** After vanilla handled a click: the cursor goes where the theme drew the text. */
+        void fieldClicked(int mouseX, int mouseY) {
+            double ui = ui();
+            double x = mouseX / ui;
+            double y = mouseY / ui;
+            for (Map.Entry<GuiTextField, SkinHooks.Field> e : fieldStates.entrySet()) {
+                SkinHooks.Field s = e.getValue();
+                GuiTextField f = e.getKey();
+                if (s.hit != null && f.isFocused() && x >= s.x && x < s.x + s.width && y >= s.y && y < s.y + s.height) {
+                    f.setCursorPosition(s.hit.applyAsInt(x));
+                }
+            }
         }
 
         void draw(int mouseX, int mouseY, float partialTicks) {
@@ -437,19 +490,20 @@ public final class ScreenSkins {
                     }
                 }
             }
+            if (advancements != null) {
+                advancements.hidePageButtons(buttonList());
+            }
             manager.bindings().setSkin(buttonList(), fields, text, flags);
             driver.draw(mouseX, mouseY, partialTicks);
+            if (advancements != null) {
+                advancements.drawTooltip();
+            }
         }
     }
 
     /** Buttons of Minecraft's own classes (vanilla screens' buttons), not other mods'. */
     private static boolean isVanillaButton(GuiButton b) {
         return b.getClass().getName().startsWith("net.minecraft.");
-    }
-
-    private static long colour(ElementDef d, String prop, long fallback) {
-        Expr e = d.prop(prop);
-        return e == null ? fallback : (long) e.num();
     }
 
     /** A button or field number from a theme; MIN_VALUE when it is not one. */
@@ -593,6 +647,7 @@ public final class ScreenSkins {
         } catch (RuntimeException e) {
             Ldic.LOGGER.error("LDIC: skin for {} failed; showing the vanilla screen", skin.gui.getClass().getName(), e);
             current = null;
+            AdvancementMap.reset();
         }
     }
 
@@ -600,24 +655,48 @@ public final class ScreenSkins {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void onMouse(GuiScreenEvent.MouseInputEvent.Pre event) {
         Skin skin = skinFor(event.getGui());
-        int button = Mouse.getEventButton();
-        if (skin == null || button < 0) {
+        if (skin == null) {
             return;
         }
+        int button = Mouse.getEventButton();
         GuiScreen gui = event.getGui();
         Minecraft mc = Minecraft.getMinecraft();
         int x = Mouse.getEventX() * gui.width / mc.displayWidth;
         int y = gui.height - Mouse.getEventY() * gui.height / mc.displayHeight - 1;
+        if (skin.advancements != null) {
+            int wheel = Mouse.getEventDWheel();
+            if (wheel != 0 && skin.advancements.wheel(x, y, wheel, skin.ui())) {
+                event.setCanceled(true);
+                return;
+            }
+        }
+        if (button < 0) {
+            return;
+        }
         boolean taken = Mouse.getEventButtonState() ? skin.driver.mouseClicked(x, y, button) : skin.driver.mouseReleased(x, y, button);
         if (taken) {
             event.setCanceled(true);
         }
     }
 
+    /** A left click in a text field: vanilla focused it; place its cursor by the theme's text. */
+    @SubscribeEvent
+    public void onMousePost(GuiScreenEvent.MouseInputEvent.Post event) {
+        Skin skin = skinFor(event.getGui());
+        if (skin == null || Mouse.getEventButton() != 0 || !Mouse.getEventButtonState()) {
+            return;
+        }
+        GuiScreen gui = event.getGui();
+        Minecraft mc = Minecraft.getMinecraft();
+        skin.fieldClicked(Mouse.getEventX() * gui.width / mc.displayWidth,
+                gui.height - Mouse.getEventY() * gui.height / mc.displayHeight - 1);
+    }
+
     @SubscribeEvent
     public void onOpen(net.minecraftforge.client.event.GuiOpenEvent event) {
         if (current != null && event.getGui() != current.gui) {
             current.driver.close();
+            AdvancementMap.reset();
             current = null;
         }
     }

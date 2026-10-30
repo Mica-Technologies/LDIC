@@ -187,10 +187,22 @@ public final class ThemeRenderer implements NodeRenderer {
                     Gfx.beginUi();
                 }
                 break;
+            case "advancement_map":
+                if (skin != null) {
+                    skin.advancementMap(n);
+                }
+                break;
+            case "advancement_tabs":
+                if (skin != null) {
+                    skin.advancementTabs(n, c -> drawCell(n, c));
+                }
+                break;
             case "vanilla_field":
                 if (skin != null) {
-                    skin.vanillaField(n);
-                    Gfx.beginUi();
+                    SkinHooks.Field f = skin.vanillaField(n);
+                    if (f != null) {
+                        drawField(n, f);
+                    }
                 }
                 break;
             case "list":
@@ -220,6 +232,68 @@ public final class ThemeRenderer implements NodeRenderer {
         double right = n.x + inset + (n.width - 2 * inset) * Math.max(0, Math.min(1, value));
         Gfx.rect(n.x + inset, n.y + n.height - 3, n.x + n.width - inset, n.y + n.height - 2, 0x40FFFFFFL, 0x40FFFFFFL, n.opacity);
         Gfx.roundedRect(n.x + inset, n.y + n.height - 3.5, right, n.y + n.height - 1.5, 1, colour, colour, n.opacity);
+    }
+
+    /**
+     * A skinned text field: box, the visible part of the text in the node's font, the selection
+     * and a blinking cursor. The shown part scrolls to keep the cursor in view.
+     */
+    private void drawField(UiNode n, SkinHooks.Field f) {
+        ElementDef d = n.def;
+        double radius = d.num("radius", 2);
+        long fill = colour(d, "colour", 0x80000000L);
+        long edge = f.focused ? colour(d, "focus_colour", 0xFF4FC3F7L) : colour(d, "border_colour", 0x30FFFFFFL);
+        Gfx.roundedRect(n.x, n.y, n.x + n.width, n.y + n.height, radius, fill, fill, n.opacity);
+        Gfx.roundedBorder(n.x, n.y, n.x + n.width, n.y + n.height, radius, f.focused ? 1 : 0.5, edge, n.opacity);
+
+        LdicFont font = font(d);
+        double size = d.num("size", 9);
+        double pad = d.num("padding", 5);
+        double room = Math.max(1, n.width - 2 * pad);
+        String text = f.text;
+        int cursor = Math.max(0, Math.min(text.length(), f.cursor));
+        int start = Math.max(0, Math.min(f.start, cursor));
+        while (start < cursor && font.width(text.substring(start, cursor), size) > room) {
+            start++;
+        }
+        int end = start;
+        while (end < text.length() && font.width(text.substring(start, end + 1), size) <= room) {
+            end++;
+        }
+        f.start = start;
+        double tx = n.x + pad;
+        double ty = n.y + (n.height - size) / 2;
+        f.x = n.x;
+        f.y = n.y;
+        f.width = n.width;
+        f.height = n.height;
+        final int from = start;
+        final int to = end;
+        f.hit = x -> {
+            // The character boundary nearest x.
+            for (int i = from; i < to; i++) {
+                double mid = (font.width(text.substring(from, i), size) + font.width(text.substring(from, i + 1), size)) / 2;
+                if (x - tx < mid) {
+                    return i;
+                }
+            }
+            return to;
+        };
+
+        int selA = Math.max(start, Math.min(cursor, f.selection));
+        int selB = Math.min(end, Math.max(cursor, f.selection));
+        if (f.focused && selA < selB) {
+            long sel = colour(d, "selection_colour", 0x804FC3F7L);
+            double sx0 = tx + font.width(text.substring(start, selA), size);
+            double sx1 = tx + font.width(text.substring(start, selB), size);
+            Gfx.rect(sx0, ty - 1, sx1, ty + size + 1, sel, sel, n.opacity);
+        }
+        font.draw(text.substring(start, end), tx, ty, size, colour(d, "text_colour", 0xFFE0E0E0L), false, n.opacity);
+        if (f.focused && (System.currentTimeMillis() / 500) % 2 == 0) {
+            double cx = tx + font.width(text.substring(start, Math.min(cursor, end)), size);
+            long caret = colour(d, "text_colour", 0xFFE0E0E0L);
+            Gfx.rect(cx, ty - 1, cx + 0.75, ty + size + 1, caret, caret, n.opacity);
+        }
     }
 
     /** A vanilla_grid: each placed vanilla button drawn with the node's button styles. */

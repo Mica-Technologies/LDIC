@@ -235,6 +235,17 @@ public final class ElementSchema {
         vanillaList.put("style_buttons", new Prop("style_buttons", Kind.FLAG, false));
         TYPES.put("vanilla_list", vanillaList);
 
+        // The advancements skin only: the selected tab's map (dragged and wheel-scrolled as in
+        // vanilla, in a view the size of this box), and the tabs as a scrolling column of buttons.
+        type("advancement_map");
+        Map<String, Prop> advancementTabs = new LinkedHashMap<>(vanillaList);
+        advancementTabs.remove("list");
+        advancementTabs.remove("style_buttons");
+        advancementTabs.put("row_height", new Prop("row_height", Kind.NUMBER, 22));
+        advancementTabs.put("gap", new Prop("gap", Kind.NUMBER, 3));
+        advancementTabs.put("icon_size", new Prop("icon_size", Kind.NUMBER, 16));
+        TYPES.put("advancement_tabs", advancementTabs);
+
         // Skinned vanilla screens only. One of the screen's own text fields (by order in the
         // screen, from 0), moved into this box; typing and clicking stay vanilla's.
         type("vanilla_field",
@@ -243,6 +254,9 @@ public final class ElementSchema {
                 new Prop("border_colour", Kind.COLOUR, 0x30FFFFFFL),
                 new Prop("focus_colour", Kind.COLOUR, 0xFF4FC3F7L),
                 new Prop("text_colour", Kind.COLOUR, 0xFFE0E0E0L),
+                new Prop("selection_colour", Kind.COLOUR, 0x804FC3F7L),
+                new Prop("font", Kind.STATIC, "minecraft"),
+                new Prop("size", Kind.NUMBER, 9),
                 new Prop("radius", Kind.NUMBER, 2),
                 new Prop("padding", Kind.NUMBER, 5));
 

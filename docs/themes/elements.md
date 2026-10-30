@@ -192,11 +192,29 @@ scroll bar sits at the right edge. Draw a panel behind it yourself. `style_butto
 the vanilla buttons inside its rows (video settings, key bindings) with this element's
 [button](#button) properties instead of vanilla's look.
 
+`list: "shown"` is the list a screen that swaps between several is showing now (statistics).
+
 ## vanilla_field
 
 [Skinned screens](skins.md) only. One of the screen's text fields, by `field` (its order in the
-screen, from 0), in a themed box: `colour`, `border_colour`, `focus_colour`, `text_colour`,
-`radius`, `padding`. Clicking and typing stay the field's.
+screen, from 0), in a themed box: `colour`, `border_colour`, `focus_colour`, `radius`, `padding`.
+The text is drawn in the theme's `font` at `size` and `text_colour`, with the selection in
+`selection_colour` and a blinking cursor, and scrolls to keep the cursor in view. Clicking (which
+places the cursor by the drawn text) and typing stay the field's.
+
+## advancement_map
+
+The advancements skin only. The selected tab's map (its background, lines and advancement frames,
+drawn as in vanilla) in a view the size of this box, instead of vanilla's small window. Drag to
+move it; the wheel scrolls it (sideways with shift held). Hovering an advancement shows its box
+over everything else. No properties of its own: draw a panel behind it yourself.
+
+## advancement_tabs
+
+The advancements skin only. Every advancement tab as a [button](#button) in a scrolling column, with
+the tab's icon at the left (leave room with `padding` and `text_align: "left"`); the selected tab
+looks hovered. `row_height` (22), `gap` (3), `icon_size` (16). Clicking a tab selects it; the wheel
+scrolls the column.
 
 ## list
 

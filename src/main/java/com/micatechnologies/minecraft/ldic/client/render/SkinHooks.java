@@ -3,6 +3,7 @@ package com.micatechnologies.minecraft.ldic.client.render;
 import com.micatechnologies.minecraft.ldic.ui.UiNode;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.DoubleToIntFunction;
 
 /**
  * What the {@code vanilla_*} elements need from a skinned vanilla screen. {@link ThemeRenderer#skin}
@@ -46,12 +47,41 @@ public interface SkinHooks {
     /** Lays the remaining vanilla buttons out in the node's box; the cells to draw. */
     List<Cell> vanillaGrid(UiNode n);
 
-    /** Moves the vanilla text field named by the node into its box and draws it. */
-    void vanillaField(UiNode n);
+    /**
+     * A vanilla text field as the theme draws it. One per field, kept while the screen is open;
+     * the renderer sets {@link #hit} each frame so a click places the cursor by the theme's font.
+     */
+    final class Field {
+        public String text = "";
+        public int cursor;
+        public int selection;
+        public boolean focused;
+        /** First character shown (the renderer keeps the cursor in view). */
+        public int start;
+        /** The text's box in layout units, for clicks. */
+        public double x;
+        public double y;
+        public double width;
+        public double height;
+        /** Layout x to character index, from the last draw; null before it. */
+        public DoubleToIntFunction hit;
+    }
+
+    /**
+     * Moves the vanilla text field named by the node into its box (vanilla still takes the focus
+     * click); its text, cursor and selection, or null when there is no such (visible) field.
+     */
+    Field vanillaField(UiNode n);
 
     /**
      * Moves the vanilla list named by the node into its box and draws it; when {@code buttons} is
      * not null, the vanilla buttons in its rows are drawn through it instead of vanilla's look.
      */
     void vanillaList(UiNode n, Consumer<Cell> buttons);
+
+    /** The advancement screen's selected tab, drawn in the node's box. */
+    void advancementMap(UiNode n);
+
+    /** The advancement tabs, each painted as a button cell (then given its icon). */
+    void advancementTabs(UiNode n, Consumer<Cell> paint);
 }

@@ -433,7 +433,7 @@
           { "id": "create_main", "type": "group", "y": 44, "width": "pw", "height": 150, "visible": "!screen_flag('more_options')", "children": [
             { "id": "create_name_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false,
               "text": "{translate('selectWorld.enterName')}" },
-            { "id": "create_name", "type": "vanilla_field", "field": "0", "y": 12, "width": "pw", "height": 20, "radius": 5,
+            { "id": "create_name", "type": "vanilla_field", "field": "0", "font": "ui", "size": 9.5, "selection_colour": "with_alpha(accent, 0.45)", "y": 12, "width": "pw", "height": 20, "radius": 5,
               "focus_colour": "accent" },
             { "id": "create_folder", "type": "text", "font": "ui", "size": 8, "colour": "#90FFFFFF", "shadow": false, "y": 36,
               "text": "{translate('selectWorld.resultFolder')} {screen_text('folder')}" },
@@ -449,7 +449,7 @@
           { "id": "create_more", "type": "group", "y": 44, "width": "pw", "height": 170, "visible": "screen_flag('more_options')", "children": [
             { "id": "create_seed_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false,
               "text": "{translate('selectWorld.enterSeed')}" },
-            { "id": "create_seed", "type": "vanilla_field", "field": "1", "y": 12, "width": "pw", "height": 20, "radius": 5,
+            { "id": "create_seed", "type": "vanilla_field", "field": "1", "font": "ui", "size": 9.5, "selection_colour": "with_alpha(accent, 0.45)", "y": 12, "width": "pw", "height": 20, "radius": 5,
               "focus_colour": "accent" },
             { "id": "create_seed_info", "type": "text", "font": "ui", "size": 8, "colour": "#90FFFFFF", "shadow": false, "y": 36,
               "text": "{translate('selectWorld.seedInfo')}" },
@@ -503,7 +503,7 @@
           { "id": "edit_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
           { "id": "edit_name_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false, "y": 44,
             "text": "{translate('selectWorld.enterName')}" },
-          { "id": "edit_name", "type": "vanilla_field", "field": "0", "y": 56, "width": "pw", "height": 20, "radius": 5,
+          { "id": "edit_name", "type": "vanilla_field", "field": "0", "font": "ui", "size": 9.5, "selection_colour": "with_alpha(accent, 0.45)", "y": 56, "width": "pw", "height": 20, "radius": 5,
             "focus_colour": "accent" },
           { "id": "edit_icon", "type": "vanilla_button", "button": "3", "style": "flat", "radius": 5,
             "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false,
@@ -537,10 +537,10 @@
           { "id": "server_edit_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
           { "id": "server_edit_name_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false, "y": 44,
             "text": "{translate('addServer.enterName')}" },
-          { "id": "server_edit_name", "type": "vanilla_field", "field": "1", "y": 56, "width": "pw", "height": 20, "radius": 5, "focus_colour": "accent" },
+          { "id": "server_edit_name", "type": "vanilla_field", "field": "1", "font": "ui", "size": 9.5, "selection_colour": "with_alpha(accent, 0.45)", "y": 56, "width": "pw", "height": 20, "radius": 5, "focus_colour": "accent" },
           { "id": "server_edit_ip_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false, "y": 84,
             "text": "{translate('addServer.enterIp')}" },
-          { "id": "server_edit_ip", "type": "vanilla_field", "field": "0", "y": 96, "width": "pw", "height": 20, "radius": 5, "focus_colour": "accent" },
+          { "id": "server_edit_ip", "type": "vanilla_field", "field": "0", "font": "ui", "size": 9.5, "selection_colour": "with_alpha(accent, 0.45)", "y": 96, "width": "pw", "height": 20, "radius": 5, "focus_colour": "accent" },
           { "id": "server_edit_packs", "type": "vanilla_button", "button": "2", "style": "flat", "radius": 5, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "y": 128, "width": "pw", "height": 22 },
           { "id": "server_edit_done", "type": "vanilla_button", "button": "0", "style": "flat", "radius": 5, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
           { "id": "server_edit_cancel", "type": "vanilla_button", "button": "1", "style": "flat", "radius": 5, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
@@ -560,7 +560,7 @@
           { "id": "server_direct_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
           { "id": "server_direct_ip_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false, "y": 44,
             "text": "{translate('addServer.enterIp')}" },
-          { "id": "server_direct_ip", "type": "vanilla_field", "field": "0", "y": 56, "width": "pw", "height": 20, "radius": 5, "focus_colour": "accent" },
+          { "id": "server_direct_ip", "type": "vanilla_field", "field": "0", "font": "ui", "size": 9.5, "selection_colour": "with_alpha(accent, 0.45)", "y": 56, "width": "pw", "height": 20, "radius": 5, "focus_colour": "accent" },
           { "id": "server_direct_join", "type": "vanilla_button", "button": "0", "style": "flat", "radius": 5, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
           { "id": "server_direct_cancel", "type": "vanilla_button", "button": "1", "style": "flat", "radius": 5, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
         ] }
@@ -707,6 +707,59 @@
           { "id": "options_language_list", "type": "vanilla_list", "list": "0", "y": 42, "width": "pw", "height": "ph - 80" },
           { "id": "options_language_unicode", "type": "vanilla_button", "button": "100", "style": "flat", "radius": 5, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
           { "id": "options_language_done", "type": "vanilla_button", "button": "6", "style": "flat", "radius": 5, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
+        ] }
+      ]
+    },
+
+    "advancement_tree": {
+      "elements": [
+        { "id": "advancement_tree_background", "type": "include", "screen": "main", "ids": ["backdrop", "art", "shade"], "visible": "!in_world" },
+        { "id": "advancement_tree_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "advancement_tree_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "advancement_tree_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "advancement_tree_panel", "type": "group", "anchor": "center", "width": "min(760, screen_width - 40)", "height": "screen_height - 30", "children": [
+          { "id": "advancement_tree_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('gui.advancements')}" },
+          { "id": "advancement_tree_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "advancement_tree_tab_title", "type": "text", "font": "ui_bold", "size": 11, "colour": "#D0FFFFFF", "shadow": false,
+            "anchor": "top_right", "align": "right", "y": 14, "text": "{screen_text('tab')}" },
+          { "id": "advancement_tree_tabs", "type": "advancement_tabs", "y": 40, "width": "min(170, pw / 4)", "height": "ph - 76",
+            "row_height": 24, "gap": 3, "style": "flat", "radius": 5, "colour": "#20FFFFFF", "hover_colour": "with_alpha(accent, 0.35)",
+            "font": "ui", "size": 10, "shadow": false, "text_align": "left", "padding": 28,
+            "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF" },
+          { "id": "advancement_tree_map_bg", "type": "rect", "colour": "#60000000", "radius": 5,
+            "x": "min(170, pw / 4) + 6", "y": 40, "width": "pw - min(170, pw / 4) - 6", "height": "ph - 76" },
+          { "id": "advancement_tree_map", "type": "advancement_map",
+            "x": "min(170, pw / 4) + 7", "y": 41, "width": "pw - min(170, pw / 4) - 8", "height": "ph - 78" },
+          { "id": "advancement_tree_empty", "type": "text", "font": "ui", "size": 11, "colour": "#B0FFFFFF", "shadow": false,
+            "visible": "screen_flag('empty')", "anchor": "center", "align": "center", "text": "{translate('advancements.empty')}" },
+          { "id": "advancement_tree_done", "type": "button", "style": "flat", "radius": 5, "colour": "accent", "hover_colour": "#FFFFFFFF",
+            "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14",
+            "anchor": "bottom_right", "width": 150, "height": 24, "text": "{translate('gui.done')}", "action": "back" }
+        ] }
+      ]
+    },
+
+    "player_stats": {
+      "elements": [
+        { "id": "player_stats_background", "type": "include", "screen": "main", "ids": ["backdrop", "art", "shade"], "visible": "!in_world" },
+        { "id": "player_stats_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "player_stats_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "player_stats_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "player_stats_loading", "type": "text", "font": "ui", "size": 12, "colour": "#D0FFFFFF", "shadow": false,
+          "visible": "screen_flag('loading')", "anchor": "center", "align": "center", "text": "{translate('multiplayer.downloadingStats')}" },
+        { "id": "player_stats_panel", "type": "group", "anchor": "center", "width": "min(480, screen_width - 40)", "height": "screen_height - 30",
+          "visible": "!screen_flag('loading')", "children": [
+          { "id": "player_stats_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('gui.stats')}" },
+          { "id": "player_stats_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "player_stats_general", "type": "vanilla_button", "button": "1", "y": 40, "width": "(pw - 18) / 4", "height": 22, "style": "flat", "radius": 5, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF" },
+          { "id": "player_stats_blocks", "type": "vanilla_button", "button": "2", "x": "(pw - 18) / 4 + 6", "y": 40, "width": "(pw - 18) / 4", "height": 22, "style": "flat", "radius": 5, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF" },
+          { "id": "player_stats_items", "type": "vanilla_button", "button": "3", "x": "(pw - 18) / 2 + 12", "y": 40, "width": "(pw - 18) / 4", "height": 22, "style": "flat", "radius": 5, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF" },
+          { "id": "player_stats_mobs", "type": "vanilla_button", "button": "4", "x": "(pw - 18) * 3 / 4 + 18", "y": 40, "width": "(pw - 18) / 4", "height": 22, "style": "flat", "radius": 5, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF" },
+          { "id": "player_stats_list_bg", "type": "rect", "colour": "#50000000", "radius": 5, "y": 68, "width": "pw", "height": "ph - 104" },
+          { "id": "player_stats_list", "type": "vanilla_list", "list": "shown", "y": 70, "width": "pw", "height": "ph - 108" },
+          { "id": "player_stats_done", "type": "vanilla_button", "button": "0", "style": "flat", "radius": 5, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
         ] }
       ]
     },

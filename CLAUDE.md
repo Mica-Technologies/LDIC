@@ -93,7 +93,10 @@ in place of the dirt progress screen), `MixinGuiContainerCreative` (tab search b
 `MixinGuiContainer` (theme in place of background + labels; full-screen toggle click before the
 screen's own), `MixinForgeHooksClient`
 (scales a full-screen inventory's drawing and converts the mouse for it and both draw events),
-`MixinGuiIngameForge` (held-item name follows the hotbar's size and slide). `LdicCoreMod`
+`MixinGuiIngameForge` (held-item name follows the hotbar's size and slide), `MixinGuiSlot` and
+`MixinGuiListExtended` (skinned lists: no dirt, theme-scale clicks), `MixinGuiAdvancementTab` and
+`MixinGuiAdvancement` (an advancement tab's 234x113 view sized to the skin's box, via
+`menu.AdvancementMap`), `MixinGuiScreenAdvancements` (skin tab clicks). `LdicCoreMod`
 registers the config through MixinBooter's `IEarlyMixinLoader`.
 
 Plans and decisions live in `docs/AGENT-PLANS/MASTER_PLAN.md` (gitignored by design).
