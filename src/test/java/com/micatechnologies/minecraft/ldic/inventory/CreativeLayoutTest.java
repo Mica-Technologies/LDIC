@@ -34,6 +34,18 @@ class CreativeLayoutTest {
     }
 
     @Test
+    void sidebarGrowsForLongNamesOnlyWhileTheGridStillFits() {
+        assertTrue(CreativeLayout.compute(960, 540, 150).sidebar.w == 150);
+        assertTrue(CreativeLayout.compute(960, 540, 400).sidebar.w == CreativeLayout.SIDEBAR_MAX_W);
+        assertTrue(CreativeLayout.compute(960, 540, 40).sidebar.w == CreativeLayout.SIDEBAR_W);
+        // Room for the default width but not a wide one: the default, not icons only.
+        CreativeLayout tight = CreativeLayout.compute(480, 270, 168);
+        assertNotNull(tight);
+        assertTrue(tight.cols >= 9);
+        assertTrue(tight.compact || tight.sidebar.w < 168);
+    }
+
+    @Test
     void panelsDoNotOverlapAndStayOnScreen() {
         for (int[] size : new int[][] {{427, 240}, {640, 360}, {960, 540}, {1280, 720}, {480, 270}}) {
             CreativeLayout l = CreativeLayout.compute(size[0], size[1]);

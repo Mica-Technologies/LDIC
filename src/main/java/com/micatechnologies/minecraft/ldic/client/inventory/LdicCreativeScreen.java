@@ -97,7 +97,12 @@ public final class LdicCreativeScreen extends GuiContainer {
             mc.displayGuiScreen(new GuiInventory(mc.player));
             return;
         }
-        layout = CreativeLayout.compute(width, height);
+        int longest = 0;
+        for (CreativeTabs t : tabs) {
+            longest = Math.max(longest, fontRenderer.getStringWidth(I18n.format(t.getTranslationKey())));
+        }
+        // Room for the icon (25) and a little after the name.
+        layout = CreativeLayout.compute(width, height, longest + 31);
         if (layout == null) {
             // Too small now (window shrunk): vanilla's screen; GuiOpenEvent will not swap it back.
             mc.displayGuiScreen(new GuiContainerCreative(mc.player));
@@ -376,8 +381,8 @@ public final class LdicCreativeScreen extends GuiContainer {
         }
     }
 
-    /** Smallest text scale for a long tab name; below this it stops being easy to read. */
-    private static final float MIN_NAME_SCALE = 0.75f;
+    /** Smallest text scale for a long tab name: only "a tad" smaller; past that the name scrolls. */
+    private static final float MIN_NAME_SCALE = 0.9f;
     /** Marquee speed (GUI pixels per second) and the pause at each end (seconds). */
     private static final float MARQUEE_SPEED = 18;
     private static final float MARQUEE_PAUSE = 1.2f;

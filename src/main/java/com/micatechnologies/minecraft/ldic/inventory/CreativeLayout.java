@@ -17,6 +17,7 @@ public final class CreativeLayout {
     static final int PAD = 5;
     static final int TOP_H = 20;
     static final int SIDEBAR_W = 112;
+    static final int SIDEBAR_MAX_W = 168;
     static final int SIDEBAR_COMPACT_W = 26;
     static final int SCROLL_W = 6;
     static final int HEADER_H = 11;
@@ -78,12 +79,12 @@ public final class CreativeLayout {
     public final int hotbarX;
     public final int hotbarY;
 
-    private CreativeLayout(int width, int height, boolean compact) {
+    private CreativeLayout(int width, int height, boolean compact, int sidebarWidth) {
         this.compact = compact;
         top = new Rect(MARGIN, MARGIN, width - 2 * MARGIN, TOP_H);
         int bodyY = top.bottom() + GAP;
         int bodyH = height - MARGIN - bodyY;
-        sidebar = new Rect(MARGIN, bodyY, compact ? SIDEBAR_COMPACT_W : SIDEBAR_W, bodyH);
+        sidebar = new Rect(MARGIN, bodyY, compact ? SIDEBAR_COMPACT_W : sidebarWidth, bodyH);
 
         int px = width - MARGIN - PLAYER_W;
         int cellX = px + PAD;
@@ -122,11 +123,23 @@ public final class CreativeLayout {
 
     /** The layout for a screen of this size, or null when it is too small for a full screen. */
     public static CreativeLayout compute(int width, int height) {
-        CreativeLayout full = new CreativeLayout(width, height, false);
-        if (full.fits(height)) {
-            return full;
+        return compute(width, height, SIDEBAR_W);
+    }
+
+    /**
+     * As above, with the sidebar as wide as {@code wantedSidebar} (the longest tab name) when
+     * there is room, between {@link #SIDEBAR_W} and {@link #SIDEBAR_MAX_W}; narrower, down to
+     * the default and then to icons only, when the grid would get too small.
+     */
+    public static CreativeLayout compute(int width, int height, int wantedSidebar) {
+        int want = Math.max(SIDEBAR_W, Math.min(SIDEBAR_MAX_W, wantedSidebar));
+        for (int w = want; w > SIDEBAR_W - 8; w -= 8) {
+            CreativeLayout full = new CreativeLayout(width, height, false, Math.max(SIDEBAR_W, w));
+            if (full.fits(height)) {
+                return full;
+            }
         }
-        CreativeLayout compact = new CreativeLayout(width, height, true);
+        CreativeLayout compact = new CreativeLayout(width, height, true, SIDEBAR_COMPACT_W);
         return compact.fits(height) ? compact : null;
     }
 }
