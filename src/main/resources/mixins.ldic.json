@@ -7,6 +7,7 @@
   "mixins": [],
   "client": [
     "AccessorGuiAdvancementTab",
+    "AccessorGuiBrewingStand",
     "AccessorGuiButton",
     "AccessorGuiConnecting",
     "AccessorGuiContainer",
@@ -16,6 +17,7 @@
     "AccessorGuiEditArray",
     "AccessorGuiEditArrayEntries",
     "AccessorGuiEditSign",
+    "AccessorGuiFurnace",
     "AccessorGuiGameOver",
     "AccessorGuiListWorldSelection",
     "AccessorGuiListWorldSelectionEntry",
@@ -23,6 +25,7 @@
     "AccessorGuiMultiplayer",
     "AccessorGuiOptionsRowListRow",
     "AccessorGuiOptions",
+    "AccessorGuiRepair",
     "AccessorGuiScreen",
     "AccessorGuiScreenAdvancements",
     "AccessorGuiSelectString",

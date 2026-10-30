@@ -76,6 +76,7 @@ public final class HostBindings {
     private List<GuiTextField> skinFields = Collections.emptyList();
     private Map<String, String> skinText = new HashMap<>();
     private Map<String, Boolean> skinFlags = new HashMap<>();
+    private Map<String, Double> screenValues = new HashMap<>();
     // The world selection screen.
     private final Slot worldSelected = scope.declare("world_selected", BOOL);
     private final Slot worldCount = scope.declare("world_count", NUMBER);
@@ -172,6 +173,7 @@ public final class HostBindings {
             return i >= 0 && i < skinFields.size() && skinFields.get(i).getVisible();
         }, NUMBER));
         scope.define(Function.str("screen_text", false, a -> skinText.getOrDefault(a[0].str(), ""), STRING));
+        scope.define(Function.num("screen_value", false, a -> screenValues.getOrDefault(a[0].str(), 0.0), STRING));
         scope.define(Function.bool("screen_flag", false, a -> skinFlags.getOrDefault(a[0].str(), false), STRING));
     }
 
@@ -220,6 +222,13 @@ public final class HostBindings {
     }
 
     /** What an inventory screen shows this frame: its title and named areas (x, y, w, h). */
+    /** A screen's own strings, switches and numbers (an inventory's progress, an anvil's cost), for screen_text etc. */
+    public void setScreenValues(Map<String, String> text, Map<String, Boolean> flags, Map<String, Double> values) {
+        skinText = text;
+        skinFlags = flags;
+        screenValues = values;
+    }
+
     public void setInventory(String title, Map<String, double[]> areas) {
         containerTitle.set(title == null ? "" : title);
         this.areas = areas;

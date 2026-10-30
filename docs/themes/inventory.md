@@ -1,6 +1,6 @@
 # Inventory screens
 
-A menu theme can also draw the game's inventories. Four screens are recognised:
+A menu theme can also draw the game's inventories. These screens are recognised:
 
 | Screen | Drawn for |
 | --- | --- |
@@ -8,14 +8,18 @@ A menu theme can also draw the game's inventories. Four screens are recognised:
 | `crafting` | The crafting table |
 | `container` | Chests (small and large), shulker boxes, hoppers, dispensers and droppers |
 | `creative` | LDIC's [full-screen creative inventory](../inventory/full-screen.md) |
+| `furnace` | The furnace |
+| `brewing` | The brewing stand |
+| `anvil` | The anvil |
 
 ![The horizon theme's inventory](../assets/screenshots/theme-inventory.png){ .shot }
 ![The horizon theme's full-screen creative inventory](../assets/screenshots/theme-creative.png){ .shot }
 
-The built-in **horizon**, **launcher** and **premiere** themes have all four, so a theme that
+The built-in **horizon**, **launcher** and **premiere** themes have all of them, so a theme that
 extends one of them gets themed inventories too. **classic** has none, and a screen a theme does
-not define keeps Minecraft's own look. Furnaces, brewing stands, enchanting tables, anvils and
-other mods' screens are never themed: their backgrounds hold part of how they work.
+not define keeps Minecraft's own look. Enchanting tables and other mods' screens (including a
+mod's furnace built on the vanilla one) are never themed: their backgrounds hold part of how
+they work.
 
 ## How they differ from menu screens
 
@@ -40,6 +44,20 @@ slots, and the text labels ("Crafting", "Inventory", the chest's name), which it
 On `creative`, LDIC still draws the working parts itself (search box, sort and full-screen
 buttons, tab list, scrollbar, trash), in the theme's `accent` colour; the theme draws the panels,
 slot cells, labels and player around them.
+
+## Furnaces, brewing stands and anvils
+
+These draw part of how they work behind their slots, so LDIC hands those parts to the theme as
+values and areas (where vanilla draws them), and the theme draws them its own way:
+
+| Screen | Values | Areas | Slot groups |
+| --- | --- | --- | --- |
+| `furnace` | `screen_value('burn')` (fuel left, 0 to 1), `screen_value('cook')` (0 to 1), `screen_flag('burning')` | `flame`, `arrow` | `input`, `fuel`, `result` |
+| `brewing` | `screen_value('fuel')` (0 to 1), `screen_value('brew')` (0 to 1), `screen_flag('brewing')` | `fuel_bar`, `arrow`, `bubbles` | `bottles`, `ingredient`, `fuel` |
+| `anvil` | `screen_text('cost')` (vanilla's cost line or Too Expensive!), `screen_value('cost')`, `screen_flag('show_cost')`, `screen_flag('affordable')` (green rather than red), `screen_flag('has_item')`, `screen_flag('blocked')` (the items do not combine) | `name` (the name box: draw its background; vanilla draws the text), `plus`, `arrow` | `input`, `result` |
+
+The built-in themes draw the flame and progress as bars in the theme's colours, rising bubbles
+while a potion brews, and the anvil's cost in green or red below its result.
 
 ## Example
 

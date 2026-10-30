@@ -71,7 +71,8 @@ studied, but none of their code, config samples or textures were copied.
   is safe on any server.
 - Sort any tab by tab order, name, mod or item id, ascending or descending. Each tab
   remembers its choice. Useful in modpacks, where registration order leaves tabs in disarray.
-- **Themed inventories**: the menu theme can draw the survival inventory, crafting table, chests
+- **Themed inventories**: the menu theme can draw the survival inventory, crafting table, chests,
+  furnaces (flame and progress), brewing stands (fuel, progress, bubbles), anvils (name box, cost)
   and the full-screen creative inventory (panels, slot cells, labels, the player) as theme
   screens, while the game keeps all their behaviour. The built-in modern themes include them.
 

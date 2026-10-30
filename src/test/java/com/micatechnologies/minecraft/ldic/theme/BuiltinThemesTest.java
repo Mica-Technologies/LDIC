@@ -88,6 +88,7 @@ class BuiltinThemesTest {
         s.define(Function.bool("field_visible", false, a -> true, Type.NUMBER));
         s.define(Function.str("screen_text", false, a -> "", Type.STRING));
         s.define(Function.bool("screen_flag", false, a -> false, Type.STRING));
+        s.define(Function.num("screen_value", false, a -> 0, Type.STRING));
         return s;
     }
 

@@ -84,7 +84,9 @@ Minecraft-facing (`client`):
   in place of an inventory's background and labels (the screen keeps all its logic), at one layout
   unit per GUI pixel. Slot groups and named areas reach the theme through `area_x(name)` etc. and
   the `slots`/`player_model` elements (`render.InventoryHooks`; null on other screens). Furnaces,
-  brewing, enchanting, anvils and mod screens are never themed (their backgrounds hold logic).
+  brewing stands and anvils (exact classes) get their progress, fuel and cost as `screen_value`/
+  `screen_flag`/`screen_text` and named areas (`InventoryTheme.machine`); enchanting and mod screens
+  are never themed (their backgrounds hold logic).
 
 Mixins (`mixins.ldic.json`, all in `"client"`): `Accessor*` (vanilla screen fields LDIC reads),
 `MixinSplashProgress` (thread takeover + null-safe texture deletes in `finish()`), `MixinMinecraft`

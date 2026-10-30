@@ -71,3 +71,4 @@ On the [mod list](mods.md): `mod_selected` and `mod_configurable` (bool) and `mo
 On the [server list](servers.md) there are also `server_selected`, `server_editable` (bool) and `server_count` (number).
 
 On [skinned screens](skins.md) there are also `vanilla_text(id)`, `vanilla_visible(id)`, `vanilla_enabled(id)`, `field_visible(i)`, `screen_text(name)` and `screen_flag(name)`.
+On [furnaces, brewing stands and anvils](inventory.md#furnaces-brewing-stands-and-anvils), `screen_text(name)`, `screen_flag(name)` and `screen_value(name)` (a number) carry their progress, fuel and cost.

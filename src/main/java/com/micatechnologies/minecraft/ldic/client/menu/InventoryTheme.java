@@ -9,6 +9,9 @@ import com.micatechnologies.minecraft.ldic.client.render.Gfx;
 import com.micatechnologies.minecraft.ldic.client.render.InventoryHooks;
 import com.micatechnologies.minecraft.ldic.client.render.ThemeRenderer;
 import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiContainer;
+import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiBrewingStand;
+import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiFurnace;
+import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiRepair;
 import com.micatechnologies.minecraft.ldic.theme.ThemeDef;
 import com.micatechnologies.minecraft.ldic.ui.UiTree;
 import java.util.ArrayList;
@@ -18,6 +21,9 @@ import java.util.Map;
 import java.util.WeakHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiHopper;
+import net.minecraft.client.gui.GuiRepair;
+import net.minecraft.client.gui.inventory.GuiBrewingStand;
+import net.minecraft.client.gui.inventory.GuiFurnace;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -27,9 +33,12 @@ import net.minecraft.client.gui.inventory.GuiDispenser;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.gui.inventory.GuiShulkerBox;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.InventoryCrafting;
+import net.minecraft.inventory.ContainerRepair;
+import net.minecraft.inventory.InventoryCraftResult;
 import net.minecraft.inventory.Slot;
 import net.minecraft.inventory.SlotCrafting;
 
@@ -44,7 +53,10 @@ import net.minecraft.inventory.SlotCrafting;
  * the slots. Slots stay where the game puts them; {@code slots} elements decorate them, and
  * {@code area_x("player")} and friends tell a theme where each group is.</p>
  *
- * <p>Other inventories (furnaces, brewing stands, enchanting tables, anvils, mods' screens)
+ * <p>Furnaces ({@code furnace}), brewing stands ({@code brewing}) and anvils ({@code anvil}) draw
+ * part of their working in their background (progress, fuel, the anvil's cost and name box): that
+ * reaches the theme as values and areas (see {@link #machine}). Other inventories (enchanting
+ * tables, mods' screens)
  * draw parts of their working in their background, so they stay as they are.</p>
  */
 public final class InventoryTheme implements InventoryHooks {
@@ -84,6 +96,16 @@ public final class InventoryTheme implements InventoryHooks {
         }
         if (gui instanceof GuiCrafting) {
             return "crafting";
+        }
+        // Exactly these: a mod's screen built on one may draw more of its working in its background.
+        if (gui.getClass() == GuiFurnace.class) {
+            return "furnace";
+        }
+        if (gui.getClass() == GuiBrewingStand.class) {
+            return "brewing";
+        }
+        if (gui.getClass() == GuiRepair.class) {
+            return "anvil";
         }
         if (gui instanceof GuiChest || gui instanceof GuiShulkerBox || gui instanceof GuiHopper || gui instanceof GuiDispenser) {
             return "container";
@@ -126,7 +148,58 @@ public final class InventoryTheme implements InventoryHooks {
         AccessorGuiContainer a = (AccessorGuiContainer) gui;
         Map<String, double[]> areas = new HashMap<>();
         areas.put("panel", new double[] {a.ldic$getGuiLeft(), a.ldic$getGuiTop(), a.ldic$getXSize(), a.ldic$getYSize()});
+        t.machine(a.ldic$getGuiLeft(), a.ldic$getGuiTop(), areas);
         return t.draw(mouseX, mouseY, areas);
+    }
+
+    /**
+     * What a furnace, brewing stand or anvil drew in its background, as values and areas for the
+     * theme: progress, fuel, the anvil's cost and name box. Areas are where vanilla draws each
+     * part, so a theme can draw them in place.
+     */
+    private void machine(int left, int top, Map<String, double[]> areas) {
+        Map<String, String> text = new HashMap<>();
+        Map<String, Boolean> flags = new HashMap<>();
+        Map<String, Double> values = new HashMap<>();
+        if (gui instanceof GuiFurnace) {
+            IInventory f = ((AccessorGuiFurnace) gui).ldic$getFurnace();
+            int burn = f.getField(0);
+            int burnTotal = f.getField(1) == 0 ? 200 : f.getField(1);
+            int cook = f.getField(2);
+            int cookTotal = f.getField(3);
+            values.put("burn", burn <= 0 ? 0 : Math.min(1, burn / (double) burnTotal));
+            values.put("cook", cookTotal <= 0 ? 0 : Math.min(1, cook / (double) cookTotal));
+            flags.put("burning", burn > 0);
+            areas.put("flame", new double[] {left + 56, top + 36, 14, 14});
+            areas.put("arrow", new double[] {left + 79, top + 34, 24, 17});
+        } else if (gui instanceof GuiBrewingStand) {
+            IInventory s = ((AccessorGuiBrewingStand) gui).ldic$getStand();
+            int brew = s.getField(0);
+            values.put("fuel", Math.max(0, Math.min(1, s.getField(1) / 20.0)));
+            values.put("brew", brew <= 0 ? 0 : 1 - brew / 400.0);
+            flags.put("brewing", brew > 0);
+            areas.put("fuel_bar", new double[] {left + 60, top + 44, 18, 4});
+            areas.put("arrow", new double[] {left + 97, top + 16, 9, 28});
+            areas.put("bubbles", new double[] {left + 63, top + 14, 12, 29});
+        } else if (gui instanceof GuiRepair) {
+            AccessorGuiRepair r = (AccessorGuiRepair) gui;
+            ContainerRepair anvil = r.ldic$getAnvil();
+            Minecraft mc = Minecraft.getMinecraft();
+            boolean result = anvil.getSlot(2).getHasStack();
+            boolean expensive = anvil.maximumCost >= 40 && mc.player != null && !mc.player.capabilities.isCreativeMode;
+            // As vanilla's label: the cost when there is a result (or "Too Expensive!"), red when
+            // the player cannot take it.
+            flags.put("show_cost", anvil.maximumCost > 0 && (expensive || result));
+            flags.put("affordable", !expensive && result && mc.player != null && anvil.getSlot(2).canTakeStack(mc.player));
+            text.put("cost", expensive ? I18n.format("container.repair.expensive") : I18n.format("container.repair.cost", anvil.maximumCost));
+            values.put("cost", (double) anvil.maximumCost);
+            flags.put("has_item", anvil.getSlot(0).getHasStack());
+            flags.put("blocked", (anvil.getSlot(0).getHasStack() || anvil.getSlot(1).getHasStack()) && !result);
+            areas.put("name", new double[] {left + 59, top + 20, 110, 16});
+            areas.put("plus", new double[] {left + 52, top + 47, 16, 16});
+            areas.put("arrow", new double[] {left + 99, top + 45, 28, 21});
+        }
+        manager.bindings().setScreenValues(text, flags, values);
     }
 
     /** Whether to skip a vanilla inventory's own text labels (the theme draws its own). */
@@ -199,7 +272,10 @@ public final class InventoryTheme implements InventoryHooks {
             if (!s.isEnabled()) {
                 continue;
             }
-            String g = group(s);
+            String g = machineGroup(s);
+            if (g == null) {
+                g = group(s);
+            }
             add(g, s);
             add("all", s);
             if (isPlayerGroup(g)) {
@@ -236,6 +312,24 @@ public final class InventoryTheme implements InventoryHooks {
 
     private static boolean isPlayerGroup(String g) {
         return g.equals("main") || g.equals("hotbar") || g.equals("armor") || g.equals("offhand");
+    }
+
+    /** A furnace's, brewing stand's or anvil's own slots by what they hold; null for others. */
+    private String machineGroup(Slot s) {
+        if (s.inventory instanceof InventoryPlayer) {
+            return null;
+        }
+        int i = s.getSlotIndex();
+        switch (screenId) {
+            case "furnace":
+                return i == 0 ? "input" : i == 1 ? "fuel" : "result";
+            case "brewing":
+                return i < 3 ? "bottles" : i == 3 ? "ingredient" : "fuel";
+            case "anvil":
+                return s.inventory instanceof InventoryCraftResult ? "result" : "input";
+            default:
+                return null;
+        }
     }
 
     private static String group(Slot s) {

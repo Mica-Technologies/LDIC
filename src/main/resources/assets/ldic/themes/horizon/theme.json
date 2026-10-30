@@ -290,6 +290,71 @@
       ]
     },
 
+    "furnace": {
+      "elements": [
+        { "id": "furnace_frame", "type": "include", "screen": "inventory", "ids": ["inv_panel", "inv_rule", "inv_slots"] },
+        { "id": "furnace_title", "type": "text", "font": "ui_bold", "size": 9, "colour": "#F0FFFFFF", "shadow": false,
+          "text": "{container_title}", "x": "area_x('panel') + 8", "y": "area_y('panel') + 5" },
+        { "id": "furnace_flame_track", "type": "rect", "radius": 2, "colour": "#30FFFFFF",
+          "x": "area_x('flame') + 3", "y": "area_y('flame')", "width": "area_w('flame') - 6", "height": "area_h('flame')" },
+        { "id": "furnace_flame", "type": "rect", "radius": 2, "colour": "#FFFF9A3C", "visible": "screen_flag('burning')",
+          "x": "area_x('flame') + 3", "y": "area_y('flame') + area_h('flame') * (1 - screen_value('burn'))",
+          "width": "area_w('flame') - 6", "height": "area_h('flame') * screen_value('burn')" },
+        { "id": "furnace_arrow_track", "type": "rect", "radius": 2, "colour": "#30FFFFFF",
+          "x": "area_x('arrow')", "y": "area_y('arrow') + 6", "width": "area_w('arrow')", "height": 5 },
+        { "id": "furnace_arrow", "type": "rect", "radius": 2, "colour": "accent", "visible": "screen_value('cook') > 0",
+          "x": "area_x('arrow')", "y": "area_y('arrow') + 6", "width": "area_w('arrow') * screen_value('cook')", "height": 5 },
+        { "id": "furnace_inventory_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false,
+          "text": "{translate('container.inventory')}", "x": "area_x('main')", "y": "area_y('main') - 11" }
+      ]
+    },
+
+    "brewing": {
+      "elements": [
+        { "id": "brewing_frame", "type": "include", "screen": "inventory", "ids": ["inv_panel", "inv_rule", "inv_slots"] },
+        { "id": "brewing_title", "type": "text", "font": "ui_bold", "size": 9, "colour": "#F0FFFFFF", "shadow": false,
+          "text": "{container_title}", "x": "area_x('panel') + 8", "y": "area_y('panel') + 5" },
+        { "id": "brewing_fuel_track", "type": "rect", "radius": 2, "colour": "#30FFFFFF",
+          "x": "area_x('fuel_bar')", "y": "area_y('fuel_bar')", "width": "area_w('fuel_bar')", "height": "area_h('fuel_bar')" },
+        { "id": "brewing_fuel", "type": "rect", "radius": 2, "colour": "#FFFFB43C", "visible": "screen_value('fuel') > 0",
+          "x": "area_x('fuel_bar')", "y": "area_y('fuel_bar')", "width": "area_w('fuel_bar') * screen_value('fuel')", "height": "area_h('fuel_bar')" },
+        { "id": "brewing_arrow_track", "type": "rect", "radius": 2, "colour": "#30FFFFFF",
+          "x": "area_x('arrow') + 2", "y": "area_y('arrow')", "width": 5, "height": "area_h('arrow')" },
+        { "id": "brewing_arrow", "type": "rect", "radius": 2, "colour": "accent", "visible": "screen_flag('brewing')",
+          "x": "area_x('arrow') + 2", "y": "area_y('arrow')", "width": 5, "height": "area_h('arrow') * screen_value('brew')" },
+        { "id": "brewing_bubble1", "type": "rect", "radius": 1.5, "colour": "#C0FFFFFF", "visible": "screen_flag('brewing')", "width": 3, "height": 3,
+          "x": "area_x('bubbles') + 2", "y": "area_y('bubbles') + (area_h('bubbles') - 3) * (1 - fract(time * 0.7))", "opacity": "1 - fract(time * 0.7)" },
+        { "id": "brewing_bubble2", "type": "rect", "radius": 1.5, "colour": "#C0FFFFFF", "visible": "screen_flag('brewing')", "width": 3, "height": 3,
+          "x": "area_x('bubbles') + 7", "y": "area_y('bubbles') + (area_h('bubbles') - 3) * (1 - fract(time * 0.7 + 0.45))", "opacity": "1 - fract(time * 0.7 + 0.45)" },
+        { "id": "brewing_inventory_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false,
+          "text": "{translate('container.inventory')}", "x": "area_x('main')", "y": "area_y('main') - 11" }
+      ]
+    },
+
+    "anvil": {
+      "elements": [
+        { "id": "anvil_frame", "type": "include", "screen": "inventory", "ids": ["inv_panel", "inv_rule", "inv_slots"] },
+        { "id": "anvil_title", "type": "text", "font": "ui_bold", "size": 9, "colour": "#F0FFFFFF", "shadow": false,
+          "text": "{translate('container.repair')}", "x": "area_x('panel') + 8", "y": "area_y('panel') + 5" },
+        { "id": "anvil_name", "type": "rect", "radius": 2, "colour": "#70000000", "border_colour": "#30FFFFFF",
+          "x": "area_x('name')", "y": "area_y('name')", "width": "area_w('name')", "height": "area_h('name')", "opacity": "screen_flag('has_item') ? 1 : 0.5" },
+        { "id": "anvil_plus", "type": "text", "font": "ui_bold", "size": 12, "colour": "#B8FFFFFF", "shadow": false, "text": "+",
+          "x": "area_x('plus') + 5", "y": "area_y('plus') + 1" },
+        { "id": "anvil_arrow", "type": "text", "font": "ui_bold", "size": 14, "colour": "accent", "shadow": false, "text": "→",
+          "visible": "!screen_flag('blocked')", "x": "area_x('arrow') + 7", "y": "area_y('arrow') + 2" },
+        { "id": "anvil_blocked", "type": "text", "font": "ui_bold", "size": 13, "colour": "#FFFF6060", "shadow": false, "text": "x",
+          "visible": "screen_flag('blocked')", "x": "area_x('arrow') + 10", "y": "area_y('arrow') + 3" },
+        { "id": "anvil_cost", "type": "text", "font": "ui_bold", "size": 9, "colour": "#FF80FF20", "shadow": false, "align": "right",
+          "visible": "screen_flag('show_cost') && screen_flag('affordable')", "anchor": "top_right",
+          "x": "area_x('panel') + area_w('panel') - 8 - screen_width", "y": "area_y('panel') + 67", "text": "{screen_text('cost')}" },
+        { "id": "anvil_cost_short", "type": "text", "font": "ui_bold", "size": 9, "colour": "#FFFF6060", "shadow": false, "align": "right",
+          "visible": "screen_flag('show_cost') && !screen_flag('affordable')", "anchor": "top_right",
+          "x": "area_x('panel') + area_w('panel') - 8 - screen_width", "y": "area_y('panel') + 67", "text": "{screen_text('cost')}" },
+        { "id": "anvil_inventory_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false,
+          "text": "{translate('container.inventory')}", "x": "area_x('main')", "y": "area_y('main') - 11" }
+      ]
+    },
+
     "creative": {
       "elements": [
         { "id": "cr_top", "type": "rect", "radius": 4, "colour": "#E60C1218", "border_colour": "#30FFFFFF",
