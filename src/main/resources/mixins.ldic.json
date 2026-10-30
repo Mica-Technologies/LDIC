@@ -8,6 +8,7 @@
   "client": [
     "AccessorGuiConnecting",
     "AccessorGuiContainer",
+    "AccessorGuiCreateWorld",
     "AccessorGuiListWorldSelection",
     "AccessorGuiListWorldSelectionEntry",
     "AccessorGuiMultiplayer",

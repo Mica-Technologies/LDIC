@@ -12,10 +12,14 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 import net.minecraftforge.common.ForgeVersion;
 import net.minecraftforge.fml.common.FMLCommonHandler;
@@ -68,6 +72,10 @@ public final class HostBindings {
     private final Slot playerLevel = scope.declare("player_level", NUMBER);
     private final Slot playerXp = scope.declare("player_xp", NUMBER);
     private Map<String, double[]> areas = new HashMap<>();
+    private List<GuiButton> skinButtons = Collections.emptyList();
+    private List<GuiTextField> skinFields = Collections.emptyList();
+    private Map<String, String> skinText = new HashMap<>();
+    private Map<String, Boolean> skinFlags = new HashMap<>();
     // The world selection screen.
     private final Slot worldSelected = scope.declare("world_selected", BOOL);
     private final Slot worldCount = scope.declare("world_count", NUMBER);
@@ -141,6 +149,44 @@ public final class HostBindings {
         scope.define(Function.num("area_w", false, a -> area(a[0].str(), 2), STRING));
         scope.define(Function.num("area_h", false, a -> area(a[0].str(), 3), STRING));
         scope.define(Function.bool("has_area", false, a -> areas.containsKey(a[0].str()), STRING));
+        // Skinned vanilla screens: their own buttons (by id) and text fields (by order), and strings
+        // and flags particular to the screen (see ScreenSkins).
+        scope.define(Function.str("vanilla_text", false, a -> {
+            GuiButton b = skinButton(a[0].num());
+            return b == null ? "" : b.displayString;
+        }, NUMBER));
+        scope.define(Function.bool("vanilla_visible", false, a -> {
+            GuiButton b = skinButton(a[0].num());
+            return b != null && b.visible;
+        }, NUMBER));
+        scope.define(Function.bool("vanilla_enabled", false, a -> {
+            GuiButton b = skinButton(a[0].num());
+            return b != null && b.visible && b.enabled;
+        }, NUMBER));
+        scope.define(Function.bool("field_visible", false, a -> {
+            int i = (int) a[0].num();
+            return i >= 0 && i < skinFields.size() && skinFields.get(i).getVisible();
+        }, NUMBER));
+        scope.define(Function.str("screen_text", false, a -> skinText.getOrDefault(a[0].str(), ""), STRING));
+        scope.define(Function.bool("screen_flag", false, a -> skinFlags.getOrDefault(a[0].str(), false), STRING));
+    }
+
+    private GuiButton skinButton(double id) {
+        for (GuiButton b : skinButtons) {
+            if (b.id == (int) id) {
+                return b;
+            }
+        }
+        return null;
+    }
+
+    /** What a skinned vanilla screen offers this frame. */
+    public void setSkin(List<GuiButton> buttons, List<GuiTextField> fields,
+                        Map<String, String> text, Map<String, Boolean> flags) {
+        skinButtons = buttons;
+        skinFields = fields;
+        skinText = text;
+        skinFlags = flags;
     }
 
     private double area(String name, int i) {

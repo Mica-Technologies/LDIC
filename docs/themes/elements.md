@@ -171,6 +171,18 @@ own box is not used.
 [Inventory screens](inventory.md) only. The player, standing in the element's box (the box height
 sets the size), turning to look at the pointer unless `follow_mouse` is `false`.
 
+## vanilla_button
+
+[Skinned screens](skins.md) only. One of the screen's own buttons, by `button` (its id), moved into
+this box and drawn with every [button](#button) property except `text`: the label, enabled state
+and what a click does stay the screen's. Not drawn while the screen hides the button.
+
+## vanilla_field
+
+[Skinned screens](skins.md) only. One of the screen's text fields, by `field` (its order in the
+screen, from 0), in a themed box: `colour`, `border_colour`, `focus_colour`, `text_colour`,
+`radius`, `padding`. Clicking and typing stay the field's.
+
 ## list
 
 World and server screens only: the [worlds](worlds.md) (or servers) as cards, drawn by the screen in

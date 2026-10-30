@@ -383,6 +383,111 @@
       ]
     },
 
+    "world_create": {
+      "elements": [
+        { "id": "create_background", "type": "include", "screen": "main", "ids": ["backdrop", "scenes", "grade"] },
+        { "id": "create_dim", "type": "rect", "colour": "#A0060A10" },
+        { "id": "create_panel", "type": "group", "anchor": "top", "y": 22,
+          "width": "min(440, screen_width - 40)", "height": "screen_height - 40", "children": [
+          { "id": "create_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('selectWorld.create')}" },
+          { "id": "create_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+
+          { "id": "create_main", "type": "group", "y": 44, "width": "pw", "height": 150, "visible": "!screen_flag('more_options')", "children": [
+            { "id": "create_name_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false,
+              "text": "{translate('selectWorld.enterName')}" },
+            { "id": "create_name", "type": "vanilla_field", "field": "0", "y": 12, "width": "pw", "height": 20, "radius": 0,
+              "focus_colour": "accent" },
+            { "id": "create_folder", "type": "text", "font": "ui", "size": 8, "colour": "#90FFFFFF", "shadow": false, "y": 36,
+              "text": "{translate('selectWorld.resultFolder')} {screen_text('folder')}" },
+            { "id": "create_mode", "type": "vanilla_button", "button": "2", "style": "flat", "radius": 0,
+              "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "font": "ui_bold", "size": 10, "shadow": false,
+              "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "y": 56, "width": "pw", "height": 22 },
+            { "id": "create_mode_hint1", "type": "text", "font": "ui", "size": 8, "colour": "#A0FFFFFF", "shadow": false, "y": 84,
+              "text": "{screen_text('mode_hint1')}" },
+            { "id": "create_mode_hint2", "type": "text", "font": "ui", "size": 8, "colour": "#A0FFFFFF", "shadow": false, "y": 96,
+              "text": "{screen_text('mode_hint2')}" }
+          ] },
+
+          { "id": "create_more", "type": "group", "y": 44, "width": "pw", "height": 170, "visible": "screen_flag('more_options')", "children": [
+            { "id": "create_seed_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false,
+              "text": "{translate('selectWorld.enterSeed')}" },
+            { "id": "create_seed", "type": "vanilla_field", "field": "1", "y": 12, "width": "pw", "height": 20, "radius": 0,
+              "focus_colour": "accent" },
+            { "id": "create_seed_info", "type": "text", "font": "ui", "size": 8, "colour": "#90FFFFFF", "shadow": false, "y": 36,
+              "text": "{translate('selectWorld.seedInfo')}" },
+            { "id": "create_structures", "type": "vanilla_button", "button": "4", "style": "flat", "radius": 0,
+              "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "font": "ui", "size": 9, "shadow": false,
+              "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "y": 54, "width": "pw / 2 - 3", "height": 20 },
+            { "id": "create_type", "type": "vanilla_button", "button": "5", "style": "flat", "radius": 0,
+              "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "font": "ui", "size": 9, "shadow": false,
+              "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "anchor": "top_right", "y": 54, "width": "pw / 2 - 3", "height": 20 },
+            { "id": "create_structures_info", "type": "text", "font": "ui", "size": 8, "colour": "#90FFFFFF", "shadow": false, "y": 78,
+              "visible": "vanilla_visible(4)", "text": "{translate('selectWorld.mapFeatures.info')}" },
+            { "id": "create_customize", "type": "vanilla_button", "button": "8", "style": "flat", "radius": 0,
+              "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "font": "ui", "size": 9, "shadow": false,
+              "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "anchor": "top_right", "y": 78, "width": "pw / 2 - 3", "height": 20 },
+            { "id": "create_type_info", "type": "text", "font": "ui", "size": 8, "colour": "#90FFFFFF", "shadow": false,
+              "anchor": "top_right", "align": "right", "y": "vanilla_visible(8) ? 102 : 78",
+              "text": "{screen_text('world_type_info')}" },
+            { "id": "create_cheats", "type": "vanilla_button", "button": "6", "style": "flat", "radius": 0,
+              "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "font": "ui", "size": 9, "shadow": false,
+              "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "y": 116, "width": "pw / 2 - 3", "height": 20 },
+            { "id": "create_bonus", "type": "vanilla_button", "button": "7", "style": "flat", "radius": 0,
+              "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "font": "ui", "size": 9, "shadow": false,
+              "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "anchor": "top_right", "y": 116, "width": "pw / 2 - 3", "height": 20 },
+            { "id": "create_cheats_info", "type": "text", "font": "ui", "size": 8, "colour": "#90FFFFFF", "shadow": false, "y": 140,
+              "visible": "vanilla_visible(6)", "text": "{translate('selectWorld.allowCommands.info')}" }
+          ] },
+
+          { "id": "create_options_toggle", "type": "vanilla_button", "button": "3", "style": "flat", "radius": 0,
+            "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "font": "ui", "size": 10, "shadow": false,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "anchor": "bottom", "y": -34, "width": "pw / 2", "height": 20 },
+          { "id": "create_go", "type": "vanilla_button", "button": "0", "style": "flat", "radius": 0, "colour": "accent", "hover_colour": "#FFFFFFFF",
+            "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false,
+            "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF",
+            "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
+          { "id": "create_cancel", "type": "vanilla_button", "button": "1", "style": "flat", "radius": 0,
+            "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "font": "ui_bold", "size": 11, "shadow": false,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
+        ] },
+        { "id": "create_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end",
+          "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 }
+      ]
+    },
+
+    "world_edit": {
+      "elements": [
+        { "id": "edit_background", "type": "include", "screen": "main", "ids": ["backdrop", "scenes", "grade"] },
+        { "id": "edit_dim", "type": "rect", "colour": "#A0060A10" },
+        { "id": "edit_panel", "type": "group", "anchor": "center", "width": "min(320, screen_width - 40)", "height": 200, "children": [
+          { "id": "edit_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('selectWorld.edit.title')}" },
+          { "id": "edit_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "edit_name_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false, "y": 44,
+            "text": "{translate('selectWorld.enterName')}" },
+          { "id": "edit_name", "type": "vanilla_field", "field": "0", "y": 56, "width": "pw", "height": 20, "radius": 0,
+            "focus_colour": "accent" },
+          { "id": "edit_icon", "type": "vanilla_button", "button": "3", "style": "flat", "radius": 0,
+            "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF",
+            "y": 86, "width": "pw / 2 - 3", "height": 22 },
+          { "id": "edit_folder", "type": "vanilla_button", "button": "4", "style": "flat", "radius": 0,
+            "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "font": "ui", "size": 10, "shadow": false,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "anchor": "top_right", "y": 86, "width": "pw / 2 - 3", "height": 22 },
+          { "id": "edit_save", "type": "vanilla_button", "button": "0", "style": "flat", "radius": 0, "colour": "accent", "hover_colour": "#FFFFFFFF",
+            "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false,
+            "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF",
+            "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
+          { "id": "edit_cancel", "type": "vanilla_button", "button": "1", "style": "flat", "radius": 0,
+            "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "font": "ui_bold", "size": 11, "shadow": false,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
+        ] },
+        { "id": "edit_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end",
+          "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 }
+      ]
+    },
+
     "world_loading": {
       "elements": [
         { "id": "loading_background", "type": "include", "screen": "main", "ids": ["backdrop", "scenes", "grade"] },

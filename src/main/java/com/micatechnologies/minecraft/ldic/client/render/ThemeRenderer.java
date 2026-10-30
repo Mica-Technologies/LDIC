@@ -34,6 +34,8 @@ public final class ThemeRenderer implements NodeRenderer {
     public InventoryHooks inventory;
     /** The open screen's list (worlds, servers), for {@code list} elements; null elsewhere. */
     public ListHooks lists;
+    /** The skinned vanilla screen, for {@code vanilla_button} and {@code vanilla_field}; null elsewhere. */
+    public SkinHooks skin;
     private final List<PanoramaRenderer> panoramas = new ArrayList<>();
 
     public ThemeRenderer(Textures textures, Fonts fonts, java.util.function.Consumer<UiNode> hoverStarted) {
@@ -159,6 +161,20 @@ public final class ThemeRenderer implements NodeRenderer {
                 break;
             case "slots":
                 drawSlots(n);
+                break;
+            case "vanilla_button":
+                if (skin != null) {
+                    String label = skin.vanillaButton(n);
+                    if (label != null) {
+                        drawButton(n, label);
+                    }
+                }
+                break;
+            case "vanilla_field":
+                if (skin != null) {
+                    skin.vanillaField(n);
+                    Gfx.beginUi();
+                }
                 break;
             case "list":
                 if (lists != null) {
@@ -434,6 +450,11 @@ public final class ThemeRenderer implements NodeRenderer {
     }
 
     private void drawButton(UiNode n) {
+        drawButton(n, n.def.str("text", ""));
+    }
+
+    /** A button with this label (a theme button's text, or a vanilla button's own label). */
+    private void drawButton(UiNode n, String label) {
         ElementDef d = n.def;
         double x0 = n.x;
         double y0 = n.y;
@@ -502,7 +523,7 @@ public final class ThemeRenderer implements NodeRenderer {
                 break;
         }
 
-        String text = d.str("text", "");
+        String text = label == null ? "" : label;
         double size = d.num("size", 9);
         double pad = d.num("padding", 6);
         LdicFont font = font(d);

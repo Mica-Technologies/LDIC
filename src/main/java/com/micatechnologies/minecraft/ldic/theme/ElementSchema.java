@@ -207,6 +207,25 @@ public final class ElementSchema {
                 new Prop("search", Kind.FLAG, true),
                 new Prop("empty_text", Kind.TEXT, ""));
 
+        // Skinned vanilla screens only. One of the screen's own buttons (by id), moved into this
+        // box and drawn with the button styles; its label, state and click stay vanilla's.
+        Map<String, Prop> vanillaButton = new LinkedHashMap<>(TYPES.get("button"));
+        vanillaButton.remove("text");
+        vanillaButton.remove("wrap");
+        vanillaButton.put("button", new Prop("button", Kind.STATIC, null));
+        TYPES.put("vanilla_button", vanillaButton);
+
+        // Skinned vanilla screens only. One of the screen's own text fields (by order in the
+        // screen, from 0), moved into this box; typing and clicking stay vanilla's.
+        type("vanilla_field",
+                new Prop("field", Kind.STATIC, "0"),
+                new Prop("colour", Kind.COLOUR, 0x80000000L),
+                new Prop("border_colour", Kind.COLOUR, 0x30FFFFFFL),
+                new Prop("focus_colour", Kind.COLOUR, 0xFF4FC3F7L),
+                new Prop("text_colour", Kind.COLOUR, 0xFFE0E0E0L),
+                new Prop("radius", Kind.NUMBER, 2),
+                new Prop("padding", Kind.NUMBER, 5));
+
         type("foreign_buttons",
                 new Prop("layout", Kind.ENUM, "column", "keep", "row", "column"),
                 new Prop("spacing", Kind.NUMBER, 4),

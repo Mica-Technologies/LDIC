@@ -68,3 +68,5 @@ Every element also has its own values (`hover`, `hover_t`, `pw`, …); see
 On the [world selection](worlds.md) screen there are also `world_selected` (bool), `world_count` (number) and `world_sort` (string).
 
 On the [server list](servers.md) there are also `server_selected`, `server_editable` (bool) and `server_count` (number).
+
+On [skinned screens](skins.md) there are also `vanilla_text(id)`, `vanilla_visible(id)`, `vanilla_enabled(id)`, `field_visible(i)`, `screen_text(name)` and `screen_flag(name)`.

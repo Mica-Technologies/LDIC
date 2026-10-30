@@ -106,6 +106,7 @@ nav:
       - World loading: themes/world-loading.md
       - World selection: themes/worlds.md
       - Server list: themes/servers.md
+      - Skins for other screens: themes/skins.md
       - Inventory screens: themes/inventory.md
       - Expressions: themes/expressions.md
       - Game values: themes/game-values.md

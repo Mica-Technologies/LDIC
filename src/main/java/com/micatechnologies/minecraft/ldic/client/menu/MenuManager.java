@@ -72,6 +72,7 @@ public final class MenuManager {
 
     private ThemeDef theme;
     private final java.util.List<Runnable> themeListeners = new java.util.ArrayList<>();
+    private final ScreenSkins skins = new ScreenSkins(this);
     private Problems problems;
     private double loadedAt;
     private boolean loadAttempted;
@@ -102,6 +103,11 @@ public final class MenuManager {
 
     Fonts fonts() {
         return fonts;
+    }
+
+    /** The skins for other vanilla screens (an event listener). */
+    public Object screenSkins() {
+        return skins;
     }
 
     public WorldLoading worldLoading() {

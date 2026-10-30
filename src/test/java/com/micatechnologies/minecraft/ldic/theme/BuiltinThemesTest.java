@@ -79,6 +79,12 @@ class BuiltinThemesTest {
         s.declare("server_selected", Type.BOOL);
         s.declare("server_editable", Type.BOOL);
         s.declare("server_count", Type.NUMBER);
+        s.define(Function.str("vanilla_text", false, a -> "Button", Type.NUMBER));
+        s.define(Function.bool("vanilla_visible", false, a -> true, Type.NUMBER));
+        s.define(Function.bool("vanilla_enabled", false, a -> true, Type.NUMBER));
+        s.define(Function.bool("field_visible", false, a -> true, Type.NUMBER));
+        s.define(Function.str("screen_text", false, a -> "", Type.STRING));
+        s.define(Function.bool("screen_flag", false, a -> false, Type.STRING));
         return s;
     }
 

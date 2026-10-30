@@ -33,6 +33,8 @@ public final class LdicSettings {
     public boolean worldsEnabled = true;
     /** Replace vanilla's server list with the menu theme's "servers" screen, when it has one. */
     public boolean serversEnabled = true;
+    /** Draw other vanilla screens (create world, edit world, ...) with the menu theme's skins for them. */
+    public boolean skinsEnabled = true;
     /** Seconds the first menu after loading fades in from black; 0 for none. */
     public double menuFadeIn = 0.6;
     /** Replace Forge's loading screen with the LDIC theme. */
@@ -208,6 +210,7 @@ public final class LdicSettings {
             worldLoadingEnabled = bool(menu, "themed_world_loading", worldLoadingEnabled);
             worldsEnabled = bool(menu, "themed_worlds", worldsEnabled);
             serversEnabled = bool(menu, "themed_servers", serversEnabled);
+            skinsEnabled = bool(menu, "themed_screens", skinsEnabled);
         }
         JsonObject loading = obj(o, "loading");
         if (loading != null) {
@@ -293,6 +296,7 @@ public final class LdicSettings {
         menu.addProperty("themed_world_loading", worldLoadingEnabled);
         menu.addProperty("themed_worlds", worldsEnabled);
         menu.addProperty("themed_servers", serversEnabled);
+        menu.addProperty("themed_screens", skinsEnabled);
         o.add("menu", menu);
         JsonObject loading = new JsonObject();
         loading.addProperty("enabled", loadingEnabled);

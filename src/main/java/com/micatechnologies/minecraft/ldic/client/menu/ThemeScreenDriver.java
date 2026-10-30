@@ -3,6 +3,7 @@ package com.micatechnologies.minecraft.ldic.client.menu;
 import com.micatechnologies.minecraft.ldic.Ldic;
 import com.micatechnologies.minecraft.ldic.client.render.Gfx;
 import com.micatechnologies.minecraft.ldic.client.render.ListHooks;
+import com.micatechnologies.minecraft.ldic.client.render.SkinHooks;
 import com.micatechnologies.minecraft.ldic.client.render.ThemeRenderer;
 import com.micatechnologies.minecraft.ldic.theme.ElementDef;
 import com.micatechnologies.minecraft.ldic.theme.Problems;
@@ -87,6 +88,9 @@ final class ThemeScreenDriver {
         ScreenDef def = theme.screen(screenId);
         this.tree = new UiTree(def);
         this.renderer = new ThemeRenderer(manager.textures(), manager.fonts(), this::hoverStarted);
+        if (host instanceof SkinHooks) {
+            renderer.skin = (SkinHooks) host;
+        }
         if (host instanceof ListHooks) {
             renderer.lists = (ListHooks) host;
         }
