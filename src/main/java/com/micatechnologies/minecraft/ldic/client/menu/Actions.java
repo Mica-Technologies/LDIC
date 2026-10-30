@@ -144,6 +144,14 @@ final class Actions {
                 case "set":
                     a.target.assign(a.value);
                     break;
+                case "server_join":
+                case "server_direct":
+                case "server_add":
+                case "server_edit":
+                case "server_delete":
+                case "server_refresh":
+                    serverAction(a.type, driver);
+                    break;
                 case "world_play":
                 case "world_create":
                 case "world_edit":
@@ -163,6 +171,35 @@ final class Actions {
             }
         } catch (Exception e) {
             Ldic.LOGGER.error("LDIC: action {} failed", a, e);
+        }
+    }
+
+    /** The server-list actions; only on the themed server list (logged elsewhere). */
+    private static void serverAction(String type, ThemeScreenDriver driver) {
+        if (!(driver.host() instanceof LdicServersScreen)) {
+            Ldic.LOGGER.warn("LDIC: action '{}' only works on the servers screen", type);
+            return;
+        }
+        LdicServersScreen servers = (LdicServersScreen) driver.host();
+        switch (type) {
+            case "server_join":
+                servers.join();
+                break;
+            case "server_direct":
+                servers.direct();
+                break;
+            case "server_add":
+                servers.add();
+                break;
+            case "server_edit":
+                servers.edit();
+                break;
+            case "server_delete":
+                servers.delete();
+                break;
+            default:
+                servers.refresh();
+                break;
         }
     }
 

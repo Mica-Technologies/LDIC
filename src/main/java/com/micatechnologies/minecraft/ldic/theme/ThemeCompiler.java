@@ -68,6 +68,13 @@ public final class ThemeCompiler {
         action("world_delete");
         action("world_recreate");
         action("world_sort");
+        // The server list screen.
+        action("server_join");
+        action("server_direct");
+        action("server_add");
+        action("server_edit");
+        action("server_delete");
+        action("server_refresh");
         action("classic_options");
         action("classic_pause");
         action("resume");

@@ -372,6 +372,62 @@
       ]
     },
 
+    "servers": {
+      "elements": [
+        { "id": "servers_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"] },
+        { "id": "servers_dim", "type": "rect", "colour": "#A0060A10" },
+
+        { "id": "servers_panel", "type": "group", "anchor": "top", "y": 22,
+          "width": "min(640, screen_width - 40)", "height": "screen_height - 40", "children": [
+          { "id": "servers_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('multiplayer.title')}" },
+          { "id": "servers_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "servers_refresh", "type": "button", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF",
+            "font": "ui", "size": 9, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "anchor": "top_right", "y": 6, "width": 90, "height": 18,
+            "text": "{translate('selectServer.refresh')}", "action": "server_refresh" },
+
+          { "id": "servers_list", "type": "list", "source": "servers", "y": 42, "width": "pw", "height": "ph - 42 - 60",
+            "font": "ui", "size": 10, "row_height": 40, "radius": 3,
+            "colour": "#50101820", "hover_colour": "#70182030", "selected_colour": "#80182838",
+            "selected_border_colour": "accent", "accent_colour": "accent" },
+
+          { "id": "servers_play", "type": "button", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF",
+            "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false,
+            "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF",
+            "anchor": "bottom_left", "y": -30, "width": "pw / 2 - 3", "height": 24,
+            "text": "{translate('selectServer.select')}", "enabled": "server_selected", "action": "server_join" },
+          { "id": "servers_create", "type": "button", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF",
+            "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "anchor": "bottom_right", "y": -30, "width": "pw / 2 - 3", "height": 24,
+            "text": "{translate('selectServer.add')}", "action": "server_add" },
+
+          { "id": "servers_edit", "type": "button", "style": "flat", "radius": 3, "colour": "#20FFFFFF", "hover_colour": "#40FFFFFF",
+            "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false,
+            "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF",
+            "anchor": "bottom_left", "width": "pw / 4 - 4", "height": 22,
+            "text": "{translate('selectServer.edit')}", "enabled": "server_editable", "action": "server_edit" },
+          { "id": "servers_delete", "type": "button", "style": "flat", "radius": 3, "colour": "#20FFFFFF", "hover_colour": "#C0E53935",
+            "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false,
+            "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF",
+            "anchor": "bottom_left", "x": "pw / 4 + 1", "width": "pw / 4 - 4", "height": 22,
+            "text": "{translate('selectServer.delete')}", "enabled": "server_editable", "action": "server_delete" },
+          { "id": "servers_recreate", "type": "button", "style": "flat", "radius": 3, "colour": "#20FFFFFF", "hover_colour": "#40FFFFFF",
+            "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false,
+            "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF",
+            "anchor": "bottom_left", "x": "pw / 2 + 2", "width": "pw / 4 - 4", "height": 22,
+            "text": "{translate('selectServer.direct')}", "action": "server_direct" },
+          { "id": "servers_back", "type": "button", "style": "flat", "radius": 3, "colour": "#20FFFFFF", "hover_colour": "#40FFFFFF",
+            "font": "ui", "size": 10, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "anchor": "bottom_right", "width": "pw / 4 - 3", "height": 22,
+            "text": "{translate('gui.cancel')}", "action": "back" }
+        ] },
+
+        { "id": "servers_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end",
+          "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 }
+      ]
+    },
+
     "world_loading": {
       "elements": [
         { "id": "loading_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left", "shade_bottom"] },

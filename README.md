@@ -41,6 +41,9 @@ studied, but none of their code, config samples or textures were copied.
 - A themed **world selection**: worlds as cards with icons, last played, game-mode, hardcore,
   cheats and version badges, search and sort, while play, create, edit, delete and re-create run
   vanilla's own code.
+- A themed **server list**: servers as cards with icon, message of the day, players, ping and
+  version warnings, LAN games and search, while every vanilla flow (add, edit, delete, direct
+  connect, refresh, LAN) runs vanilla's own code.
 - Other mods' buttons keep working: LDIC's screens extend the vanilla screen classes, and
   LDIC never hides a mod's button on the options or pause screens.
 

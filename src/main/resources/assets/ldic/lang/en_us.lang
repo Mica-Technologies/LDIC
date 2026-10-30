@@ -50,3 +50,5 @@ ldic.worlds.none_match=No worlds match
 ldic.worlds.sort=Sort
 ldic.worlds.sort.recent=Last played
 ldic.worlds.sort.name=Name
+ldic.servers.search=Search servers
+ldic.servers.offline=Offline

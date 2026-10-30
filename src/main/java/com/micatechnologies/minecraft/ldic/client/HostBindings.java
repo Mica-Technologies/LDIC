@@ -72,6 +72,10 @@ public final class HostBindings {
     private final Slot worldSelected = scope.declare("world_selected", BOOL);
     private final Slot worldCount = scope.declare("world_count", NUMBER);
     private final Slot worldSort = scope.declare("world_sort", STRING);
+    // The server list screen.
+    private final Slot serverSelected = scope.declare("server_selected", BOOL);
+    private final Slot serverEditable = scope.declare("server_editable", BOOL);
+    private final Slot serverCount = scope.declare("server_count", NUMBER);
 
     private final Map<String, SimpleDateFormat> dateFormats = new HashMap<>();
     private String splash = "";
@@ -149,6 +153,13 @@ public final class HostBindings {
         worldSelected.set(selected);
         worldCount.set(count);
         worldSort.set(sort);
+    }
+
+    /** The server list screen's state this frame: a row selected, a saved (editable) one, how many saved. */
+    public void setServers(boolean selected, boolean editable, int count) {
+        serverSelected.set(selected);
+        serverEditable.set(editable);
+        serverCount.set(count);
     }
 
     /** What an inventory screen shows this frame: its title and named areas (x, y, w, h). */

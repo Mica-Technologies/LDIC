@@ -76,6 +76,9 @@ class BuiltinThemesTest {
         s.declare("world_selected", Type.BOOL);
         s.declare("world_count", Type.NUMBER);
         s.declare("world_sort", Type.STRING);
+        s.declare("server_selected", Type.BOOL);
+        s.declare("server_editable", Type.BOOL);
+        s.declare("server_count", Type.NUMBER);
         return s;
     }
 

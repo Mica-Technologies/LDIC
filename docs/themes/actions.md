@@ -57,3 +57,7 @@ else.
 ## World selection
 
 `world_play`, `world_create`, `world_edit`, `world_delete`, `world_recreate` and `world_sort` work on the [world selection](worlds.md) screen.
+
+## Server list
+
+`server_join`, `server_direct`, `server_add`, `server_edit`, `server_delete` and `server_refresh` work on the [server list](servers.md).

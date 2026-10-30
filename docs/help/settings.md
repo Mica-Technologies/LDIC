@@ -13,7 +13,7 @@ launcher that manages `settings.json` does not see it change.
 
 ```json
 {
-  "menu": { "enabled": true, "fade_in": 0.6, "themed_options": true, "themed_pause": true, "themed_world_loading": true, "themed_worlds": true },
+  "menu": { "enabled": true, "fade_in": 0.6, "themed_options": true, "themed_pause": true, "themed_world_loading": true, "themed_worlds": true, "themed_servers": true },
   "loading": { "enabled": true, "fps": 60, "hold_seconds": 0 },
   "logo_screen": { "enabled": true, "seconds": 3 },
   "photosensitivity_notice": { "enabled": true, "always": true, "seconds": 5 },
@@ -33,6 +33,7 @@ launcher that manages `settings.json` does not see it change.
 | `menu.themed_pause` | `true` | Use the menu theme's `pause` screen in place of vanilla's pause menu, when the theme has one |
 | `menu.themed_world_loading` | `true` | Use the menu theme's `world_loading` screen while a world loads, when the theme has one |
 | `menu.themed_worlds` | `true` | Use the menu theme's `worlds` screen in place of vanilla's world selection, when the theme has one |
+| `menu.themed_servers` | `true` | Use the menu theme's `servers` screen in place of vanilla's server list, when the theme has one |
 | `loading.enabled` | `true` | `false` leaves Forge's loading screen alone |
 | `loading.fps` | `60` | Loading-screen frame cap (10–240). Lower leaves more CPU for loading. |
 | `loading.hold_seconds` | `0` | With `debug`: keep the loading screen up this long after loading, to preview a theme |
