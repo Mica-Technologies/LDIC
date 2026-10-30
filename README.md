@@ -52,6 +52,9 @@ studied, but none of their code, config samples or textures were copied.
   to the largest crisp size that fits.
 - Search box on **every** creative tab, not only Search Items (click the title or press Ctrl+F).
 - Richer search everywhere: several words in any order, `@mod`, `#tooltip`, `-exclude`.
+- **Survival search and sort**: a search box above every survival inventory dims what does not
+  match; a sort button merges and orders your inventory or a chest with ordinary clicks, so it
+  is safe on any server.
 - Sort any tab by tab order, name, mod or item id, ascending or descending. Each tab
   remembers its choice. Useful in modpacks, where registration order leaves tabs in disarray.
 - **Themed inventories**: the menu theme can draw the survival inventory, crafting table, chests
@@ -76,7 +79,6 @@ See the wiki: [creative search and sort](https://mica-technologies.github.io/LDI
 
 ### On the way
 
-- **Survival search:** highlighting matching items in survival inventories and chests.
 - **HUD:** SUM's general-purpose HUD elements move into LDIC, with a OneConfig settings page.
 
 ## Installing

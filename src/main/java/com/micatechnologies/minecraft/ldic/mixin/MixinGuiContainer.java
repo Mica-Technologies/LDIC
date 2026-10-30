@@ -1,6 +1,7 @@
 package com.micatechnologies.minecraft.ldic.mixin;
 
 import com.micatechnologies.minecraft.ldic.client.inventory.InventoryScreens;
+import com.micatechnologies.minecraft.ldic.client.inventory.SurvivalSearch;
 import com.micatechnologies.minecraft.ldic.client.menu.InventoryTheme;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -38,10 +39,21 @@ public abstract class MixinGuiContainer {
         }
     }
 
+    /** The survival search box takes keys while it has focus (and Ctrl+F to get it). */
+    @Inject(method = "keyTyped", at = @At("HEAD"), cancellable = true)
+    private void ldic$typeInSearch(char typedChar, int keyCode, CallbackInfo ci) {
+        SurvivalSearch search = SurvivalSearch.instance();
+        if (search != null && search.key((GuiScreen) (Object) this, typedChar, keyCode)) {
+            ci.cancel();
+        }
+    }
+
     @Inject(method = "mouseClicked", at = @At("HEAD"), cancellable = true)
-    private void ldic$clickFullScreenToggle(int mouseX, int mouseY, int mouseButton, CallbackInfo ci) {
+    private void ldic$clickOwnControls(int mouseX, int mouseY, int mouseButton, CallbackInfo ci) {
         InventoryScreens screens = InventoryScreens.instance();
-        if (screens != null && screens.clickToggle((GuiScreen) (Object) this, mouseX, mouseY, mouseButton)) {
+        SurvivalSearch search = SurvivalSearch.instance();
+        if (screens != null && screens.clickToggle((GuiScreen) (Object) this, mouseX, mouseY, mouseButton)
+                || search != null && search.click((GuiScreen) (Object) this, mouseX, mouseY, mouseButton)) {
             ci.cancel();
         }
     }

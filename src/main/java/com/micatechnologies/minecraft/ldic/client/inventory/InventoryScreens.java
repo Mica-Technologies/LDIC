@@ -215,7 +215,8 @@ public final class InventoryScreens {
         if (gui instanceof LdicCreativeScreen) {
             return ((LdicCreativeScreen) gui).isTyping();
         }
-        return gui instanceof GuiContainerCreative && CreativeSearch.isTyping(gui);
+        SurvivalSearch search = SurvivalSearch.instance();
+        return gui instanceof GuiContainerCreative && CreativeSearch.isTyping(gui) || search != null && search.isTyping(gui);
     }
 
     @SubscribeEvent
