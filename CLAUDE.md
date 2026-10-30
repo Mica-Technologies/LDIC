@@ -113,6 +113,8 @@ Plans and decisions live in `docs/AGENT-PLANS/MASTER_PLAN.md` (gitignored by des
   Copy a built-in theme into `run/config/ldic/themes/<x>-dev/` and point
   `run/config/ldic/menu.json` at it for live reload. MCMCP (jar in `run/mods`) can screenshot the
   menu.
+- A theme screen id that matches an `open` action name (`resource_packs`, `video`, `language`, ...
+  in `Actions`) wins over the vanilla screen, so skin screen ids must avoid those names.
 - Keep theme parsing, layout and expression code free of Minecraft types.
 - Third-party reference source goes in `example-source/` (gitignored), never into `src/`.
 - CI workflows come from `dev-configurations/minecraft-mod-workflows/template/`.
