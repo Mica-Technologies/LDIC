@@ -213,7 +213,27 @@ public final class ElementSchema {
         vanillaButton.remove("text");
         vanillaButton.remove("wrap");
         vanillaButton.put("button", new Prop("button", Kind.STATIC, null));
+        vanillaButton.put("slider_colour", new Prop("slider_colour", Kind.COLOUR, 0xFF4FC3F7L));
         TYPES.put("vanilla_button", vanillaButton);
+
+        // Skinned vanilla screens only. Every vanilla button the theme did not place (except
+        // "exclude", a comma list of ids), laid out in columns in this box, button-styled.
+        Map<String, Prop> vanillaGrid = new LinkedHashMap<>(vanillaButton);
+        vanillaGrid.remove("button");
+        vanillaGrid.put("columns", new Prop("columns", Kind.NUMBER, 2));
+        vanillaGrid.put("row_height", new Prop("row_height", Kind.NUMBER, 20));
+        vanillaGrid.put("gap", new Prop("gap", Kind.NUMBER, 4));
+        vanillaGrid.put("exclude", new Prop("exclude", Kind.STATIC, null));
+        TYPES.put("vanilla_grid", vanillaGrid);
+
+        // Skinned vanilla screens only. One of the screen's scrolling lists (by order, from 0),
+        // moved into this box with its dirt background off; scrolling and clicks stay vanilla's.
+        // With style_buttons, the buttons inside its rows are drawn with these button styles.
+        Map<String, Prop> vanillaList = new LinkedHashMap<>(vanillaButton);
+        vanillaList.remove("button");
+        vanillaList.put("list", new Prop("list", Kind.STATIC, "0"));
+        vanillaList.put("style_buttons", new Prop("style_buttons", Kind.FLAG, false));
+        TYPES.put("vanilla_list", vanillaList);
 
         // Skinned vanilla screens only. One of the screen's own text fields (by order in the
         // screen, from 0), moved into this box; typing and clicking stay vanilla's.

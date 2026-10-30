@@ -533,6 +533,253 @@
       ]
     },
 
+    "server_edit": {
+      "elements": [
+        { "id": "server_edit_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "server_edit_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "server_edit_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "server_edit_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "server_edit_panel", "type": "group", "anchor": "center", "width": "min(340, screen_width - 40)", "height": 220, "children": [
+          { "id": "server_edit_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('addServer.title')}" },
+          { "id": "server_edit_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "server_edit_name_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false, "y": 44,
+            "text": "{translate('addServer.enterName')}" },
+          { "id": "server_edit_name", "type": "vanilla_field", "field": "1", "y": 56, "width": "pw", "height": 20, "radius": 3, "focus_colour": "accent" },
+          { "id": "server_edit_ip_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false, "y": 84,
+            "text": "{translate('addServer.enterIp')}" },
+          { "id": "server_edit_ip", "type": "vanilla_field", "field": "0", "y": 96, "width": "pw", "height": 20, "radius": 3, "focus_colour": "accent" },
+          { "id": "server_edit_packs", "type": "vanilla_button", "button": "2", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "y": 128, "width": "pw", "height": 22 },
+          { "id": "server_edit_done", "type": "vanilla_button", "button": "0", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
+          { "id": "server_edit_cancel", "type": "vanilla_button", "button": "1", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
+        ] }
+      ]
+    },
+
+    "server_direct": {
+      "elements": [
+        { "id": "server_direct_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "server_direct_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "server_direct_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "server_direct_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "server_direct_panel", "type": "group", "anchor": "center", "width": "min(340, screen_width - 40)", "height": 140, "children": [
+          { "id": "server_direct_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('selectServer.direct')}" },
+          { "id": "server_direct_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "server_direct_ip_label", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false, "y": 44,
+            "text": "{translate('addServer.enterIp')}" },
+          { "id": "server_direct_ip", "type": "vanilla_field", "field": "0", "y": 56, "width": "pw", "height": 20, "radius": 3, "focus_colour": "accent" },
+          { "id": "server_direct_join", "type": "vanilla_button", "button": "0", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
+          { "id": "server_direct_cancel", "type": "vanilla_button", "button": "1", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
+        ] }
+      ]
+    },
+
+    "lan_share": {
+      "elements": [
+        { "id": "lan_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "lan_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "lan_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "lan_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "lan_panel", "type": "group", "anchor": "center", "width": "min(340, screen_width - 40)", "height": 160, "children": [
+          { "id": "lan_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('lanServer.title')}" },
+          { "id": "lan_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "lan_hint", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false, "y": 44,
+            "text": "{translate('lanServer.otherPlayers')}" },
+          { "id": "lan_mode", "type": "vanilla_button", "button": "104", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "y": 62, "width": "pw / 2 - 3", "height": 22 },
+          { "id": "lan_cheats", "type": "vanilla_button", "button": "103", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "top_right", "y": 62, "width": "pw / 2 - 3", "height": 22 },
+          { "id": "lan_start", "type": "vanilla_button", "button": "101", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
+          { "id": "lan_cancel", "type": "vanilla_button", "button": "102", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
+        ] }
+      ]
+    },
+
+    "death": {
+      "elements": [
+        { "id": "death_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "death_tint", "type": "rect", "colour": "#70300000", "colour_bottom": "#A0100000" },
+        { "id": "death_panel", "type": "group", "anchor": "center", "width": "min(340, screen_width - 40)", "height": 170, "children": [
+          { "id": "death_title", "type": "text", "font": "ui_bold", "size": 30, "colour": "#FFFF6B6B", "shadow": false, "align": "center", "width": "pw",
+            "text": "{translate(screen_flag('hardcore') ? 'deathScreen.title.hardcore' : 'deathScreen.title')}" },
+          { "id": "death_rule", "type": "rect", "colour": "#FFFF6B6B", "anchor": "top", "y": 40, "width": 48, "height": 2 },
+          { "id": "death_cause", "type": "text", "font": "ui", "size": 10, "colour": "#E0FFFFFF", "shadow": false, "align": "center", "wrap": true,
+            "y": 52, "width": "pw", "text": "{screen_text('cause')}" },
+          { "id": "death_score", "type": "text", "font": "ui", "size": 9, "colour": "#B8FFFFFF", "shadow": false, "align": "center",
+            "y": 84, "width": "pw", "text": "{translate('deathScreen.score')}: {screen_text('score')}" },
+          { "id": "death_respawn", "type": "vanilla_button", "button": "0", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
+          { "id": "death_title_screen", "type": "vanilla_button", "button": "1", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
+        ] }
+      ]
+    },
+
+    "disconnected": {
+      "elements": [
+        { "id": "disconnected_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "disconnected_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "disconnected_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "disconnected_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "disconnected_panel", "type": "group", "anchor": "center", "width": "min(400, screen_width - 40)", "height": 180, "children": [
+          { "id": "disconnected_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{screen_text('reason')}" },
+          { "id": "disconnected_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "disconnected_message", "type": "text", "font": "ui", "size": 10, "colour": "#D0FFFFFF", "shadow": false, "wrap": true,
+            "y": 44, "width": "pw", "text": "{screen_text('message')}" },
+          { "id": "disconnected_back", "type": "vanilla_button", "button": "0", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom", "width": "pw / 2", "height": 24 }
+        ] }
+      ]
+    },
+
+    "confirm": {
+      "elements": [
+        { "id": "confirm_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "confirm_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "confirm_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "confirm_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "confirm_panel", "type": "group", "anchor": "center", "width": "min(400, screen_width - 40)", "height": 160, "children": [
+          { "id": "confirm_title", "type": "text", "font": "ui_bold", "size": 16, "colour": "#FFFFFF", "shadow": false, "wrap": true, "width": "pw",
+            "text": "{screen_text('line1')}" },
+          { "id": "confirm_rule", "type": "rect", "colour": "accent", "y": 44, "width": 48, "height": 2 },
+          { "id": "confirm_detail", "type": "text", "font": "ui", "size": 10, "colour": "#D0FFFFFF", "shadow": false, "wrap": true,
+            "y": 56, "width": "pw", "text": "{screen_text('line2')}" },
+          { "id": "confirm_yes", "type": "vanilla_button", "button": "0", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
+          { "id": "confirm_no", "type": "vanilla_button", "button": "1", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
+        ] }
+      ]
+    },
+
+    "options_sounds": {
+      "elements": [
+        { "id": "options_sounds_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "options_sounds_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "options_sounds_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "options_sounds_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "options_sounds_panel", "type": "group", "anchor": "center", "width": "min(420, screen_width - 40)", "height": "min(260, screen_height - 30)", "children": [
+          { "id": "options_sounds_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('options.sounds.title')}" },
+          { "id": "options_sounds_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "options_sounds_grid", "type": "vanilla_grid", "exclude": "200", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "columns": 2, "row_height": 20, "gap": 5,
+            "y": 44, "width": "pw", "height": "ph - 80" },
+          { "id": "options_sounds_done", "type": "vanilla_button", "button": "200", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom", "width": "pw / 2", "height": 24 }
+        ] }
+      ]
+    },
+
+    "options_chat": {
+      "elements": [
+        { "id": "options_chat_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "options_chat_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "options_chat_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "options_chat_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "options_chat_panel", "type": "group", "anchor": "center", "width": "min(420, screen_width - 40)", "height": "min(260, screen_height - 30)", "children": [
+          { "id": "options_chat_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('options.chat.title')}" },
+          { "id": "options_chat_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "options_chat_grid", "type": "vanilla_grid", "exclude": "200", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "columns": 2, "row_height": 20, "gap": 5,
+            "y": 44, "width": "pw", "height": "ph - 80" },
+          { "id": "options_chat_done", "type": "vanilla_button", "button": "200", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom", "width": "pw / 2", "height": 24 }
+        ] }
+      ]
+    },
+
+    "options_skin": {
+      "elements": [
+        { "id": "options_skin_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "options_skin_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "options_skin_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "options_skin_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "options_skin_panel", "type": "group", "anchor": "center", "width": "min(420, screen_width - 40)", "height": "min(240, screen_height - 30)", "children": [
+          { "id": "options_skin_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('options.skinCustomisation.title')}" },
+          { "id": "options_skin_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "options_skin_grid", "type": "vanilla_grid", "exclude": "200", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "columns": 2, "row_height": 20, "gap": 5,
+            "y": 44, "width": "pw", "height": "ph - 80" },
+          { "id": "options_skin_done", "type": "vanilla_button", "button": "200", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom", "width": "pw / 2", "height": 24 }
+        ] }
+      ]
+    },
+
+    "options_language": {
+      "elements": [
+        { "id": "options_language_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "options_language_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "options_language_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "options_language_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "options_language_panel", "type": "group", "anchor": "center", "width": "min(440, screen_width - 40)", "height": "screen_height - 30", "children": [
+          { "id": "options_language_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('options.language')}" },
+          { "id": "options_language_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "options_language_warning", "type": "text", "font": "ui", "size": 8, "colour": "#90FFFFFF", "shadow": false,
+            "anchor": "top_right", "align": "right", "y": 16, "text": "{translate('options.languageWarning')}" },
+          { "id": "options_language_list_bg", "type": "rect", "colour": "#50000000", "radius": 3, "y": 40, "width": "pw", "height": "ph - 76" },
+          { "id": "options_language_list", "type": "vanilla_list", "list": "0", "y": 42, "width": "pw", "height": "ph - 80" },
+          { "id": "options_language_unicode", "type": "vanilla_button", "button": "100", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
+          { "id": "options_language_done", "type": "vanilla_button", "button": "6", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
+        ] }
+      ]
+    },
+
+    "options_video": {
+      "elements": [
+        { "id": "options_video_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "options_video_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "options_video_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "options_video_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "options_video_panel", "type": "group", "anchor": "center", "width": "min(460, screen_width - 40)", "height": "screen_height - 30", "children": [
+          { "id": "options_video_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('options.videoTitle')}" },
+          { "id": "options_video_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "options_video_list_bg", "type": "rect", "colour": "#50000000", "radius": 3, "y": 40, "width": "pw", "height": "ph - 76" },
+          { "id": "options_video_list", "type": "vanilla_list", "list": "0", "style_buttons": true, "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 9, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent",
+            "y": 42, "width": "pw", "height": "ph - 80" },
+          { "id": "options_video_done", "type": "vanilla_button", "button": "200", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom", "width": "pw / 2", "height": 24 }
+        ] }
+      ]
+    },
+
+    "options_controls": {
+      "elements": [
+        { "id": "options_controls_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "options_controls_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "options_controls_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "options_controls_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "options_controls_panel", "type": "group", "anchor": "center", "width": "min(480, screen_width - 40)", "height": "screen_height - 30", "children": [
+          { "id": "options_controls_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('controls.title')}" },
+          { "id": "options_controls_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "options_controls_grid", "type": "vanilla_grid", "exclude": "200,201", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "columns": 2, "row_height": 18, "gap": 4,
+            "y": 40, "width": "pw", "height": 40 },
+          { "id": "options_controls_list_bg", "type": "rect", "colour": "#50000000", "radius": 3, "y": 86, "width": "pw", "height": "ph - 122" },
+          { "id": "options_controls_list", "type": "vanilla_list", "list": "0", "style_buttons": true, "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 9, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent",
+            "y": 88, "width": "pw", "height": "ph - 126" },
+          { "id": "options_controls_reset", "type": "vanilla_button", "button": "201", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
+          { "id": "options_controls_done", "type": "vanilla_button", "button": "200", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
+        ] }
+      ]
+    },
+
+    "packs": {
+      "elements": [
+        { "id": "resource_packs_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left"], "visible": "!in_world" },
+        { "id": "resource_packs_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "resource_packs_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "resource_packs_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "resource_packs_panel", "type": "group", "anchor": "center", "width": "min(460, screen_width - 40)", "height": "screen_height - 30", "children": [
+          { "id": "resource_packs_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('resourcePack.title')}" },
+          { "id": "resource_packs_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "resource_packs_hint", "type": "text", "font": "ui", "size": 8, "colour": "#90FFFFFF", "shadow": false,
+            "anchor": "top_right", "align": "right", "y": 16, "text": "{translate('resourcePack.folderInfo')}" },
+          { "id": "resource_packs_available_bg", "type": "rect", "colour": "#50000000", "radius": 3, "y": 40, "width": "pw / 2 - 4", "height": "ph - 76" },
+          { "id": "resource_packs_available", "type": "vanilla_list", "list": "0", "y": 42, "width": "pw / 2 - 4", "height": "ph - 80" },
+          { "id": "resource_packs_selected_bg", "type": "rect", "colour": "#50000000", "radius": 3, "anchor": "top_right", "y": 40, "width": "pw / 2 - 4", "height": "ph - 76" },
+          { "id": "resource_packs_selected", "type": "vanilla_list", "list": "1", "anchor": "top_right", "y": 42, "width": "pw / 2 - 4", "height": "ph - 80" },
+          { "id": "resource_packs_folder", "type": "vanilla_button", "button": "2", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF", "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF", "slider_colour": "accent", "anchor": "bottom_left", "width": "pw / 2 - 3", "height": 24 },
+          { "id": "resource_packs_done", "type": "vanilla_button", "button": "1", "style": "flat", "radius": 3, "colour": "accent", "hover_colour": "#FFFFFFFF", "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF", "anchor": "bottom_right", "width": "pw / 2 - 3", "height": 24 }
+        ] }
+      ]
+    },
+
     "world_loading": {
       "elements": [
         { "id": "loading_background", "type": "include", "screen": "main", "ids": ["panorama", "shade_left", "shade_bottom"] },

@@ -167,7 +167,24 @@ public final class ThemeRenderer implements NodeRenderer {
                     String label = skin.vanillaButton(n);
                     if (label != null) {
                         drawButton(n, label);
+                        drawSliderFill(n, skin.vanillaSlider(n));
                     }
+                }
+                break;
+            case "vanilla_grid":
+                if (skin != null) {
+                    drawGrid(n);
+                }
+                break;
+            case "vanilla_list":
+                if (skin != null) {
+                    skin.vanillaList(n, Boolean.parseBoolean(n.def.statik("style_buttons", "false")) ? c -> {
+                        // Inside the list's own drawing: set up for ours and hand it back.
+                        Gfx.beginUi();
+                        drawCell(n, c);
+                        Gfx.endUi();
+                    } : null);
+                    Gfx.beginUi();
                 }
                 break;
             case "vanilla_field":
@@ -191,6 +208,49 @@ public final class ThemeRenderer implements NodeRenderer {
             default:
                 break;
         }
+    }
+
+    /** A skinned slider's position: a bar along the bottom of its button. */
+    private void drawSliderFill(UiNode n, double value) {
+        if (value < 0) {
+            return;
+        }
+        long colour = (long) n.def.num("slider_colour", 0xFF4FC3F7L);
+        double inset = Math.min(4, n.width / 8);
+        double right = n.x + inset + (n.width - 2 * inset) * Math.max(0, Math.min(1, value));
+        Gfx.rect(n.x + inset, n.y + n.height - 3, n.x + n.width - inset, n.y + n.height - 2, 0x40FFFFFFL, 0x40FFFFFFL, n.opacity);
+        Gfx.roundedRect(n.x + inset, n.y + n.height - 3.5, right, n.y + n.height - 1.5, 1, colour, colour, n.opacity);
+    }
+
+    /** A vanilla_grid: each placed vanilla button drawn with the node's button styles. */
+    private void drawGrid(UiNode n) {
+        for (SkinHooks.Cell c : skin.vanillaGrid(n)) {
+            drawCell(n, c);
+        }
+    }
+
+    /** One vanilla button, in a cell of its own, with the node's button styles. */
+    private void drawCell(UiNode n, SkinHooks.Cell c) {
+        double x = n.x;
+        double y = n.y;
+        double w = n.width;
+        double h = n.height;
+        boolean enabled = n.enabled;
+        double hoverT = n.hoverT;
+        n.x = c.x;
+        n.y = c.y;
+        n.width = c.width;
+        n.height = c.height;
+        n.enabled = c.enabled;
+        n.hoverT = c.hoverT;
+        drawButton(n, c.label);
+        drawSliderFill(n, c.value);
+        n.x = x;
+        n.y = y;
+        n.width = w;
+        n.height = h;
+        n.enabled = enabled;
+        n.hoverT = hoverT;
     }
 
     /** A cell behind each slot of the group; the node's own box is not used. */

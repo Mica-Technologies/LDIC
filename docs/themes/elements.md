@@ -177,6 +177,21 @@ sets the size), turning to look at the pointer unless `follow_mouse` is `false`.
 this box and drawn with every [button](#button) property except `text`: the label, enabled state
 and what a click does stay the screen's. Not drawn while the screen hides the button.
 
+## vanilla_grid
+
+[Skinned screens](skins.md) only. Every vanilla button the theme did not place with
+`vanilla_button`, except the ids in `exclude` (comma-separated), in `columns` (2) of `row_height`
+(20) with `gap` (4); a button vanilla made wider than 200 px spans its row. Drawn with every
+[button](#button) property except `text`; sliders also draw their position in `slider_colour`.
+
+## vanilla_list
+
+[Skinned screens](skins.md) only. One of the screen's scrolling lists, by `list` (its order in the
+screen, from 0), laid out in this box at the theme's scale with vanilla's dirt background off; the
+scroll bar sits at the right edge. Draw a panel behind it yourself. `style_buttons: true` draws
+the vanilla buttons inside its rows (video settings, key bindings) with this element's
+[button](#button) properties instead of vanilla's look.
+
 ## vanilla_field
 
 [Skinned screens](skins.md) only. One of the screen's text fields, by `field` (its order in the
