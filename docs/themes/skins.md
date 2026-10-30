@@ -41,6 +41,9 @@ A vanilla button a skin does not place is not lost: it appears in the theme's
 | `chat_bar` | Chat (the typing bar) | none; the bar is field 0 | 0 message |
 | `chat_bed` | Chat while in bed | 1 Leave Bed | 0 message |
 | `forge_config` | Forge config screens (mods' Config screens and their categories) | 2000 Done, 2001 Reset to Default, 2002 Undo Changes, 2003 Apply globally (a check box) | list 0 entries (use `gui_pixels`) |
+| `forge_config_values` | Forge's list editor and value picker (opened from a list or choice setting) | 2000 Done, 2001 Reset to Default, 2002 Undo Changes | list 0 entries (use `gui_pixels`) |
+| `sign_edit` | Sign editing | 0 Done | none; the lines are values (below) |
+| `book` | Book and Quill, written books | 0 Done, 3 Sign, 5 Sign and Close, 4 Cancel; the page arrows stay in the book | none; draw the book with [vanilla_screen](elements.md#vanilla_screen) |
 
 Only the exact vanilla class is skinned: another mod's screen built on one of these stays as it is.
 Screens that can open in a world (death, LAN, settings) should cover the world lightly rather than
@@ -82,3 +85,16 @@ GUI scale (`"gui_pixels": true`), because each entry places its own controls fro
 size; `style_buttons` still draws the entries' buttons in the theme's style. Values:
 `screen_text('title')` and `screen_text('title2')` (the config file or category). The entries'
 and buttons' tooltips show as in Forge's screen.
+
+The list editor and value picker have `screen_text('title')`, `'title2'` and `'title3'`.
+
+Sign editing: `screen_text('line1')` to `'line4'` (the line being typed carries vanilla's blinking
+`_` cursor) and `screen_text('edit_line')` (`1` to `4`, for highlighting it). Typing, Up, Down and
+Enter stay vanilla's.
+
+The book keeps vanilla's own page drawing in a [`vanilla_screen`](elements.md#vanilla_screen)
+element (so its clickable and hoverable text, editing cursor, title page and page arrows work
+exactly as before); the theme draws around it and places Done, Sign, Sign and Close and Cancel. The
+book is drawn at GUI scale, 192 GUI pixels wide from the top of the screen, so place the buttons
+in GUI pixels too (`198 / ui_scale`). `vanilla_visible(3)` tells a book you can still sign (Done
+then shares the row) from a written one.

@@ -66,5 +66,6 @@ ldic.mods.credits=Credits
 ldic.mods.website=Website
 ldic.mods.children=Includes
 ldic.mods.no_info=This mod has no mcmod.info: ask its author to add one.
+ldic.sign.hint=Up and Down (or Enter) move between lines
 ldic.servers.search=Search servers
 ldic.servers.offline=Offline

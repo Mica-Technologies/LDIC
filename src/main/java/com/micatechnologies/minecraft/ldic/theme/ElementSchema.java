@@ -249,6 +249,10 @@ public final class ElementSchema {
         // The advancements skin only: the selected tab's map (dragged and wheel-scrolled as in
         // vanilla, in a view the size of this box), and the tabs as a scrolling column of buttons.
         type("advancement_map");
+
+        // Skinned vanilla screens only: the screen's own drawing where vanilla puts it (a book's
+        // pages), without the vanilla buttons the theme places; its other vanilla buttons stay in it.
+        type("vanilla_screen");
         Map<String, Prop> advancementTabs = new LinkedHashMap<>(vanillaList);
         advancementTabs.remove("list");
         advancementTabs.remove("style_buttons");

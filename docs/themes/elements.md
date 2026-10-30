@@ -198,6 +198,13 @@ the vanilla buttons inside its rows (video settings, key bindings) with this ele
 `gui_pixels: true` keeps the list at GUI scale (its rows are
 not scaled with the theme), for lists whose rows place their own controls (Forge config entries).
 
+## vanilla_screen
+
+[Skinned screens](skins.md) only. The screen's own drawing, at GUI scale and where vanilla puts it
+(the book's pages), without the vanilla buttons the theme places with `vanilla_button`; its other
+vanilla buttons (the book's page arrows) stay in it, drawn and clicked as vanilla's. No
+properties of its own.
+
 ## vanilla_field
 
 [Skinned screens](skins.md) only. One of the screen's text fields, by `field` (its order in the

@@ -82,6 +82,9 @@ public interface SkinHooks {
      */
     void vanillaList(UiNode n, Consumer<Cell> buttons);
 
+    /** The screen's own drawing (at GUI scale, where vanilla put it), minus the buttons the theme draws. */
+    void vanillaScreen(UiNode n);
+
     /** The advancement screen's selected tab, drawn in the node's box. */
     void advancementMap(UiNode n);
 

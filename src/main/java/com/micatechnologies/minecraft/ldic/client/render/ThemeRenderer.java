@@ -197,6 +197,12 @@ public final class ThemeRenderer implements NodeRenderer {
                     Gfx.beginUi();
                 }
                 break;
+            case "vanilla_screen":
+                if (skin != null) {
+                    skin.vanillaScreen(n);
+                    Gfx.beginUi();
+                }
+                break;
             case "advancement_map":
                 if (skin != null) {
                     skin.advancementMap(n);

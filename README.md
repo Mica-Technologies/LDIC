@@ -48,7 +48,8 @@ studied, but none of their code, config samples or textures were copied.
   details panel (authors, links, description, update changes) with each mod's Config button.
 - **Skins** for other vanilla screens (create and edit world, add server, direct connect, open to
   LAN, death, disconnected, confirmations, the chat bar, sound, chat, skin, language, video, controls,
-  resource packs, statistics, advancements with a full-window map, and Forge's config screens): the screen
+  resource packs, statistics, advancements with a full-window map, signs, books and Forge's config
+  screens with their list editors): the screen
   keeps all its logic and the theme redraws it, placing the screen's own buttons, text fields and
   lists.
 - Other mods' buttons keep working: LDIC's screens extend the vanilla screen classes, and
