@@ -10,12 +10,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.Nullable;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.CreativeCrafting;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.gui.inventory.GuiContainerCreative;
@@ -32,6 +35,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
 /**
  * The full-screen creative inventory (Decision 14): every tab in a sidebar (no tab pages, so
@@ -355,10 +359,12 @@ public final class LdicCreativeScreen extends GuiContainer {
                 RenderHelper.disableStandardItemLighting();
             }
             if (!layout.compact) {
-                String name = fontRenderer.trimStringToWidth(I18n.format(t.getTranslationKey()), sb.w - 30);
-                fontRenderer.drawString(name, sb.x + 25, y + 5, t == tab ? InventoryStyle.TEXT : 0xFFC0C8D0);
+                drawTabName(t, I18n.format(t.getTranslationKey()), sb.x + 25, y + 5, sb.w - 30,
+                        t == tab ? InventoryStyle.TEXT : 0xFFC0C8D0, hover || t == tab);
             }
         }
+        marqueeStarts.keySet().retainAll(marqueeing);
+        marqueeing.clear();
         RenderHelper.disableStandardItemLighting();
         GlStateManager.disableLighting();
         if (tabs.size() > rows) {
@@ -368,6 +374,77 @@ public final class LdicCreativeScreen extends GuiContainer {
             int ty = sb.y + 4 + (trackH - thumbH) * sidebarScroll / Math.max(1, tabs.size() - rows);
             Gui.drawRect(sb.right() - 3, ty, sb.right() - 1, ty + thumbH, 0x60FFFFFF);
         }
+    }
+
+    /** Smallest text scale for a long tab name; below this it stops being easy to read. */
+    private static final float MIN_NAME_SCALE = 0.75f;
+    /** Marquee speed (GUI pixels per second) and the pause at each end (seconds). */
+    private static final float MARQUEE_SPEED = 18;
+    private static final float MARQUEE_PAUSE = 1.2f;
+
+    /** When each tab's name started scrolling, so a marquee begins at its start. */
+    private final Map<CreativeTabs, Long> marqueeStarts = new HashMap<>();
+    private final Set<CreativeTabs> marqueeing = new HashSet<>();
+
+    /**
+     * A tab name in {@code width} pixels: as is when it fits, else shrunk to fit (down to
+     * {@link #MIN_NAME_SCALE}). Still too long, it ends in "..." at rest and scrolls back and
+     * forth while {@code animate} (hovered or selected).
+     */
+    private void drawTabName(CreativeTabs t, String name, int x, int y, int width, int colour, boolean animate) {
+        int full = fontRenderer.getStringWidth(name);
+        if (full <= width) {
+            fontRenderer.drawString(name, x, y, colour);
+            return;
+        }
+        float scale = Math.max(MIN_NAME_SCALE, width / (float) full);
+        float scaledWidth = full * scale;
+        String shown = name;
+        float offset = 0;
+        boolean clip = false;
+        if (scaledWidth > width) {
+            if (animate) {
+                marqueeing.add(t);
+                long start = marqueeStarts.computeIfAbsent(t, k -> System.currentTimeMillis());
+                offset = marqueeOffset((System.currentTimeMillis() - start) / 1000f, scaledWidth - width);
+                clip = true;
+            } else {
+                int room = (int) (width / scale) - fontRenderer.getStringWidth("...");
+                shown = fontRenderer.trimStringToWidth(name, room).trim() + "...";
+            }
+        }
+        if (clip) {
+            ScaledResolution sr = new ScaledResolution(mc);
+            int f = sr.getScaleFactor();
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            GL11.glScissor(x * f, mc.displayHeight - (y + 9) * f, width * f, 10 * f);
+        }
+        GlStateManager.pushMatrix();
+        // Keep the shrunken text centred on the row.
+        GlStateManager.translate(x - offset, y + (1 - scale) * 4, 0);
+        GlStateManager.scale(scale, scale, 1);
+        fontRenderer.drawString(shown, 0, 0, colour);
+        GlStateManager.popMatrix();
+        if (clip) {
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        }
+    }
+
+    /** Pause, scroll to the end, pause, scroll back, repeat. */
+    static float marqueeOffset(float seconds, float travel) {
+        float move = travel / MARQUEE_SPEED;
+        float cycle = 2 * (MARQUEE_PAUSE + move);
+        float p = seconds % cycle;
+        if (p < MARQUEE_PAUSE) {
+            return 0;
+        }
+        if (p < MARQUEE_PAUSE + move) {
+            return (p - MARQUEE_PAUSE) * MARQUEE_SPEED;
+        }
+        if (p < 2 * MARQUEE_PAUSE + move) {
+            return travel;
+        }
+        return travel - (p - 2 * MARQUEE_PAUSE - move) * MARQUEE_SPEED;
     }
 
     private void drawScrollbar(int mouseX, int mouseY, int accent) {
