@@ -49,6 +49,8 @@ import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiScreenAddServer;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.gui.GuiWorldEdit;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiSleepMP;
 import net.minecraft.client.gui.advancements.GuiScreenAdvancements;
 import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiScreenAdvancements;
 import com.micatechnologies.minecraft.ldic.mixin.AccessorGuiStats;
@@ -107,6 +109,8 @@ public final class ScreenSkins {
         SKINS.put(GuiScreenResourcePacks.class, "packs");
         SKINS.put(GuiScreenAdvancements.class, "advancement_tree");
         SKINS.put(GuiStats.class, "player_stats");
+        SKINS.put(GuiChat.class, "chat_bar");
+        SKINS.put(GuiSleepMP.class, "chat_bed");
         EXTRAS.put(GuiStats.class, s -> {
             Map<String, Object> m = new HashMap<>();
             m.put("loading", ((AccessorGuiStats) s).ldic$isLoading());
@@ -497,6 +501,13 @@ public final class ScreenSkins {
             driver.draw(mouseX, mouseY, partialTicks);
             if (advancements != null) {
                 advancements.drawTooltip();
+            }
+            if (gui instanceof GuiChat) {
+                // As vanilla's chat screen: the hover box of the chat text under the mouse.
+                ITextComponent hovered = mc.ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
+                if (hovered != null && hovered.getStyle().getHoverEvent() != null) {
+                    ((AccessorGuiScreen) gui).ldic$handleComponentHover(hovered, mouseX, mouseY);
+                }
             }
         }
     }

@@ -176,7 +176,7 @@ public final class ThemeLoader {
         if (path.isEmpty() || isQualified(path)) {
             return v;
         }
-        if (key.equals("font")) {
+        if (key.equals("font") || key.equals("title_font")) {
             String lower = path.toLowerCase(Locale.ROOT);
             // Font names (minecraft, sans, an alias) stay names; only font files are paths.
             if (!lower.endsWith(".ttf") && !lower.endsWith(".otf")) {

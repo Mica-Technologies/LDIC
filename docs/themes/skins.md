@@ -38,6 +38,8 @@ A vanilla button a skin does not place is not lost: it appears in the theme's
 | `packs` | Resource Packs | 1 Done, 2 Open Folder | list 0 available, list 1 selected |
 | `advancement_tree` | Advancements | none (add a theme `button` with `"action": "back"`); draw it with [advancement_map](elements.md#advancement_map) and [advancement_tabs](elements.md#advancement_tabs) | |
 | `player_stats` | Statistics | 0 Done, 1 General, 2 Blocks, 3 Items, 4 Mobs | list `shown` (the list the screen is showing) |
+| `chat_bar` | Chat (the typing bar) | none; the bar is field 0 | 0 message |
+| `chat_bed` | Chat while in bed | 1 Leave Bed | 0 message |
 
 Only the exact vanilla class is skinned: another mod's screen built on one of these stays as it is.
 Screens that can open in a world (death, LAN, settings) should cover the world lightly rather than
@@ -68,3 +70,7 @@ screen shows and hides its own buttons to match, so lay both pages out and let `
 Advancements: `screen_text('tab')` (the selected tab's title), `screen_text('tabs')` (how many tabs)
 and `screen_flag('empty')` (no advancements to show). Statistics: `screen_flag('loading')` while the
 server sends the stats (the screen has no buttons or lists until then).
+
+The chat skins draw only the bar (and Leave Bed); the chat lines above it stay vanilla's, and a
+chat link's hover box still shows. Size the bar in GUI pixels (`16 / ui_scale`) so it keeps clear
+of the chat lines, which start 48 GUI pixels above the bottom.

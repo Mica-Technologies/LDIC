@@ -15,6 +15,7 @@
     "AccessorGuiGameOver",
     "AccessorGuiListWorldSelection",
     "AccessorGuiListWorldSelectionEntry",
+    "AccessorGuiModList",
     "AccessorGuiMultiplayer",
     "AccessorGuiOptionsRowListRow",
     "AccessorGuiOptions",

@@ -44,8 +44,10 @@ studied, but none of their code, config samples or textures were copied.
 - A themed **server list**: servers as cards with icon, message of the day, players, ping and
   version warnings, LAN games and search, while every vanilla flow (add, edit, delete, direct
   connect, refresh, LAN) runs vanilla's own code.
+- A themed **mod list**: mods as cards with logos and update badges, search and sort, and a
+  details panel (authors, links, description, update changes) with each mod's Config button.
 - **Skins** for other vanilla screens (create and edit world, add server, direct connect, open to
-  LAN, death, disconnected, confirmations, sound, chat, skin, language, video, controls,
+  LAN, death, disconnected, confirmations, the chat bar, sound, chat, skin, language, video, controls,
   resource packs, statistics and advancements, with a full-window advancement map): the screen
   keeps all its logic and the theme redraws it, placing the screen's own buttons, text fields and
   lists.

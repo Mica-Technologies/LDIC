@@ -68,6 +68,7 @@ public final class ThemeCompiler {
         action("world_delete");
         action("world_recreate");
         action("world_sort");
+        action("mod_sort");
         // The server list screen.
         action("server_join");
         action("server_direct");
@@ -942,9 +943,6 @@ public final class ThemeCompiler {
                 break;
             case "option":
                 require(a, "name");
-                break;
-            case "mod_config":
-                require(a, "modid");
                 break;
             case "sound":
                 require(a, "sound");

@@ -61,7 +61,7 @@ public final class ElementSchema {
 
     /** Keys whose string values are asset paths, resolved relative to the declaring theme file. */
     public static final Set<String> ASSET_KEYS = new HashSet<>(Arrays.asList(
-            "image", "hover_image", "images", "icon", "font", "tracks"));
+            "image", "hover_image", "images", "icon", "font", "title_font", "tracks"));
 
     private static final Map<String, Map<String, Prop>> TYPES = new LinkedHashMap<>();
     private static final Map<String, String> ALIASES = new HashMap<>();
@@ -189,7 +189,7 @@ public final class ElementSchema {
         // World and server screens only: the list of worlds or servers as cards, drawn by the
         // screen inside the element's box (with its own search box at the top when "search").
         type("list",
-                new Prop("source", Kind.ENUM, "worlds", "worlds", "servers"),
+                new Prop("source", Kind.ENUM, "worlds", "worlds", "servers", "mods"),
                 new Prop("row_height", Kind.NUMBER, 40),
                 new Prop("gap", Kind.NUMBER, 4),
                 new Prop("padding", Kind.NUMBER, 6),
@@ -206,6 +206,16 @@ public final class ElementSchema {
                 new Prop("size", Kind.NUMBER, 9),
                 new Prop("search", Kind.FLAG, true),
                 new Prop("empty_text", Kind.TEXT, ""));
+
+        // The mod list screen only: the selected mod's logo, name, version, details, links,
+        // description and update notes, scrolling with the wheel.
+        type("mod_info",
+                new Prop("font", Kind.STATIC, "minecraft"),
+                new Prop("title_font", Kind.STATIC, null),
+                new Prop("size", Kind.NUMBER, 9),
+                new Prop("text_colour", Kind.COLOUR, 0xFFF0F0F0L),
+                new Prop("detail_colour", Kind.COLOUR, 0xFF9AA3AEL),
+                new Prop("accent_colour", Kind.COLOUR, 0xFF4FC3F7L));
 
         // Skinned vanilla screens only. One of the screen's own buttons (by id), moved into this
         // box and drawn with the button styles; its label, state and click stay vanilla's.

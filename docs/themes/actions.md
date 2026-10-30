@@ -16,7 +16,7 @@ Arguments marked *text* accept `{expression}` parts.
 | `connect` | `address` *text*, `name` *text* | Joins a server (`host` or `host:port`) |
 | `load_world` | `folder` *text* | Loads a singleplayer world by its folder name in `saves/` |
 | `open_folder` | `path` *text* | Opens a folder inside the game directory (`screenshots`, `resourcepacks`, …) |
-| `mod_config` | `modid` *text* | Opens a mod's config screen |
+| `mod_config` | `modid` *text* | Opens a mod's config screen; without `modid` on the [mod list](mods.md), the selected mod's |
 | `sound` | `sound` *text*, `volume`, `pitch` | Plays a sound event |
 | `set` | `name`, `value` *expr* | Sets a [`state`](theme-files.md#top-level-keys) value |
 | `toggle` | `name` | Flips a bool `state` value |
@@ -57,6 +57,7 @@ else.
 ## World selection
 
 `world_play`, `world_create`, `world_edit`, `world_delete`, `world_recreate` and `world_sort` work on the [world selection](worlds.md) screen.
+`mod_sort` (and `mod_config` without a `modid`) work on the [mod list](mods.md).
 
 ## Server list
 

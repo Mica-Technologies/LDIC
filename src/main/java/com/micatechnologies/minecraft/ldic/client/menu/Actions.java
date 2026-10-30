@@ -136,7 +136,11 @@ final class Actions {
                     break;
                 }
                 case "mod_config":
-                    modConfig(a.str("modid", ""), screen);
+                    if (a.str("modid", "").isEmpty() && driver.host() instanceof LdicModsScreen) {
+                        ((LdicModsScreen) driver.host()).openConfig();
+                    } else {
+                        modConfig(a.str("modid", ""), screen);
+                    }
                     break;
                 case "sound":
                     playSound(a.str("sound", ""), (float) a.num("volume", 1), (float) a.num("pitch", 1));
@@ -159,6 +163,9 @@ final class Actions {
                 case "world_recreate":
                 case "world_sort":
                     worldAction(a.type, driver);
+                    break;
+                case "mod_sort":
+                    modAction(a.type, driver);
                     break;
                 case "toggle":
                     if (a.target.type() == Type.BOOL) {
@@ -201,6 +208,16 @@ final class Actions {
                 servers.refresh();
                 break;
         }
+    }
+
+    /** The mod-list actions; only on the themed mod list (logged elsewhere). */
+    private static void modAction(String type, ThemeScreenDriver driver) {
+        if (!(driver.host() instanceof LdicModsScreen)) {
+            Ldic.LOGGER.warn("LDIC: action '{}' only works on the mod list screen", type);
+            return;
+        }
+        LdicModsScreen mods = (LdicModsScreen) driver.host();
+        mods.cycleSort();
     }
 
     /** The world-list actions; only on the themed world selection (logged elsewhere). */

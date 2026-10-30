@@ -727,6 +727,64 @@
       ]
     },
 
+    "mod_list": {
+      "elements": [
+        { "id": "mod_list_background", "type": "include", "screen": "main", "ids": ["backdrop", "scenes", "grade"], "visible": "!in_world" },
+        { "id": "mod_list_dim", "type": "rect", "colour": "#A0060A10", "visible": "!in_world" },
+        { "id": "mod_list_world_dim", "type": "rect", "colour": "#90060A10", "visible": "in_world" },
+        { "id": "mod_list_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "mod_list_panel", "type": "group", "anchor": "top", "y": 22, "width": "min(820, screen_width - 40)", "height": "screen_height - 40", "children": [
+          { "id": "mod_list_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('ldic.mods.title')}" },
+          { "id": "mod_list_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "mod_list_sort", "type": "button", "style": "flat", "radius": 0, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF",
+            "font": "ui", "size": 9, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "anchor": "top_right", "y": 6, "width": 120, "height": 18,
+            "text": "{translate('ldic.mods.sort')}: {translate('ldic.mods.sort.' + mod_sort)}", "action": "mod_sort" },
+          { "id": "mod_list_list", "type": "list", "source": "mods", "y": 42, "width": "min(260, pw * 0.4)", "height": "ph - 72",
+            "font": "ui", "size": 10, "row_height": 30, "gap": 3, "radius": 0,
+            "colour": "#50101820", "hover_colour": "#70182030", "selected_colour": "#80182838",
+            "selected_border_colour": "accent", "accent_colour": "accent" },
+          { "id": "mod_list_info_bg", "type": "rect", "colour": "#50000000", "radius": 0,
+            "x": "min(260, pw * 0.4) + 8", "y": 42, "width": "pw - min(260, pw * 0.4) - 8", "height": "ph - 72" },
+          { "id": "mod_list_info", "type": "mod_info", "font": "ui", "title_font": "ui_bold", "size": 10, "accent_colour": "accent",
+            "x": "min(260, pw * 0.4) + 20", "y": 54, "width": "pw - min(260, pw * 0.4) - 34", "height": "ph - 96" },
+          { "id": "mod_list_config", "type": "button", "style": "flat", "radius": 0, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF",
+            "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false,
+            "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF",
+            "anchor": "bottom_right", "x": -156, "width": 120, "height": 24,
+            "text": "{translate('ldic.mods.config')}", "enabled": "mod_configurable", "action": "mod_config" },
+          { "id": "mod_list_done", "type": "button", "style": "flat", "radius": 0, "colour": "accent", "hover_colour": "#FFFFFFFF",
+            "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14",
+            "anchor": "bottom_right", "width": 150, "height": 24, "text": "{translate('gui.done')}", "action": "back" }
+        ] }
+      ]
+    },
+
+    "chat_bar": {
+      "elements": [
+        { "id": "chat_bar_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "chat_bar_field", "type": "vanilla_field", "field": "0", "font": "ui", "size": "9 / ui_scale",
+          "selection_colour": "with_alpha(accent, 0.45)", "colour": "#C00C1016", "border_colour": "#30FFFFFF",
+          "focus_colour": "with_alpha(accent, 0.7)", "radius": 0, "padding": "5 / ui_scale",
+          "anchor": "bottom_left", "x": "3 / ui_scale", "y": "-3 / ui_scale", "width": "screen_width - 6 / ui_scale", "height": "16 / ui_scale" }
+      ]
+    },
+
+    "chat_bed": {
+      "elements": [
+        { "id": "chat_bed_dim", "type": "rect", "colour": "#50060A10" },
+        { "id": "chat_bed_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end", "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 },
+        { "id": "chat_bed_leave", "type": "vanilla_button", "button": "1", "style": "flat", "radius": 0, "colour": "accent", "hover_colour": "#FFFFFFFF",
+          "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14",
+          "anchor": "bottom", "y": "-40 / ui_scale", "width": 200, "height": 24 },
+        { "id": "chat_bed_field", "type": "vanilla_field", "field": "0", "font": "ui", "size": "9 / ui_scale",
+          "selection_colour": "with_alpha(accent, 0.45)", "colour": "#C00C1016", "border_colour": "#30FFFFFF",
+          "focus_colour": "with_alpha(accent, 0.7)", "radius": 0, "padding": "5 / ui_scale",
+          "anchor": "bottom_left", "x": "3 / ui_scale", "y": "-3 / ui_scale", "width": "screen_width - 6 / ui_scale", "height": "16 / ui_scale" }
+      ]
+    },
+
     "options_video": {
       "elements": [
         { "id": "options_video_background", "type": "include", "screen": "main", "ids": ["backdrop", "scenes", "grade"], "visible": "!in_world" },

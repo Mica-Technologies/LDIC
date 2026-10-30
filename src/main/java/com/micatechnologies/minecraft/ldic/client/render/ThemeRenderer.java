@@ -205,6 +205,12 @@ public final class ThemeRenderer implements NodeRenderer {
                     }
                 }
                 break;
+            case "mod_info":
+                if (lists != null) {
+                    lists.drawDetails(n);
+                    Gfx.beginUi();
+                }
+                break;
             case "list":
                 if (lists != null) {
                     lists.drawList(n);

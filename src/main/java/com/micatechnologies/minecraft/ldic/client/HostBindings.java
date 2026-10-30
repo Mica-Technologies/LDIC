@@ -84,6 +84,10 @@ public final class HostBindings {
     private final Slot serverSelected = scope.declare("server_selected", BOOL);
     private final Slot serverEditable = scope.declare("server_editable", BOOL);
     private final Slot serverCount = scope.declare("server_count", NUMBER);
+    // The mod list screen.
+    private final Slot modSelected = scope.declare("mod_selected", BOOL);
+    private final Slot modConfigurable = scope.declare("mod_configurable", BOOL);
+    private final Slot modSort = scope.declare("mod_sort", STRING);
 
     private final Map<String, SimpleDateFormat> dateFormats = new HashMap<>();
     private String splash = "";
@@ -199,6 +203,13 @@ public final class HostBindings {
         worldSelected.set(selected);
         worldCount.set(count);
         worldSort.set(sort);
+    }
+
+    /** The mod list screen's state this frame: a mod selected, one with a config screen, the sort. */
+    public void setMods(boolean selected, boolean configurable, String sort) {
+        modSelected.set(selected);
+        modConfigurable.set(configurable);
+        modSort.set(sort);
     }
 
     /** The server list screen's state this frame: a row selected, a saved (editable) one, how many saved. */

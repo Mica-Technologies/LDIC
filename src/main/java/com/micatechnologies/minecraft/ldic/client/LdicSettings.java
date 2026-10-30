@@ -33,6 +33,8 @@ public final class LdicSettings {
     public boolean worldsEnabled = true;
     /** Replace vanilla's server list with the menu theme's "servers" screen, when it has one. */
     public boolean serversEnabled = true;
+    /** Replace Forge's mod list with the menu theme's "mod_list" screen, when it has one. */
+    public boolean modsEnabled = true;
     /** Draw other vanilla screens (create world, edit world, ...) with the menu theme's skins for them. */
     public boolean skinsEnabled = true;
     /** Seconds the first menu after loading fades in from black; 0 for none. */
@@ -209,6 +211,7 @@ public final class LdicSettings {
             pauseEnabled = bool(menu, "themed_pause", pauseEnabled);
             worldLoadingEnabled = bool(menu, "themed_world_loading", worldLoadingEnabled);
             worldsEnabled = bool(menu, "themed_worlds", worldsEnabled);
+            modsEnabled = bool(menu, "themed_mods", modsEnabled);
             serversEnabled = bool(menu, "themed_servers", serversEnabled);
             skinsEnabled = bool(menu, "themed_screens", skinsEnabled);
         }
@@ -295,6 +298,7 @@ public final class LdicSettings {
         menu.addProperty("themed_pause", pauseEnabled);
         menu.addProperty("themed_world_loading", worldLoadingEnabled);
         menu.addProperty("themed_worlds", worldsEnabled);
+        menu.addProperty("themed_mods", modsEnabled);
         menu.addProperty("themed_servers", serversEnabled);
         menu.addProperty("themed_screens", skinsEnabled);
         o.add("menu", menu);

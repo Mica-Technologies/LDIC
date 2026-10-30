@@ -216,6 +216,13 @@ public final class MenuManager {
             }
             return;
         }
+        if (event.getGui() != null && event.getGui().getClass() == net.minecraftforge.fml.client.GuiModList.class) {
+            if (settings.modsEnabled && theme != null && theme.screen(LdicModsScreen.SCREEN) != null) {
+                GuiScreen parent = ((com.micatechnologies.minecraft.ldic.mixin.AccessorGuiModList) event.getGui()).ldic$getParent();
+                event.setGui(new LdicModsScreen(this, theme, parent));
+            }
+            return;
+        }
         if (event.getGui() != null && event.getGui().getClass() == net.minecraft.client.gui.GuiWorldSelection.class) {
             if (settings.worldsEnabled && theme != null && theme.screen(LdicWorldsScreen.SCREEN) != null) {
                 GuiScreen parent = ((com.micatechnologies.minecraft.ldic.mixin.AccessorGuiWorldSelection) event.getGui()).ldic$getPrevScreen();

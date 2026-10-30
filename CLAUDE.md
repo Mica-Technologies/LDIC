@@ -56,7 +56,8 @@ Minecraft-facing (`client`):
   `ThemeScreenDriver` runs a theme screen (drawing, input, slider drags, other mods' buttons,
   links) inside a vanilla screen class: `LdicMenuScreen` extends `GuiMainMenu`, `LdicPauseScreen`
   extends `GuiIngameMenu` and
-  `LdicOptionsScreen` extends `GuiOptions`, on purpose, so other mods' `instanceof` button hooks
+  `LdicOptionsScreen` extends `GuiOptions` (likewise `LdicWorldsScreen`, `LdicServersScreen` and
+  `LdicModsScreen`, which extends Forge's `GuiModList`), on purpose, so other mods' `instanceof` button hooks
   keep working. Theme elements never enter `buttonList`; other mods' buttons are never hidden on
   the options or pause screens. `Actions` runs theme actions; `GameOptions` maps option names to
   `GameSettings`.

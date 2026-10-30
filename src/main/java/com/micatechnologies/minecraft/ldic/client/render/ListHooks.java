@@ -12,4 +12,8 @@ public interface ListHooks {
 
     /** Draws the list into the node's box (layout units; the GL matrix is already scaled). */
     void drawList(UiNode node);
+
+    /** Draws the selected item's details into the node's box ({@code mod_info}); nothing by default. */
+    default void drawDetails(UiNode node) {
+    }
 }

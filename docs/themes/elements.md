@@ -216,14 +216,22 @@ the tab's icon at the left (leave room with `padding` and `text_align: "left"`);
 looks hovered. `row_height` (22), `gap` (3), `icon_size` (16). Clicking a tab selects it; the wheel
 scrolls the column.
 
+## mod_info
+
+[Mod list](mods.md) only: the selected mod's logo, name (in `title_font`, else `font`), version,
+id and state, authors, credits, website, included mods, update link, description and the update's
+changes, scrolling with the wheel. `font`, `title_font`, `size`, `text_colour`, `detail_colour`,
+`accent_colour` (version badge and links). With nothing selected it shows a hint.
+
 ## list
 
-World and server screens only: the [worlds](worlds.md) (or servers) as cards, drawn by the screen in
+World, server and mod list screens only: the [worlds](worlds.md), [servers](servers.md) or
+[mods](mods.md) as cards, drawn by the screen in
 the element's box, with a search box across the top. The screen handles clicks, scrolling and keys.
 
 | Property | Type | Default | Meaning |
 | --- | --- | --- | --- |
-| `source` | `worlds` / `servers` | `worlds` | What the list shows |
+| `source` | `worlds` / `servers` / `mods` | `worlds` | What the list shows
 | `row_height`, `gap`, `radius` | number *expr* | `40`, `4`, `3` | Card height, space between cards, corner radius |
 | `colour`, `hover_colour`, `selected_colour` | colour *expr* | dark, darker, darkest | Card backgrounds |
 | `border_colour`, `selected_border_colour` | colour *expr* | faint white, `#4FC3F7` | Card edges |
