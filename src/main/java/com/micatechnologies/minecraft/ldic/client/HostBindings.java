@@ -68,6 +68,10 @@ public final class HostBindings {
     private final Slot playerLevel = scope.declare("player_level", NUMBER);
     private final Slot playerXp = scope.declare("player_xp", NUMBER);
     private Map<String, double[]> areas = new HashMap<>();
+    // The world selection screen.
+    private final Slot worldSelected = scope.declare("world_selected", BOOL);
+    private final Slot worldCount = scope.declare("world_count", NUMBER);
+    private final Slot worldSort = scope.declare("world_sort", STRING);
 
     private final Map<String, SimpleDateFormat> dateFormats = new HashMap<>();
     private String splash = "";
@@ -138,6 +142,13 @@ public final class HostBindings {
     private double area(String name, int i) {
         double[] r = areas.get(name);
         return r == null ? 0 : r[i];
+    }
+
+    /** The world selection screen's state this frame. */
+    public void setWorlds(boolean selected, int count, String sort) {
+        worldSelected.set(selected);
+        worldCount.set(count);
+        worldSort.set(sort);
     }
 
     /** What an inventory screen shows this frame: its title and named areas (x, y, w, h). */

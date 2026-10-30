@@ -64,3 +64,5 @@ shulker box's name) and the player's `player_health`, `player_max_health`, `play
 
 Every element also has its own values (`hover`, `hover_t`, `pw`, …); see
 [Elements](elements.md#common-properties).
+
+On the [world selection](worlds.md) screen there are also `world_selected` (bool), `world_count` (number) and `world_sort` (string).

@@ -53,3 +53,7 @@ built-in one wins, except `options`, which always opens as the options screen.
 
 A failing action, such as a missing world or an unknown screen name, is logged and does nothing
 else.
+
+## World selection
+
+`world_play`, `world_create`, `world_edit`, `world_delete`, `world_recreate` and `world_sort` work on the [world selection](worlds.md) screen.

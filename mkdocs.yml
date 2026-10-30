@@ -104,6 +104,7 @@ nav:
       - Options screen: themes/options.md
       - Pause menu: themes/pause.md
       - World loading: themes/world-loading.md
+      - World selection: themes/worlds.md
       - Inventory screens: themes/inventory.md
       - Expressions: themes/expressions.md
       - Game values: themes/game-values.md

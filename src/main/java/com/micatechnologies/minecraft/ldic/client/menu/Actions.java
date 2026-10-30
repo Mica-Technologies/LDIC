@@ -144,6 +144,14 @@ final class Actions {
                 case "set":
                     a.target.assign(a.value);
                     break;
+                case "world_play":
+                case "world_create":
+                case "world_edit":
+                case "world_delete":
+                case "world_recreate":
+                case "world_sort":
+                    worldAction(a.type, driver);
+                    break;
                 case "toggle":
                     if (a.target.type() == Type.BOOL) {
                         a.target.set(!a.target.getBool());
@@ -155,6 +163,35 @@ final class Actions {
             }
         } catch (Exception e) {
             Ldic.LOGGER.error("LDIC: action {} failed", a, e);
+        }
+    }
+
+    /** The world-list actions; only on the themed world selection (logged elsewhere). */
+    private static void worldAction(String type, ThemeScreenDriver driver) {
+        if (!(driver.host() instanceof LdicWorldsScreen)) {
+            Ldic.LOGGER.warn("LDIC: action '{}' only works on the worlds screen", type);
+            return;
+        }
+        LdicWorldsScreen worlds = (LdicWorldsScreen) driver.host();
+        switch (type) {
+            case "world_play":
+                worlds.play();
+                break;
+            case "world_create":
+                worlds.create();
+                break;
+            case "world_edit":
+                worlds.edit();
+                break;
+            case "world_delete":
+                worlds.delete();
+                break;
+            case "world_recreate":
+                worlds.recreate();
+                break;
+            default:
+                worlds.cycleSort();
+                break;
         }
     }
 

@@ -32,6 +32,8 @@ public final class ThemeRenderer implements NodeRenderer {
     public UiNode foreignNode;
     /** The open inventory screen, for {@code slots} and {@code player_model}; null elsewhere. */
     public InventoryHooks inventory;
+    /** The open screen's list (worlds, servers), for {@code list} elements; null elsewhere. */
+    public ListHooks lists;
     private final List<PanoramaRenderer> panoramas = new ArrayList<>();
 
     public ThemeRenderer(Textures textures, Fonts fonts, java.util.function.Consumer<UiNode> hoverStarted) {
@@ -157,6 +159,12 @@ public final class ThemeRenderer implements NodeRenderer {
                 break;
             case "slots":
                 drawSlots(n);
+                break;
+            case "list":
+                if (lists != null) {
+                    lists.drawList(n);
+                    Gfx.beginUi();
+                }
                 break;
             case "player_model":
                 if (inventory != null) {

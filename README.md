@@ -38,6 +38,9 @@ studied, but none of their code, config samples or textures were copied.
 - `extends` lets a theme inherit from a built-in one and change only what it needs.
 - Live reload while you edit, with every theme problem reported by file and JSON path,
   never as a crash.
+- A themed **world selection**: worlds as cards with icons, last played, game-mode, hardcore,
+  cheats and version badges, search and sort, while play, create, edit, delete and re-create run
+  vanilla's own code.
 - Other mods' buttons keep working: LDIC's screens extend the vanilla screen classes, and
   LDIC never hides a mod's button on the options or pause screens.
 

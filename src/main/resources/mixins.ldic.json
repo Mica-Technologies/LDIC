@@ -8,9 +8,12 @@
   "client": [
     "AccessorGuiConnecting",
     "AccessorGuiContainer",
+    "AccessorGuiListWorldSelection",
+    "AccessorGuiListWorldSelectionEntry",
     "AccessorGuiOptions",
     "AccessorGuiScreen",
     "AccessorGuiScreenWorking",
+    "AccessorGuiWorldSelection",
     "AccessorMinecraft",
     "MixinForgeHooksClient",
     "MixinGuiContainer",

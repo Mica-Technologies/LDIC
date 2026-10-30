@@ -271,6 +271,62 @@
       ]
     },
 
+    "worlds": {
+      "elements": [
+        { "id": "worlds_background", "type": "include", "screen": "main", "ids": ["backdrop", "scenes", "grade"] },
+        { "id": "worlds_dim", "type": "rect", "colour": "#A0060A10" },
+
+        { "id": "worlds_panel", "type": "group", "anchor": "top", "y": 22,
+          "width": "min(640, screen_width - 40)", "height": "screen_height - 40", "children": [
+          { "id": "worlds_title", "type": "text", "font": "ui_bold", "size": 22, "colour": "#FFFFFF", "shadow": false,
+            "text": "{translate('selectWorld.title')}" },
+          { "id": "worlds_rule", "type": "rect", "colour": "accent", "y": 30, "width": 48, "height": 2 },
+          { "id": "worlds_sort", "type": "button", "style": "flat", "radius": 0, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF",
+            "font": "ui", "size": 9, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "anchor": "top_right", "y": 6, "width": 120, "height": 18,
+            "text": "{translate('ldic.worlds.sort')}: {translate('ldic.worlds.sort.' + world_sort)}", "action": "world_sort" },
+
+          { "id": "worlds_list", "type": "list", "source": "worlds", "y": 42, "width": "pw", "height": "ph - 42 - 60",
+            "font": "ui", "size": 10, "row_height": 40, "radius": 0,
+            "colour": "#70060606", "hover_colour": "#90101010", "selected_colour": "#A0141414",
+            "selected_border_colour": "accent", "accent_colour": "accent" },
+
+          { "id": "worlds_play", "type": "button", "style": "flat", "radius": 0, "colour": "accent", "hover_colour": "#FFFFFFFF",
+            "disabled_colour": "#30FFFFFF", "font": "ui_bold", "size": 11, "shadow": false,
+            "text_colour": "#FF0A0E14", "hover_text_colour": "#FF0A0E14", "disabled_text_colour": "#80FFFFFF",
+            "anchor": "bottom_left", "y": -30, "width": "pw / 2 - 3", "height": 24,
+            "text": "{translate('selectWorld.select')}", "enabled": "world_selected", "action": "world_play" },
+          { "id": "worlds_create", "type": "button", "style": "flat", "radius": 0, "colour": "#30FFFFFF", "hover_colour": "#50FFFFFF",
+            "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "anchor": "bottom_right", "y": -30, "width": "pw / 2 - 3", "height": 24,
+            "text": "{translate('selectWorld.create')}", "action": "world_create" },
+
+          { "id": "worlds_edit", "type": "button", "style": "flat", "radius": 0, "colour": "#20FFFFFF", "hover_colour": "#40FFFFFF",
+            "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false,
+            "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF",
+            "anchor": "bottom_left", "width": "pw / 4 - 4", "height": 22,
+            "text": "{translate('selectWorld.edit')}", "enabled": "world_selected", "action": "world_edit" },
+          { "id": "worlds_delete", "type": "button", "style": "flat", "radius": 0, "colour": "#20FFFFFF", "hover_colour": "#C0E53935",
+            "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false,
+            "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF",
+            "anchor": "bottom_left", "x": "pw / 4 + 1", "width": "pw / 4 - 4", "height": 22,
+            "text": "{translate('selectWorld.delete')}", "enabled": "world_selected", "action": "world_delete" },
+          { "id": "worlds_recreate", "type": "button", "style": "flat", "radius": 0, "colour": "#20FFFFFF", "hover_colour": "#40FFFFFF",
+            "disabled_colour": "#10FFFFFF", "font": "ui", "size": 10, "shadow": false,
+            "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#60FFFFFF",
+            "anchor": "bottom_left", "x": "pw / 2 + 2", "width": "pw / 4 - 4", "height": 22,
+            "text": "{translate('selectWorld.recreate')}", "enabled": "world_selected", "action": "world_recreate" },
+          { "id": "worlds_back", "type": "button", "style": "flat", "radius": 0, "colour": "#20FFFFFF", "hover_colour": "#40FFFFFF",
+            "font": "ui", "size": 10, "shadow": false, "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF",
+            "anchor": "bottom_right", "width": "pw / 4 - 3", "height": 22,
+            "text": "{translate('gui.cancel')}", "action": "back" }
+        ] },
+
+        { "id": "worlds_mod_buttons", "type": "foreign_buttons", "layout": "column", "align": "end",
+          "anchor": "top_right", "x": -8, "y": 8, "width": 160, "height": 120 }
+      ]
+    },
+
     "world_loading": {
       "elements": [
         { "id": "loading_background", "type": "include", "screen": "main", "ids": ["backdrop", "scenes", "grade"] },

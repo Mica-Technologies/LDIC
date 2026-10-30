@@ -203,6 +203,13 @@ public final class MenuManager {
             }
             return;
         }
+        if (event.getGui() != null && event.getGui().getClass() == net.minecraft.client.gui.GuiWorldSelection.class) {
+            if (settings.worldsEnabled && theme != null && theme.screen(LdicWorldsScreen.SCREEN) != null) {
+                GuiScreen parent = ((com.micatechnologies.minecraft.ldic.mixin.AccessorGuiWorldSelection) event.getGui()).ldic$getPrevScreen();
+                event.setGui(new LdicWorldsScreen(this, theme, parent));
+            }
+            return;
+        }
         if (event.getGui() instanceof net.minecraft.client.gui.GuiIngameMenu && !(event.getGui() instanceof LdicPauseScreen)) {
             if (classicPauseOnce) {
                 classicPauseOnce = false;

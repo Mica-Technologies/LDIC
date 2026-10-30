@@ -186,6 +186,27 @@ public final class ElementSchema {
         type("player_model",
                 new Prop("follow_mouse", Kind.BOOL, true));
 
+        // World and server screens only: the list of worlds or servers as cards, drawn by the
+        // screen inside the element's box (with its own search box at the top when "search").
+        type("list",
+                new Prop("source", Kind.ENUM, "worlds", "worlds", "servers"),
+                new Prop("row_height", Kind.NUMBER, 40),
+                new Prop("gap", Kind.NUMBER, 4),
+                new Prop("padding", Kind.NUMBER, 6),
+                new Prop("radius", Kind.NUMBER, 3),
+                new Prop("colour", Kind.COLOUR, 0x40000000L),
+                new Prop("hover_colour", Kind.COLOUR, 0x60000000L),
+                new Prop("selected_colour", Kind.COLOUR, 0x80000000L),
+                new Prop("border_colour", Kind.COLOUR, 0x18FFFFFFL),
+                new Prop("selected_border_colour", Kind.COLOUR, 0xFF4FC3F7L),
+                new Prop("accent_colour", Kind.COLOUR, 0xFF4FC3F7L),
+                new Prop("text_colour", Kind.COLOUR, 0xFFF0F0F0L),
+                new Prop("detail_colour", Kind.COLOUR, 0xFF9AA3AEL),
+                new Prop("font", Kind.STATIC, "minecraft"),
+                new Prop("size", Kind.NUMBER, 9),
+                new Prop("search", Kind.FLAG, true),
+                new Prop("empty_text", Kind.TEXT, ""));
+
         type("foreign_buttons",
                 new Prop("layout", Kind.ENUM, "column", "keep", "row", "column"),
                 new Prop("spacing", Kind.NUMBER, 4),

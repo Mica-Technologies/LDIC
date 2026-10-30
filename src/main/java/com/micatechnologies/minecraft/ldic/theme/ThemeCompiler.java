@@ -61,6 +61,13 @@ public final class ThemeCompiler {
         action("chain", "actions", Kind.STATIC);
         action("option", "name", Kind.TEXT);
         action("difficulty");
+        // The worlds screen.
+        action("world_play");
+        action("world_create");
+        action("world_edit");
+        action("world_delete");
+        action("world_recreate");
+        action("world_sort");
         action("classic_options");
         action("classic_pause");
         action("resume");

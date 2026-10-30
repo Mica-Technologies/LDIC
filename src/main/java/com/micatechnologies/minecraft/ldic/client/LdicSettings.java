@@ -29,6 +29,8 @@ public final class LdicSettings {
     public boolean pauseEnabled = true;
     /** Draw the menu theme's "world_loading" screen while a world loads, when it has one. */
     public boolean worldLoadingEnabled = true;
+    /** Replace vanilla's world selection with the menu theme's "worlds" screen, when it has one. */
+    public boolean worldsEnabled = true;
     /** Seconds the first menu after loading fades in from black; 0 for none. */
     public double menuFadeIn = 0.6;
     /** Replace Forge's loading screen with the LDIC theme. */
@@ -202,6 +204,7 @@ public final class LdicSettings {
             optionsEnabled = bool(menu, "themed_options", optionsEnabled);
             pauseEnabled = bool(menu, "themed_pause", pauseEnabled);
             worldLoadingEnabled = bool(menu, "themed_world_loading", worldLoadingEnabled);
+            worldsEnabled = bool(menu, "themed_worlds", worldsEnabled);
         }
         JsonObject loading = obj(o, "loading");
         if (loading != null) {
@@ -285,6 +288,7 @@ public final class LdicSettings {
         menu.addProperty("themed_options", optionsEnabled);
         menu.addProperty("themed_pause", pauseEnabled);
         menu.addProperty("themed_world_loading", worldLoadingEnabled);
+        menu.addProperty("themed_worlds", worldsEnabled);
         o.add("menu", menu);
         JsonObject loading = new JsonObject();
         loading.addProperty("enabled", loadingEnabled);

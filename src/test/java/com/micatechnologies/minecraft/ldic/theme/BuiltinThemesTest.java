@@ -73,6 +73,9 @@ class BuiltinThemesTest {
             s.define(Function.num(f, false, a -> 10, Type.STRING));
         }
         s.define(Function.bool("has_area", false, a -> true, Type.STRING));
+        s.declare("world_selected", Type.BOOL);
+        s.declare("world_count", Type.NUMBER);
+        s.declare("world_sort", Type.STRING);
         return s;
     }
 

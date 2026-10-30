@@ -171,6 +171,23 @@ own box is not used.
 [Inventory screens](inventory.md) only. The player, standing in the element's box (the box height
 sets the size), turning to look at the pointer unless `follow_mouse` is `false`.
 
+## list
+
+World and server screens only: the [worlds](worlds.md) (or servers) as cards, drawn by the screen in
+the element's box, with a search box across the top. The screen handles clicks, scrolling and keys.
+
+| Property | Type | Default | Meaning |
+| --- | --- | --- | --- |
+| `source` | `worlds` / `servers` | `worlds` | What the list shows |
+| `row_height`, `gap`, `radius` | number *expr* | `40`, `4`, `3` | Card height, space between cards, corner radius |
+| `colour`, `hover_colour`, `selected_colour` | colour *expr* | dark, darker, darkest | Card backgrounds |
+| `border_colour`, `selected_border_colour` | colour *expr* | faint white, `#4FC3F7` | Card edges |
+| `accent_colour` | colour *expr* | `#4FC3F7` | Game-mode badge, search focus |
+| `text_colour`, `detail_colour` | colour *expr* | white, grey | Names; second lines and hints |
+| `font`, `size` | | `minecraft`, `9` | As for text |
+| `search` | `true` / `false` | `true` | The search box |
+| `empty_text` | text | | Shown when there is nothing to list |
+
 ## slider
 
 Drag to set a value. Bound to a game option with `option`, it reads and sets that option; see
