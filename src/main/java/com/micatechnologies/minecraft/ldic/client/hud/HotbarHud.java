@@ -3,6 +3,7 @@ package com.micatechnologies.minecraft.ldic.client.hud;
 import com.micatechnologies.minecraft.ldic.client.LdicSettings;
 import com.micatechnologies.minecraft.ldic.client.inventory.InventoryStyle;
 import com.micatechnologies.minecraft.ldic.inventory.HotbarVisibility;
+import java.nio.FloatBuffer;
 import java.util.EnumSet;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -22,7 +23,9 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 /**
  * The hotbar: LDIC's modern look, a size of its own, and auto-hide.
@@ -32,6 +35,12 @@ import org.lwjgl.input.Keyboard;
  * transform pushed in each element's {@code Pre} event and popped in its {@code Post}, so the
  * bars stay where they belong relative to the hotbar. Nothing is pushed while the hotbar is at
  * its normal size and fully shown.</p>
+ *
+ * <p>Cancelling an element's {@code Pre} (the modern hotbar replaces vanilla's; a hidden group
+ * is skipped) means Forge never fires its {@code Post}. Other mods pair the two: Controllable's
+ * console hotbar translates up in {@code Pre} and back down in {@code Post}. So when LDIC cancels
+ * an element it puts back the model-view matrix from before that element's {@code Pre}, or
+ * their transform would leak into the crosshair, the rest of the HUD and any open screen.</p>
  */
 public final class HotbarHud {
 
@@ -48,6 +57,8 @@ public final class HotbarHud {
             Keyboard.KEY_H, "key.categories.ldic");
     private final HotbarVisibility visibility = new HotbarVisibility();
     private final EnumSet<ElementType> pushed = EnumSet.noneOf(ElementType.class);
+    private final FloatBuffer savedMatrix = BufferUtils.createFloatBuffer(16);
+    private boolean matrixSaved;
 
     private final Item[] lastItems = new Item[10];
     private final int[] lastCounts = new int[10];
@@ -159,6 +170,28 @@ public final class HotbarHud {
         }
     }
 
+    /** Saves the model-view matrix before any mod's {@code Pre} for an element LDIC may cancel. */
+    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
+    public void onOverlayPreFirst(RenderGameOverlayEvent.Pre event) {
+        ElementType type = event.getType();
+        matrixSaved = GROUP.contains(type) && (type == ElementType.HOTBAR && modern() || visibility.visibility() <= 0);
+        if (matrixSaved) {
+            savedMatrix.clear();
+            GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, savedMatrix);
+        }
+    }
+
+    /** Cancels an element and undoes what other mods' {@code Pre} did to the matrix for it. */
+    private void cancel(RenderGameOverlayEvent.Pre event) {
+        event.setCanceled(true);
+        if (matrixSaved) {
+            savedMatrix.clear();
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+            GL11.glLoadMatrix(savedMatrix);
+            matrixSaved = false;
+        }
+    }
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onOverlayPre(RenderGameOverlayEvent.Pre event) {
         ElementType type = event.getType();
@@ -176,14 +209,15 @@ public final class HotbarHud {
         Minecraft mc = Minecraft.getMinecraft();
         boolean spectator = mc.playerController != null && mc.playerController.isSpectator();
         if (!spectator && visibility.visibility() <= 0) {
-            event.setCanceled(true);
+            cancel(event);
             return;
         }
         boolean didPush = begin(event.getResolution());
         if (type == ElementType.HOTBAR && modern() && !spectator && mc.getRenderViewEntity() instanceof EntityPlayer) {
+            // Drawn with other mods' transforms for the hotbar (a raised console hotbar).
             drawModern(mc, event.getResolution(), event.getPartialTicks());
             end(didPush);
-            event.setCanceled(true);
+            cancel(event);
             return;
         }
         if (didPush) {
