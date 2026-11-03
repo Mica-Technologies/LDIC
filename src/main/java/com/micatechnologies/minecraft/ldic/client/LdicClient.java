@@ -17,6 +17,7 @@ public final class LdicClient {
     private static MenuManager menu;
     private static LdicSettings settings;
     private static File dir;
+    private static HotbarHud hotbar;
 
     private LdicClient() {
     }
@@ -28,11 +29,19 @@ public final class LdicClient {
         MinecraftForge.EVENT_BUS.register(menu);
         MinecraftForge.EVENT_BUS.register(menu.worldLoading());
         MinecraftForge.EVENT_BUS.register(menu.screenSkins());
-        MinecraftForge.EVENT_BUS.register(new HotbarHud(settings));
+        hotbar = new HotbarHud(settings);
         MinecraftForge.EVENT_BUS.register(new InventoryScreens(settings));
         MinecraftForge.EVENT_BUS.register(new SurvivalSearch());
         OneConfigSupport.start();
         menu.addThemeListener(OneConfigSupport::themeChanged);
+    }
+
+    /**
+     * After every mod's pre-init and init, so the hotbar's HUD handlers run after other mods' at
+     * the same priority (see {@link HotbarHud}).
+     */
+    public static void postInit() {
+        MinecraftForge.EVENT_BUS.register(hotbar);
     }
 
     public static MenuManager menu() {

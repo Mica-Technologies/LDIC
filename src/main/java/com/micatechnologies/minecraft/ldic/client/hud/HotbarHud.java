@@ -36,11 +36,21 @@ import org.lwjgl.opengl.GL11;
  * bars stay where they belong relative to the hotbar. Nothing is pushed while the hotbar is at
  * its normal size and fully shown.</p>
  *
+ * <p>With the modern style the group sits at the bottom of the screen whatever other mods do
+ * to it: Controllable's console hotbar translates every HUD element up 20 px in {@code Pre} and
+ * back down in {@code Post}. So for each group element LDIC puts back the model-view matrix from
+ * before any mod's {@code Pre} (in its own last {@code Pre} handler) and from before any mod's
+ * {@code Post} (in its last {@code Post} handler), which drops their lift and its undo together.
+ * The vanilla style is left to them.</p>
+ *
  * <p>Cancelling an element's {@code Pre} (the modern hotbar replaces vanilla's; a hidden group
- * is skipped) means Forge never fires its {@code Post}. Other mods pair the two: Controllable's
- * console hotbar translates up in {@code Pre} and back down in {@code Post}. So when LDIC cancels
- * an element it puts back the model-view matrix from before that element's {@code Pre}, or
- * their transform would leak into the crosshair, the rest of the HUD and any open screen.</p>
+ * is skipped) means Forge never fires its {@code Post}, so when LDIC cancels an element it also
+ * puts back the matrix from before that element's {@code Pre}, or a lift would leak into the
+ * crosshair, the rest of the HUD and any open screen.</p>
+ *
+ * <p>Registered in post-init (see {@code LdicClient}), after every mod's pre-init and init, so
+ * these handlers run after other mods' at the same priority: Controllable registers its HUD
+ * handlers in pre-init, at LOWEST.</p>
  */
 public final class HotbarHud {
 
@@ -57,7 +67,10 @@ public final class HotbarHud {
             Keyboard.KEY_H, "key.categories.ldic");
     private final HotbarVisibility visibility = new HotbarVisibility();
     private final EnumSet<ElementType> pushed = EnumSet.noneOf(ElementType.class);
+    /** Group elements drawn at the bottom whose Post must drop other mods' undo of their lift. */
+    private final EnumSet<ElementType> grounded = EnumSet.noneOf(ElementType.class);
     private final FloatBuffer savedMatrix = BufferUtils.createFloatBuffer(16);
+    private final FloatBuffer postMatrix = BufferUtils.createFloatBuffer(16);
     private boolean matrixSaved;
 
     private final Item[] lastItems = new Item[10];
@@ -170,26 +183,30 @@ public final class HotbarHud {
         }
     }
 
-    /** Saves the model-view matrix before any mod's {@code Pre} for an element LDIC may cancel. */
+    /** Saves the model-view matrix before any mod's {@code Pre} for a group element. */
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
     public void onOverlayPreFirst(RenderGameOverlayEvent.Pre event) {
-        ElementType type = event.getType();
-        matrixSaved = GROUP.contains(type) && (type == ElementType.HOTBAR && modern() || visibility.visibility() <= 0);
+        matrixSaved = GROUP.contains(event.getType());
         if (matrixSaved) {
             savedMatrix.clear();
             GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, savedMatrix);
         }
     }
 
-    /** Cancels an element and undoes what other mods' {@code Pre} did to the matrix for it. */
-    private void cancel(RenderGameOverlayEvent.Pre event) {
-        event.setCanceled(true);
+    /** Undoes what other mods' {@code Pre} did to the matrix for this element. */
+    private void restorePreMatrix() {
         if (matrixSaved) {
             savedMatrix.clear();
             GlStateManager.matrixMode(GL11.GL_MODELVIEW);
             GL11.glLoadMatrix(savedMatrix);
-            matrixSaved = false;
         }
+    }
+
+    /** Cancels an element and undoes what other mods' {@code Pre} did to the matrix for it. */
+    private void cancel(RenderGameOverlayEvent.Pre event) {
+        event.setCanceled(true);
+        restorePreMatrix();
+        matrixSaved = false;
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -208,13 +225,17 @@ public final class HotbarHud {
         }
         Minecraft mc = Minecraft.getMinecraft();
         boolean spectator = mc.playerController != null && mc.playerController.isSpectator();
+        boolean ground = modern() && !spectator;
+        if (ground) {
+            // At the bottom of the screen: drop other mods' lifts (Controllable's console hotbar).
+            restorePreMatrix();
+        }
         if (!spectator && visibility.visibility() <= 0) {
             cancel(event);
             return;
         }
         boolean didPush = begin(event.getResolution());
-        if (type == ElementType.HOTBAR && modern() && !spectator && mc.getRenderViewEntity() instanceof EntityPlayer) {
-            // Drawn with other mods' transforms for the hotbar (a raised console hotbar).
+        if (type == ElementType.HOTBAR && ground && mc.getRenderViewEntity() instanceof EntityPlayer) {
             drawModern(mc, event.getResolution(), event.getPartialTicks());
             end(didPush);
             cancel(event);
@@ -223,19 +244,38 @@ public final class HotbarHud {
         if (didPush) {
             pushed.add(type);
         }
+        if (ground) {
+            grounded.add(type);
+        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
     public void onOverlayPost(RenderGameOverlayEvent.Post event) {
-        if (pushed.remove(event.getType())) {
+        ElementType type = event.getType();
+        if (pushed.remove(type)) {
             GlStateManager.popMatrix();
         }
-        if (event.getType() == ElementType.ALL) {
+        if (grounded.contains(type)) {
+            postMatrix.clear();
+            GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, postMatrix);
+        }
+        if (type == ElementType.ALL) {
             // An element whose Post never came (another mod cancelled it after us).
             for (int i = pushed.size(); i > 0; i--) {
                 GlStateManager.popMatrix();
             }
             pushed.clear();
+            grounded.clear();
+        }
+    }
+
+    /** Drops other mods' {@code Post} transforms for a grounded element: the undo of their lift. */
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public void onOverlayPostLast(RenderGameOverlayEvent.Post event) {
+        if (grounded.remove(event.getType())) {
+            postMatrix.clear();
+            GlStateManager.matrixMode(GL11.GL_MODELVIEW);
+            GL11.glLoadMatrix(postMatrix);
         }
     }
 

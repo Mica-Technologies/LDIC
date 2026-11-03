@@ -12,6 +12,11 @@ with an accent outline on the selected slot that glides from slot to slot. The a
 from the menu theme's `accent` constant, so the game matches the menu. **Vanilla** keeps Minecraft's own textures and still
 honours size and auto-hide.
 
+The modern hotbar and its bars always sit at the bottom of the screen, even when another mod
+moves the HUD up. Controllable's **Console Hotbar** is one example: with it on, chat and the HUD
+text still move up, but the hotbar stays down. With the vanilla style, LDIC leaves the hotbar
+wherever other mods put it.
+
 ## Size
 
 **Size** (50% to 200%) scales the hotbar together with everything that sits on it: health,

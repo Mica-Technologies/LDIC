@@ -72,6 +72,9 @@ Minecraft-facing (`client`):
   width/height at init), `InventoryStyle` (shared look; accent from the menu theme's `accent`).
 - `hud.HotbarHud`: modern hotbar, size and auto-hide. One GL transform per bottom-group element,
   pushed in its overlay `Pre` and popped in `Post`; nothing pushed at size 1 and fully shown.
+  Registered in post-init so its handlers run after other mods' at the same priority. With the
+  modern style it restores the matrix from before other mods' `Pre`/`Post`, which keeps the group
+  at the bottom when Controllable's console hotbar lifts the HUD 20 px.
 - `LdicConfigScreen` (Mods list Config): hotbar and inventory settings, saved to `player.json`.
 - `hud` (OneConfig, compileOnly; the pack provides it): `OneConfigSupport` starts `LdicOneConfig`
   only when OneConfig's classes exist (nothing else may reference OneConfig types).

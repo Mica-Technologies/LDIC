@@ -2,6 +2,7 @@ package com.micatechnologies.minecraft.ldic;
 
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
+import net.minecraftforge.fml.common.event.FMLPostInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -37,6 +38,13 @@ public class Ldic {
         LOGGER.info("{} {} loaded", Tags.MODNAME, Tags.VERSION);
         if (event.getSide().isClient()) {
             com.micatechnologies.minecraft.ldic.client.LdicClient.preInit(event.getModConfigurationDirectory());
+        }
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        if (event.getSide().isClient()) {
+            com.micatechnologies.minecraft.ldic.client.LdicClient.postInit();
         }
     }
 }
