@@ -269,6 +269,20 @@ final class ThemeScreenDriver {
             total += (layout.equals("row") ? b.width : b.height) + spacing;
         }
         total = Math.max(0, total - spacing);
+        int half = (int) Math.floor((aw - spacing) / 2);
+        if (layout.equals("column") && ay + total > host.gui().height && shown.size() > 1 && half >= 60) {
+            // More buttons than fit between the area's top and the bottom of the screen (several
+            // mods' settings buttons, plus entries, in a small window): two narrower columns, or
+            // the last ones would be pushed onto each other at the screen's edge. A column that
+            // only runs past the area keeps its full-width buttons.
+            for (int i = 0; i < shown.size(); i++) {
+                GuiButton b = shown.get(i);
+                b.width = half;
+                b.x = (int) Math.round(ax + (i % 2) * (half + spacing));
+                b.y = (int) Math.round(ay + (i / 2) * (b.height + spacing));
+            }
+            return;
+        }
         double start = align.equals("center") ? ((layout.equals("row") ? aw : ah) - total) / 2
                 : align.equals("end") ? (layout.equals("row") ? aw : ah) - total : 0;
         double pos = start;
@@ -407,7 +421,40 @@ final class ThemeScreenDriver {
         if (option != null) {
             GameOptions.setFraction(option, dragging.fractionX(layoutX));
             optionsChanged = true;
+        } else if (dragging.def.has("row") && host instanceof LdicPageScreen) {
+            // The row number is an expression over the factory's index: evaluate it as this node.
+            tree.prepare(dragging);
+            ((LdicPageScreen) host).view().setFraction((int) dragging.def.num("row", -1), dragging.fractionX(layoutX));
         }
+    }
+
+    /**
+     * How many of other mods' entries a theme screen draws itself: the room in its factories
+     * whose template has a {@code menu_entry} action. 0 when it draws none; entries past this
+     * number are added to the screen as buttons, so none is ever out of reach. A
+     * {@code menu_entry} action outside a factory means the theme places entries one by one and
+     * takes them all on.
+     */
+    static int entryCapacity(ThemeDef theme, String screenId) {
+        ScreenDef def = theme == null ? null : theme.screen(screenId);
+        long room = 0;
+        if (def != null) {
+            for (ElementDef d : def.elements) {
+                room += entryCapacity(d);
+            }
+        }
+        return (int) Math.min(Integer.MAX_VALUE, room);
+    }
+
+    private static long entryCapacity(ElementDef d) {
+        long room = d.action != null && d.action.uses("menu_entry") ? Integer.MAX_VALUE : 0;
+        if (d.factory != null && d.factory.template != null && entryCapacity(d.factory.template) > 0) {
+            room += d.factory.max;
+        }
+        for (ElementDef c : d.children) {
+            room += entryCapacity(c);
+        }
+        return room;
     }
 
     /** Returns true when the key was handled. */
@@ -423,6 +470,10 @@ final class ThemeScreenDriver {
                 double step = GuiScreen.isShiftKeyDown() ? 0.1 : 0.02;
                 GameOptions.setFraction(option, GameOptions.value(option) + (keyCode == Keyboard.KEY_RIGHT ? step : -step));
                 optionsChanged = true;
+            } else if (focused.def.has("row") && host instanceof LdicPageScreen) {
+                tree.prepare(focused);
+                ((LdicPageScreen) host).view().nudge((int) focused.def.num("row", -1),
+                        keyCode == Keyboard.KEY_RIGHT ? 1 : -1, GuiScreen.isShiftKeyDown());
             }
             return true;
         }

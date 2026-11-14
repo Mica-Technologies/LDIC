@@ -73,6 +73,7 @@ public final class MenuManager {
     private ThemeDef theme;
     private final java.util.List<Runnable> themeListeners = new java.util.ArrayList<>();
     private final ScreenSkins skins = new ScreenSkins(this);
+    private final ModMenus modMenus;
     private Problems problems;
     private double loadedAt;
     private boolean loadAttempted;
@@ -86,6 +87,8 @@ public final class MenuManager {
         this.textures = new Textures(assets, web);
         this.fonts = new Fonts(assets, com.micatechnologies.minecraft.ldic.client.render.VanillaFont.INSTANCE);
         this.bindings = new HostBindings(settings, servers, new WebText(web));
+        this.bindings.setAccent(() -> themeAccent(settings.inventoryAccent));
+        this.modMenus = new ModMenus(this);
         writeStarterTheme();
         IResourceManager rm = Minecraft.getMinecraft().getResourceManager();
         if (rm instanceof IReloadableResourceManager) {
@@ -270,6 +273,31 @@ public final class MenuManager {
     }
 
     /**
+     * Opens a page another mod registered through the API: in the theme's {@code mod_page} screen,
+     * or as a plain vanilla-style screen when the menu theme is off or did not load.
+     */
+    void openPage(com.micatechnologies.minecraft.ldic.api.MenuPage page, GuiScreen parent) {
+        Minecraft mc = Minecraft.getMinecraft();
+        if (settings.menuEnabled && !loadAttempted) {
+            load();
+        }
+        if (settings.menuEnabled && theme != null && theme.screen(LdicPageScreen.SCREEN) != null) {
+            mc.displayGuiScreen(new LdicPageScreen(this, theme, page, parent));
+        } else {
+            mc.displayGuiScreen(new ClassicPageScreen(page, parent));
+        }
+    }
+
+    /** The entries and pages other mods registered through the API (an event listener). */
+    public Object modMenus() {
+        return modMenus;
+    }
+
+    ModMenus modMenusImpl() {
+        return modMenus;
+    }
+
+    /**
      * With debug on, adds a sample button to LDIC's screens the way another mod would (in
      * InitGuiEvent.Post), so a theme author can see where other mods' buttons will go, and so
      * the pass-through can be checked without installing such a mod.
@@ -439,7 +467,8 @@ public final class MenuManager {
         if (r == null) {
             return null;
         }
-        ThemeDef t = ThemeCompiler.compile(r.json, bindings.scope, p);
+        // Over LDIC's base layer: the screens every theme has unless it defines its own (mod_page).
+        ThemeDef t = ThemeCompiler.compile(ThemeLoader.overBase(source, r.json, p), bindings.scope, p);
         if (t.screen("main") == null) {
             p.error("screens", doc.name + " has no \"main\" screen (or top-level \"elements\")");
             return null;

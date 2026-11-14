@@ -18,7 +18,9 @@
   },
   "functions": {
     "enter(number i)": "ease_out_cubic(saturate((screen_time - 0.06 * i) / 0.45))",
-    "slide(number i)": "-24 * (1 - enter(i))"
+    "slide(number i)": "-24 * (1 - enter(i))",
+    "pause_entries_y()": "singleplayer ? (lan_open ? 226 : 252) : 200",
+    "pause_leave_y()": "max(262, pause_entries_y() + 26 * min(4, menu_entry_count('pause')) + 10)"
   },
   "screens": {
     "main": {
@@ -194,7 +196,7 @@
         { "id": "pause_shade", "type": "include", "screen": "main", "ids": ["shade_left"] },
         { "id": "pause_clock", "type": "include", "screen": "main", "ids": ["clock", "date"] },
 
-        { "id": "pause_menu", "type": "group", "anchor": "left", "width": 300, "height": 292, "children": [
+        { "id": "pause_menu", "type": "group", "anchor": "left", "width": 300, "height": "max(292, pause_leave_y() + 30)", "children": [
           { "id": "pause_title", "type": "text", "font": "ui_bold", "size": 30, "colour": "#FFFFFF", "shadow": false,
             "text": "{translate('menu.game')}", "x": "menu_x + slide(0)", "y": 0, "opacity": "enter(0)" },
           { "id": "pause_subtitle", "type": "text", "font": "ui", "size": 11, "colour": "#B0FFFFFF", "shadow": false,
@@ -238,9 +240,19 @@
             "opacity": "enter(4)", "visible": "singleplayer", "action": "cheats",
             "children": [ { "id": "cheats_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] },
 
+          { "id": "pause_mod_entries", "type": "factory", "count": "menu_entry_count('pause')", "max": 8,
+            "template": { "id": "pause_mod_entry", "type": "button", "style": "none", "font": "ui_bold", "size": 13, "text_align": "left", "padding": 12,
+              "text_colour": "#F0FFFFFF", "hover_text_colour": "accent", "disabled_text_colour": "#70FFFFFF", "shadow": false,
+              "text": "{menu_entry_label('pause', index)}", "tooltip": "{menu_entry_tooltip('pause', index)}",
+              "x": "menu_x + 230 * floor(index / 4) + slide(5) + 6 * hover_t", "y": "pause_entries_y() + 26 * (index - 4 * floor(index / 4))", "width": 220, "height": 22,
+              "opacity": "enter(5)", "enabled": "menu_entry_enabled('pause', index)",
+              "action": { "type": "menu_entry", "location": "pause", "index": "index" },
+              "children": [ { "id": "pause_mod_entry_bar", "type": "rect", "colour": "accent", "width": "2 + 2 * parent_hover_t", "height": "100%", "opacity": "0.35 + 0.65 * parent_hover_t" } ] } },
+
           { "id": "leave", "type": "button", "style": "flat", "radius": 3, "colour": "#40FFFFFF", "hover_colour": "#C0E53935",
             "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#F0FFFFFF", "hover_text_colour": "#FFFFFF",
-            "text": "{translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect')}", "x": "menu_x", "y": 262, "width": 220, "height": 24,
+            "text": "{translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect')}", "x": "menu_x",
+            "y": "pause_leave_y()", "width": 220, "height": 24,
             "opacity": "enter(5)", "action": "disconnect" }
         ] },
 

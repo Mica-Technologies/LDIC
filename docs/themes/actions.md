@@ -28,6 +28,8 @@ Arguments marked *text* accept `{expression}` parts.
 | `disconnect` | | Saves and quits to the title screen (singleplayer), or disconnects from the server |
 | `cheats` | | Turns Allow Cheats on or off in the singleplayer world, saved with the world (vanilla only offers it under Open to LAN, for the session) |
 | `classic_pause` | | Opens vanilla's own pause menu instead of the themed one |
+| `menu_entry` | `location` *text*, `index` *expr* | Runs an entry another mod added to `main`, `pause` or `options`; see [Entries and pages from mods](mod-menus.md) |
+| `page_row` | `index` *expr* | On the `mod_page` screen: clicks a row of a mod's page |
 | `quit` | | Quits the game |
 
 ## Built-in screens for `open`

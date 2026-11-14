@@ -89,6 +89,23 @@ class BuiltinThemesTest {
         s.define(Function.str("screen_text", false, a -> "", Type.STRING));
         s.define(Function.bool("screen_flag", false, a -> false, Type.STRING));
         s.define(Function.num("screen_value", false, a -> 0, Type.STRING));
+        s.define(Function.num("accent_colour", false, a -> 0xFF4FC3F7L));
+        s.define(Function.num("menu_entry_count", false, a -> 2, Type.STRING));
+        s.define(Function.str("menu_entry_label", false, a -> "Entry", Type.STRING, Type.NUMBER));
+        s.define(Function.str("menu_entry_tooltip", false, a -> "", Type.STRING, Type.NUMBER));
+        s.define(Function.bool("menu_entry_enabled", false, a -> true, Type.STRING, Type.NUMBER));
+        s.define(Function.str("page_title", false, a -> "Page"));
+        s.define(Function.num("page_rows", false, a -> 3));
+        s.define(Function.num("page_scroll", false, a -> 0));
+        s.define(Function.num("page_fit", false, a -> 3, Type.NUMBER));
+        s.define(Function.bool("page_more", false, a -> false));
+        s.define(Function.bool("page_row_is", false, a -> true, Type.NUMBER, Type.STRING));
+        for (String f : new String[] {"page_row_kind", "page_row_label", "page_row_text", "page_row_tooltip"}) {
+            s.define(Function.str(f, false, a -> "", Type.NUMBER));
+        }
+        s.define(Function.num("page_row_value", false, a -> 0.5, Type.NUMBER));
+        s.define(Function.bool("page_row_on", false, a -> true, Type.NUMBER));
+        s.define(Function.bool("page_row_enabled", false, a -> true, Type.NUMBER));
         return s;
     }
 
@@ -143,19 +160,46 @@ class BuiltinThemesTest {
     @Test
     void builtinThemesCompileCleanly() throws IOException {
         for (String id : THEMES) {
-            check(id, hostStub());
+            // Menu themes compile over the base layer, as MenuManager loads them.
+            ThemeDef t = check(id, hostStub(), true);
+            assertNotNull(t.screen("mod_page"), id + " has no mod_page screen from the base layer");
         }
         for (String id : LOADING_THEMES) {
-            check(id, loadingStub());
+            check(id, loadingStub(), false);
         }
     }
 
-    private static void check(String id, Scope scope) throws IOException {
+    /** A theme's own mod_page elements override the base layer's by id. */
+    @Test
+    void themeOverridesBaseLayerById() throws IOException {
+        Problems p = new Problems();
+        com.google.gson.JsonObject theme = Json.parse("{\"ldic\":1,\"elements\":[],\"screens\":{\"mod_page\":{\"elements\":["
+                + "{\"id\":\"page_dim\",\"type\":\"rect\",\"colour\":\"#FF112233\"}]}}}").getAsJsonObject();
+        com.google.gson.JsonObject merged = ThemeLoader.overBase(JAR, theme, p);
+        assertTrue(p.isEmpty(), p.all().toString());
+        com.google.gson.JsonArray elements = merged.getAsJsonObject("screens").getAsJsonObject("mod_page").getAsJsonArray("elements");
+        int dims = 0;
+        boolean panel = false;
+        for (com.google.gson.JsonElement e : elements) {
+            String id = e.getAsJsonObject().get("id").getAsString();
+            if (id.equals("page_dim")) {
+                dims++;
+                assertTrue(e.getAsJsonObject().get("colour").getAsString().equals("#FF112233"));
+            }
+            panel |= id.equals("page_panel");
+        }
+        assertTrue(dims == 1 && panel, "page_dim overridden in place, the rest of the base kept");
+        assertNotNull(ThemeCompiler.compile(merged, hostStub(), p).screen("mod_page"));
+        assertTrue(p.isEmpty(), p.all().toString());
+    }
+
+    private static ThemeDef check(String id, Scope scope, boolean overBase) throws IOException {
         Problems p = new Problems();
         ThemeLoader.Result r = ThemeLoader.load(JAR, JAR.open("builtin:" + id), p);
         assertNotNull(r, id + ": " + p.all());
-        ThemeDef t = ThemeCompiler.compile(r.json, scope, p);
+        ThemeDef t = ThemeCompiler.compile(overBase ? ThemeLoader.overBase(JAR, r.json, p) : r.json, scope, p);
         assertTrue(p.isEmpty(), id + ": " + p.all());
         assertNotNull(t.screen(id.equals("notices") ? "photosensitivity" : "main"), id);
+        return t;
     }
 }

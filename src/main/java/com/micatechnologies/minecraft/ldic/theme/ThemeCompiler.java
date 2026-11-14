@@ -81,6 +81,9 @@ public final class ThemeCompiler {
         action("resume");
         action("disconnect");
         action("cheats");
+        // Other mods' entries (the API) and the rows of a mod's page.
+        action("menu_entry", "location", Kind.TEXT, "index", Kind.NUMBER);
+        action("page_row", "index", Kind.NUMBER);
     }
 
     private static void action(String type, Object... argKinds) {
@@ -739,6 +742,9 @@ public final class ThemeCompiler {
             }
             return;
         }
+        if (d.has("row")) {
+            problems.warn(path + ".row", "ignored: this slider sets the game option '" + option + "'");
+        }
         if (!option.matches("[A-Za-z0-9_:]+")) {
             problems.error(path + ".option", "'" + option + "' is not an option name such as FOV or sound:master");
             return;
@@ -946,6 +952,13 @@ public final class ThemeCompiler {
                 break;
             case "sound":
                 require(a, "sound");
+                break;
+            case "menu_entry":
+                require(a, "location");
+                require(a, "index");
+                break;
+            case "page_row":
+                require(a, "index");
                 break;
             default:
                 break;

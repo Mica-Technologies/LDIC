@@ -109,6 +109,7 @@ nav:
       - Mod list: themes/mods.md
       - Skins for other screens: themes/skins.md
       - Inventory screens: themes/inventory.md
+      - Entries and pages from mods: themes/mod-menus.md
       - Expressions: themes/expressions.md
       - Game values: themes/game-values.md
   - Loading screen:
@@ -121,6 +122,8 @@ nav:
       - Full-screen inventory: inventory/full-screen.md
       - Hotbar: inventory/hotbar.md
       - HUD (OneConfig): inventory/hud.md
+  - Mod developers:
+      - The LDIC API: mods/api.md
   - Help:
       - Troubleshooting: help/troubleshooting.md
       - Settings: help/settings.md

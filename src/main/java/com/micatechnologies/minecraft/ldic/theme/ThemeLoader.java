@@ -98,6 +98,28 @@ public final class ThemeLoader {
         return new Result(merged, chain);
     }
 
+    /** The layer under every menu theme: screens a theme has unless it defines its own. */
+    public static final String BASE = "builtin:_base";
+
+    /**
+     * {@code theme} (already merged with its ancestors) over the base layer. A theme overrides
+     * the base's screens by id like any parent's; without a readable base the theme is returned
+     * as it is, with a warning.
+     */
+    public static JsonObject overBase(ThemeSource source, JsonObject theme, Problems problems) {
+        try {
+            ThemeSource.Document doc = source.open(BASE);
+            JsonElement e = Json.parse(doc.text);
+            if (e.isJsonObject()) {
+                return JsonMerge.merge(e.getAsJsonObject(), theme);
+            }
+            problems.warn("", "LDIC's base layer (" + BASE + ") is not a JSON object; pages from other mods use the plain style");
+        } catch (IOException | JsonParseException | IllegalStateException e) {
+            problems.warn("", "LDIC's base layer (" + BASE + ") could not be read; pages from other mods use the plain style: " + e.getMessage());
+        }
+        return theme;
+    }
+
     private static JsonObject parse(ThemeSource.Document doc, Problems problems) {
         try {
             JsonElement e = Json.parse(doc.text);

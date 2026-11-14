@@ -167,6 +167,16 @@ final class Actions {
                 case "mod_sort":
                     modAction(a.type, driver);
                     break;
+                case "menu_entry":
+                    manager.modMenusImpl().activate(ModMenus.shownAt(a.str("location", ""), (int) a.num("index", -1)), screen);
+                    break;
+                case "page_row":
+                    if (driver.host() instanceof LdicPageScreen) {
+                        ((LdicPageScreen) driver.host()).view().activate((int) a.num("index", -1));
+                    } else {
+                        Ldic.LOGGER.warn("LDIC: action 'page_row' only works on the mod_page screen");
+                    }
+                    break;
                 case "toggle":
                     if (a.target.type() == Type.BOOL) {
                         a.target.set(!a.target.getBool());

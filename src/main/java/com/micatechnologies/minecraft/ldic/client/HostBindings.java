@@ -6,7 +6,11 @@ import static com.micatechnologies.minecraft.ldic.expr.Type.STRING;
 
 import com.micatechnologies.minecraft.ldic.expr.Function;
 import com.micatechnologies.minecraft.ldic.expr.Scope;
+import com.micatechnologies.minecraft.ldic.api.MenuEntry;
+import com.micatechnologies.minecraft.ldic.api.MenuLocation;
 import com.micatechnologies.minecraft.ldic.client.menu.GameOptions;
+import com.micatechnologies.minecraft.ldic.client.menu.ModMenus;
+import com.micatechnologies.minecraft.ldic.client.menu.PageView;
 import com.micatechnologies.minecraft.ldic.expr.Slot;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -175,6 +179,52 @@ public final class HostBindings {
         scope.define(Function.str("screen_text", false, a -> skinText.getOrDefault(a[0].str(), ""), STRING));
         scope.define(Function.num("screen_value", false, a -> screenValues.getOrDefault(a[0].str(), 0.0), STRING));
         scope.define(Function.bool("screen_flag", false, a -> skinFlags.getOrDefault(a[0].str(), false), STRING));
+        // The menu theme's accent (its "accent" constant, else the pack's inventory accent), for
+        // screens that must look right in any theme (LDIC's base layer).
+        scope.define(Function.num("accent_colour", false, a -> (accent.getAsInt() | 0xFF000000) & 0xFFFFFFFFL));
+        // Entries other mods added through the API, by location ("main", "pause", "options") and
+        // position among the ones showing.
+        scope.define(Function.num("menu_entry_count", false, a -> ModMenus.shown(MenuLocation.byKey(a[0].str())).size(), STRING));
+        scope.define(Function.str("menu_entry_label", false, a -> {
+            MenuEntry e = ModMenus.shownAt(a[0].str(), (int) a[1].num());
+            return e == null ? "" : ModMenus.label(e);
+        }, STRING, NUMBER));
+        scope.define(Function.str("menu_entry_tooltip", false, a -> {
+            MenuEntry e = ModMenus.shownAt(a[0].str(), (int) a[1].num());
+            return e == null ? "" : ModMenus.tooltip(e);
+        }, STRING, NUMBER));
+        scope.define(Function.bool("menu_entry_enabled", false, a -> {
+            MenuEntry e = ModMenus.shownAt(a[0].str(), (int) a[1].num());
+            return e != null && ModMenus.enabled(e);
+        }, STRING, NUMBER));
+        // A page another mod described through the API (the mod_page screen). Rows are numbered
+        // from the first one in view.
+        scope.define(Function.str("page_title", false, a -> page == null ? "" : page.title()));
+        scope.define(Function.num("page_rows", false, a -> page == null ? 0 : page.rows()));
+        scope.define(Function.num("page_scroll", false, a -> page == null ? 0 : page.scroll()));
+        scope.define(Function.num("page_fit", false, a -> page == null ? 0 : page.fit((int) a[0].num()), NUMBER));
+        scope.define(Function.bool("page_more", false, a -> page != null && page.more()));
+        scope.define(Function.bool("page_row_is", false, a -> page != null && page.kind((int) a[0].num()).equals(a[1].str()), NUMBER, STRING));
+        scope.define(Function.str("page_row_kind", false, a -> page == null ? "" : page.kind((int) a[0].num()), NUMBER));
+        scope.define(Function.str("page_row_label", false, a -> page == null ? "" : page.label((int) a[0].num()), NUMBER));
+        scope.define(Function.str("page_row_text", false, a -> page == null ? "" : page.text((int) a[0].num()), NUMBER));
+        scope.define(Function.num("page_row_value", false, a -> page == null ? 0 : page.value((int) a[0].num()), NUMBER));
+        scope.define(Function.bool("page_row_on", false, a -> page != null && page.on((int) a[0].num()), NUMBER));
+        scope.define(Function.bool("page_row_enabled", false, a -> page != null && page.enabled((int) a[0].num()), NUMBER));
+        scope.define(Function.str("page_row_tooltip", false, a -> page == null ? "" : page.tooltip((int) a[0].num()), NUMBER));
+    }
+
+    private java.util.function.IntSupplier accent = () -> 0xFF4FC3F7;
+    private PageView page;
+
+    /** Where {@code accent_colour()} comes from (the menu manager, once it exists). */
+    public void setAccent(java.util.function.IntSupplier accent) {
+        this.accent = accent;
+    }
+
+    /** The mod page on screen this frame. */
+    public void setPage(PageView page) {
+        this.page = page;
     }
 
     private GuiButton skinButton(double id) {

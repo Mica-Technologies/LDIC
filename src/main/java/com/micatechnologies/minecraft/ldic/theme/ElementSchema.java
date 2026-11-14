@@ -142,8 +142,10 @@ public final class ElementSchema {
 
         // Drag to set a value. With "option" it is bound to a game option ("FOV",
         // "RENDER_DISTANCE", "sound:master", ...), and value and text default to that option's.
+        // With "row" (on the mod_page screen) it sets that row of another mod's page.
         type("slider",
                 new Prop("option", Kind.STATIC, null),
+                new Prop("row", Kind.NUMBER, null),
                 new Prop("value", Kind.NUMBER, null),
                 new Prop("text", Kind.TEXT, null),
                 new Prop("style", Kind.ENUM, "flat", "flat", "vanilla"),

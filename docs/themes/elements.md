@@ -260,6 +260,7 @@ Drag to set a value. Bound to a game option with `option`, it reads and sets tha
 | Property | Type | Default | Meaning |
 | --- | --- | --- | --- |
 | `option` | name | | The game option to set, such as `FOV` or `sound:music` |
+| `row` | number *expr* | | On the [`mod_page`](mod-menus.md#pages) screen, instead of `option`: the row of a mod's page to set |
 | `value` | number *expr* | the option's | Knob position 0–1 |
 | `text` | text | the option's label | Centred over the slider |
 | `style` | `flat` / `vanilla` | `flat` | `vanilla` draws the resource pack's slider |

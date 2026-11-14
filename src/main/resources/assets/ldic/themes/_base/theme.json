@@ -1,0 +1,53 @@
+{
+  "_comment": "LDIC's base layer, merged under every menu theme. It supplies the screens a theme has unless it defines its own: 'mod_page' draws a settings page another mod described through the LDIC API. A theme restyles it by overriding these elements by id, or the page_font / page_font_bold fonts. It uses accent_colour() rather than a constant, so it compiles in any theme.",
+  "ldic": 1,
+  "fonts": { "page_font": "sans", "page_font_bold": "sans:bold" },
+  "screens": {
+    "mod_page": {
+      "elements": [
+        { "id": "page_backdrop", "type": "rect", "colour": "#FF0B0E14", "colour_bottom": "#FF141A24", "visible": "!in_world" },
+        { "id": "page_dim", "type": "rect", "colour": "#C8060A10", "visible": "in_world" },
+
+        { "id": "page_panel", "type": "rect", "anchor": "center", "width": "min(440, screen_width - 32)", "height": "screen_height - 40",
+          "radius": 6, "colour": "#B0080C12", "border_colour": "#20FFFFFF", "children": [
+          { "id": "page_title", "type": "text", "font": "page_font_bold", "size": 18, "colour": "#FFFFFF", "shadow": false,
+            "text": "{page_title()}", "x": 20, "y": 16 },
+          { "id": "page_rule", "type": "rect", "colour": "accent_colour()", "x": 20, "y": 40, "width": 48, "height": 2 },
+
+          { "id": "page_rows", "type": "factory", "x": 20, "y": 54, "width": "pw - 40", "height": "ph - 100",
+            "count": "page_fit(floor((elem_height + 4) / 26))", "max": 64,
+            "template": { "id": "page_row", "type": "group", "y": "index * 26", "height": 22, "children": [
+              { "id": "page_row_section", "type": "text", "font": "page_font_bold", "size": 9, "colour": "accent_colour()", "shadow": false,
+                "text": "{upper(page_row_label(index))}", "y": 9, "visible": "page_row_is(index, 'section')" },
+              { "id": "page_row_text", "type": "text", "font": "page_font", "size": 10, "colour": "#C0FFFFFF", "shadow": false,
+                "text": "{page_row_label(index)}", "y": 6, "visible": "page_row_is(index, 'text')" },
+              { "id": "page_row_button", "type": "button", "style": "flat", "radius": 3, "colour": "#30FFFFFF", "hover_colour": "#60FFFFFF",
+                "disabled_colour": "#18FFFFFF", "font": "page_font", "size": 10, "shadow": false,
+                "text_colour": "#E0FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_text_colour": "#70FFFFFF",
+                "text": "{page_row_text(index)}", "width": "pw", "height": 22,
+                "visible": "page_row_is(index, 'toggle') || page_row_is(index, 'choice') || page_row_is(index, 'button')",
+                "enabled": "page_row_enabled(index)", "tooltip": "{page_row_tooltip(index)}",
+                "action": { "type": "page_row", "index": "index" },
+                "children": [
+                  { "id": "page_row_switch_on", "type": "rect", "colour": "accent_colour()", "anchor": "right", "x": -10, "width": 8, "height": 8, "radius": 4,
+                    "visible": "page_row_is(index, 'toggle') && page_row_on(index)" },
+                  { "id": "page_row_switch_off", "type": "rect", "colour": "#40FFFFFF", "anchor": "right", "x": -10, "width": 8, "height": 8, "radius": 4,
+                    "visible": "page_row_is(index, 'toggle') && !page_row_on(index)" }
+                ] },
+              { "id": "page_row_slider", "type": "slider", "row": "index", "value": "page_row_value(index)", "text": "{page_row_text(index)}",
+                "width": "pw", "height": 22, "font": "page_font", "size": 10, "shadow": false,
+                "fill_colour": "with_alpha(accent_colour(), 0.55)", "knob_colour": "accent_colour()",
+                "visible": "page_row_is(index, 'slider')", "enabled": "page_row_enabled(index)",
+                "opacity": "page_row_enabled(index) ? 1 : 0.45", "tooltip": "{page_row_tooltip(index)}" }
+            ] } },
+
+          { "id": "page_done", "type": "button", "style": "flat", "radius": 3, "colour": "accent_colour()", "hover_colour": "brighten(accent_colour(), 0.25)",
+            "font": "page_font_bold", "size": 11, "shadow": false, "text_colour": "#FF06121A", "hover_text_colour": "#FF06121A",
+            "text": "{translate('gui.done')}", "anchor": "bottom_left", "x": 20, "y": -14, "width": 104, "height": 22, "action": "back" },
+          { "id": "page_scroll_hint", "type": "text", "font": "page_font", "size": 9, "colour": "#80FFFFFF", "shadow": false, "align": "right",
+            "text": "Scroll for more", "anchor": "bottom_right", "x": -20, "y": -20, "visible": "page_more() || page_scroll() > 0" }
+        ] }
+      ]
+    }
+  }
+}

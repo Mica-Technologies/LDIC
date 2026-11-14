@@ -27,8 +27,8 @@ import net.minecraft.client.gui.GuiScreen;
  * {@code GuiMainMenu}: mods add their settings buttons to "the options screen" by checking
  * {@code instanceof GuiOptions}, and those buttons must keep appearing. Unlike the main menu,
  * a theme can never hide them here; they go into the theme's {@code foreign_buttons} area, or
- * stay where the mod put them. Vanilla's own buttons are not created at all: the theme draws
- * its own, and its sub-screens (video, controls, sounds, ...) are vanilla's, opened as-is.</p>
+ * stay where the mod put them. Vanilla's own buttons are dropped: the theme draws its own, and
+ * its sub-screens (video, controls, sounds, ...) open the way vanilla's buttons open them.</p>
  *
  * <p>The {@code classic_options} action opens vanilla's screen instead, once, as a way out.</p>
  */

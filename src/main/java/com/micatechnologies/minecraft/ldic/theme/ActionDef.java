@@ -42,6 +42,19 @@ public final class ActionDef {
         return v == null ? fallback : Boolean.parseBoolean(v);
     }
 
+    /** Whether this action, or any action it chains, is of a type. */
+    public boolean uses(String actionType) {
+        if (type.equals(actionType)) {
+            return true;
+        }
+        for (ActionDef sub : chain) {
+            if (sub.uses(actionType)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public String toString() {
         return type + " @ " + path;

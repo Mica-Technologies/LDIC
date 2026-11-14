@@ -29,6 +29,7 @@ public final class LdicClient {
         MinecraftForge.EVENT_BUS.register(menu);
         MinecraftForge.EVENT_BUS.register(menu.worldLoading());
         MinecraftForge.EVENT_BUS.register(menu.screenSkins());
+        MinecraftForge.EVENT_BUS.register(menu.modMenus());
         hotbar = new HotbarHud(settings);
         MinecraftForge.EVENT_BUS.register(new InventoryScreens(settings));
         MinecraftForge.EVENT_BUS.register(new SurvivalSearch());

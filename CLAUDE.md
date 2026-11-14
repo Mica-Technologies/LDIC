@@ -47,6 +47,18 @@ Pure Java (no Minecraft types, fully unit-tested):
 - `inventory`: `ItemQuery` (creative search syntax), `ItemSort` (stable tab orders),
   `HotbarVisibility` (auto-hide state), `CreativeLayout` (full-screen creative rectangles).
 
+For other mods (`api`, the only supported surface; no LDIC internals in its signatures):
+- `LdicApi.menus()` is a static `MenuRegistry` (usable before LDIC's pre-init): `MenuEntry` per
+  `MenuLocation` (MAIN, PAUSE, OPTIONS) that opens a screen, runs code, or opens a `MenuPage`
+  (rows: section, text, toggle, slider, choice, button; pure Java, unit-tested).
+- `client.menu.ModMenus` shows entries: a theme screen draws them itself through
+  `menu_entry_*` + the `menu_entry` action (the built-in themes' pause menus); every entry past that
+  capacity (`ThemeScreenDriver.entryCapacity`), and every entry on other and vanilla screens,
+  gets a `ModEntryButton` in InitGuiEvent, so none is ever unreachable. Pages are the theme's
+  `mod_page` screen (`LdicPageScreen`), which every theme has from the base layer
+  `themes/_base/theme.json` (`ThemeLoader.overBase`, merged under each menu theme), or
+  `ClassicPageScreen` with no theme. Every call into a mod's supplier is guarded.
+
 Minecraft-facing (`client`):
 - `render`: all drawing goes through `Gfx.gl()`, a per-thread `GlBackend`: `McGl` (GlStateManager +
   Tessellator) on the main thread, `RawGl` (plain GL11) on the loading thread. Never call
@@ -60,7 +72,11 @@ Minecraft-facing (`client`):
   `LdicModsScreen`, which extends Forge's `GuiModList`), on purpose, so other mods' `instanceof` button hooks
   keep working. Theme elements never enter `buttonList`; other mods' buttons are never hidden on
   the options or pause screens. `Actions` runs theme actions; `GameOptions` maps option names to
-  `GameSettings`.
+  `GameSettings`. The theme loads on the first `GuiOpenEvent` of any screen (a launch straight
+  into a server never opens the title screen). `LdicOptionsScreen.initGui` runs vanilla's, drops
+  vanilla's buttons and keeps what mixins added there (AUSM, LDOG), sending their clicks to
+  `GuiOptions.actionPerformed`; from it, `open video` etc. go through that method with vanilla's
+  button id, so Celeritas's hook swaps in its own screen.
 - `loading.LoadingScreen`: wraps Forge's splash runnable (via `MixinSplashProgress`), keeps
   Forge's lock/mutex/pause protocol, falls back to Forge's runnable on any failure.
 - `audio`: Ogg Vorbis via the JOrbis classes Minecraft ships, played through Java Sound (never

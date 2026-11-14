@@ -17,7 +17,8 @@
     "news_url": "''"
   },
   "functions": {
-    "enter(number i)": "reduced_motion ? 1 : ease_out_cubic(saturate((screen_time - 0.05 * i) / 0.4))"
+    "enter(number i)": "reduced_motion ? 1 : ease_out_cubic(saturate((screen_time - 0.05 * i) / 0.4))",
+    "pause_entry_rows()": "floor((min(6, menu_entry_count('pause')) + 1) / 2)"
   },
   "screens": {
     "main": {
@@ -203,7 +204,7 @@
             "text": "{clock()}" }
         ] },
 
-        { "id": "pause_card", "type": "rect", "anchor": "center", "y": 17, "width": 300, "height": 254, "radius": 6,
+        { "id": "pause_card", "type": "rect", "anchor": "center", "y": 17, "width": 300, "height": "254 + 36 * pause_entry_rows()", "radius": 6,
           "colour": "#D0101319", "border_colour": "#18FFFFFF", "opacity": "enter(1)", "children": [
           { "id": "resume", "type": "button", "style": "flat", "radius": 4, "colour": "accent", "hover_colour": "brighten(accent, 0.2)",
             "font": "ui_bold", "size": 14, "shadow": false, "text_colour": "#FFFFFF", "hover_text_colour": "#FFFFFF",
@@ -228,9 +229,16 @@
             "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_colour": "#08FFFFFF", "disabled_text_colour": "#60FFFFFF",
             "text": "{translate('selectWorld.allowCommands')} {translate(cheats ? 'options.on' : 'options.off')}",
             "x": "24 + (pw - 40) / 2", "y": 138, "width": "(pw - 40) / 2", "height": 30, "enabled": "singleplayer", "action": "cheats" },
+          { "id": "pause_mod_entries", "type": "factory", "count": "menu_entry_count('pause')", "max": 6,
+            "template": { "id": "pause_mod_entry", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "with_alpha(accent, 0.45)",
+              "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#E8FFFFFF", "hover_text_colour": "#FFFFFF", "disabled_colour": "#08FFFFFF", "disabled_text_colour": "#60FFFFFF",
+              "text": "{menu_entry_label('pause', index)}", "tooltip": "{menu_entry_tooltip('pause', index)}",
+              "x": "index - 2 * floor(index / 2) < 1 ? 16 : 24 + (pw - 40) / 2", "y": "174 + 36 * floor(index / 2)", "width": "(pw - 40) / 2", "height": 30,
+              "enabled": "menu_entry_enabled('pause', index)",
+              "action": { "type": "menu_entry", "location": "pause", "index": "index" } } },
           { "id": "leave", "type": "button", "style": "flat", "radius": 4, "colour": "#14FFFFFF", "hover_colour": "#C0E53935",
             "font": "ui_bold", "size": 11, "shadow": false, "text_colour": "#FF8A80", "hover_text_colour": "#FFFFFF",
-            "text": "{translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect')}", "x": 16, "y": 182, "width": "pw - 32", "height": 30,
+            "text": "{translate(singleplayer ? 'menu.returnToMenu' : 'menu.disconnect')}", "x": 16, "y": "182 + 36 * pause_entry_rows()", "width": "pw - 32", "height": 30,
             "action": "disconnect" },
           { "id": "pause_hint", "type": "text", "anchor": "bottom", "align": "center", "y": -12, "font": "ui", "size": 8, "colour": "#60FFFFFF", "shadow": false,
             "text": "{in_world && singleplayer ? 'Game paused' : ''}" }
