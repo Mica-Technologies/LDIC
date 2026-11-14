@@ -46,6 +46,15 @@ there.
 
     [:octicons-arrow-right-24: Loading screen](loading/index.md)
 
+-   :material-puzzle: **For mod developers**
+
+    ---
+
+    Add your mod's entries to the title, pause and options screens, and describe a settings page
+    that LDIC draws in the pack's theme.
+
+    [:octicons-arrow-right-24: The LDIC API](mods/api.md)
+
 </div>
 
 ## What LDIC does

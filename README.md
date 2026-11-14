@@ -107,6 +107,17 @@ See the wiki: [creative search and sort](https://mica-technologies.github.io/LDI
 - Needs [OneConfig](https://polyfrost.org/projects/oneconfig/) in the pack (Alto ships it). Without
   it, LDIC works as before with these two parts off.
 
+### For other mods
+
+- An **API** (`com.micatechnologies.minecraft.ldic.api`) for adding entries to the title, pause and
+  options screens, drawn in the pack's theme and still reachable as plain buttons without one.
+- **Settings pages** described as rows (switches, sliders, choices, buttons): LDIC draws and
+  scrolls them in the theme's style, so the mod writes no GUI code.
+- Mods that add plain buttons to those screens, by Forge event or by mixin, keep working as they
+  are.
+
+See the wiki: [the LDIC API](https://mica-technologies.github.io/LDIC/mods/api/).
+
 ## Installing
 
 Drop the jar into `mods/`. It needs [MixinBooter](https://www.curseforge.com/minecraft/mc-mods/mixin-booter).
