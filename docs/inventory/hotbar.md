@@ -34,7 +34,9 @@ it. It comes back when something happens worth seeing:
 - you open any screen.
 
 The **Show/hide hotbar** key (H by default; Controls, under LDIC) hides it at once or brings
-it back. With auto-hide off, the key simply hides the hotbar until you press it again.
+it back. With auto-hide off, the key simply hides the hotbar until you press it again; a line
+above the hotbar's place says so and names the key, and the hotbar always comes back when you
+join a world.
 
 ## Settings
 

@@ -198,6 +198,12 @@ public final class MenuManager {
         if (!settings.menuEnabled) {
             return;
         }
+        if (!loadAttempted && event.getGui() != null) {
+            // On the first screen of any kind, not just the title screen: a launch straight into a
+            // server or world never opens the title screen, and the pause, options and world-loading
+            // screens need the theme all the same.
+            load();
+        }
         if (event.getGui() instanceof GuiOptions && !(event.getGui() instanceof LdicOptionsScreen)) {
             if (classicOptionsOnce) {
                 classicOptionsOnce = false;
@@ -206,6 +212,8 @@ public final class MenuManager {
             if (settings.optionsEnabled && theme != null && theme.screen("options") != null) {
                 GuiScreen parent = ((AccessorGuiOptions) event.getGui()).ldic$getLastScreen();
                 event.setGui(new LdicOptionsScreen(this, theme, parent));
+            } else if (settings.optionsEnabled) {
+                noteSkipped("options");
             }
             return;
         }
@@ -237,18 +245,27 @@ public final class MenuManager {
             }
             if (settings.pauseEnabled && theme != null && theme.screen("pause") != null) {
                 event.setGui(new LdicPauseScreen(this, theme));
+            } else if (settings.pauseEnabled) {
+                noteSkipped("pause");
             }
             return;
         }
         if (event.getGui() instanceof GuiMainMenu && !(event.getGui() instanceof LdicMenuScreen)) {
-            if (!loadAttempted) {
-                load();
-            }
             if (theme != null) {
                 history.clear();
                 event.setGui(new LdicMenuScreen(this, theme, "main"));
                 startMusic();
             }
+        }
+    }
+
+    private final java.util.Set<String> skippedLogged = new java.util.HashSet<>();
+
+    /** Says in the log, once per screen and reason, why a themed screen was left as vanilla's. */
+    private void noteSkipped(String screen) {
+        String why = theme == null ? "no menu theme is loaded" : "the theme has no \"" + screen + "\" screen";
+        if (skippedLogged.add(screen + ":" + why)) {
+            Ldic.LOGGER.info("LDIC: showing the vanilla {} screen: {}", screen, why);
         }
     }
 

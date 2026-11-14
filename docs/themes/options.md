@@ -10,12 +10,14 @@ every theme that extends them, have one.
 ## What stays vanilla
 
 - **The sub-screens.** Video Settings, Controls, Music & Sounds, Language, Resource Packs, Skin
-  Customization and Chat Settings are Minecraft's own screens (and OptiFine's, where it replaces
-  them), opened as they are.
+  Customization and Chat Settings are Minecraft's own screens, opened the way vanilla's own
+  buttons open them. So a mod that puts its own screen in place of one still does: OptiFine's and
+  Celeritas's video settings open from the theme's Video Settings button.
 - **Other mods' buttons.** Mods that add a button to the options screen still do, and a theme can
   **never** hide them here. They go into the theme's `foreign_buttons` area, or stay where the mod
   put them. The value `foreign_buttons` tells a theme how many there are, for a "Mod settings"
-  heading.
+  heading. This includes buttons a mod adds by patching the vanilla options screen itself (a
+  shader mod's "Shader Options..."), not only those added through Forge's events.
 - **Mod config screens** open as each mod draws them.
 - **A way out.** The `classic_options` action opens vanilla's own options screen, once. Turn the
   themed screen off entirely with `"themed_options": false` under `menu` in

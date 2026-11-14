@@ -48,6 +48,18 @@ Check `"foreign_buttons"` at the top of the theme (is it `"hide"`?) and whether 
 `wrap`s it. Buttons other mods add stay where the mod puts them unless the theme has a
 [`foreign_buttons`](../themes/elements.md#foreign_buttons) element.
 
+## The pause or options screen is vanilla's
+
+The log says why, once: look for `LDIC: showing the vanilla pause screen` (or `options`). Either
+no menu theme loaded (the lines above it say what was wrong with it) or the theme has no `pause`
+or `options` screen. `"themed_pause": false` or `"themed_options": false` in
+[settings](settings.md) also turn them off, without a log line.
+
+## The hotbar is gone
+
+The **Show/hide hotbar** key (H by default) hides the hotbar and the bars above it until it is
+pressed again; LDIC shows a line naming the key when that happens. See [Hotbar](../inventory/hotbar.md).
+
 ## My edits do not show
 
 The menu reloads automatically when `config/ldic/menu.json` or anything in `config/ldic/themes/`

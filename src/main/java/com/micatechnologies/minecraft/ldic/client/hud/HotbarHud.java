@@ -1,5 +1,6 @@
 package com.micatechnologies.minecraft.ldic.client.hud;
 
+import com.micatechnologies.minecraft.ldic.Ldic;
 import com.micatechnologies.minecraft.ldic.client.LdicSettings;
 import com.micatechnologies.minecraft.ldic.client.inventory.InventoryStyle;
 import com.micatechnologies.minecraft.ldic.inventory.HotbarVisibility;
@@ -9,8 +10,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.RenderItem;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -72,6 +75,8 @@ public final class HotbarHud {
     private final FloatBuffer savedMatrix = BufferUtils.createFloatBuffer(16);
     private final FloatBuffer postMatrix = BufferUtils.createFloatBuffer(16);
     private boolean matrixSaved;
+    /** The modern hotbar threw once; vanilla's draws for the rest of the session. */
+    private boolean modernFailed;
 
     private final Item[] lastItems = new Item[10];
     private final int[] lastCounts = new int[10];
@@ -112,11 +117,18 @@ public final class HotbarHud {
         EntityPlayer player = mc.player;
         if (player == null) {
             lastSlot = -1;
+            // Out of the world: a hotbar hidden with the key comes back for the next one.
+            visibility.reset();
             return;
         }
         visibility.configure(settings.hotbarAutoHide, settings.hotbarHideDelay);
         while (toggleKey.isPressed()) {
             visibility.toggle();
+            if (visibility.hiddenByKey()) {
+                // The key hides the hotbar until it is pressed again, so say which key that is:
+                // pressed by accident, a missing hotbar is otherwise a mystery.
+                mc.ingameGUI.setOverlayMessage(I18n.format("ldic.hotbar.hidden", toggleKey.getDisplayName()), false);
+            }
         }
         boolean active = mc.currentScreen != null && lastSlot >= 0;
         if (player.inventory.currentItem != lastSlot) {
@@ -235,11 +247,21 @@ public final class HotbarHud {
             return;
         }
         boolean didPush = begin(event.getResolution());
-        if (type == ElementType.HOTBAR && ground && mc.getRenderViewEntity() instanceof EntityPlayer) {
-            drawModern(mc, event.getResolution(), event.getPartialTicks());
-            end(didPush);
-            cancel(event);
-            return;
+        if (type == ElementType.HOTBAR && ground && !modernFailed && mc.getRenderViewEntity() instanceof EntityPlayer) {
+            boolean drawn = true;
+            try {
+                drawModern(mc, event.getResolution(), event.getPartialTicks());
+            } catch (RuntimeException e) {
+                // Vanilla's hotbar from here on: a hotbar that fails must not become no hotbar.
+                modernFailed = true;
+                drawn = false;
+                Ldic.LOGGER.error("LDIC: the modern hotbar failed to draw; using the vanilla hotbar for this session", e);
+            }
+            if (drawn) {
+                end(didPush);
+                cancel(event);
+                return;
+            }
         }
         if (didPush) {
             pushed.add(type);
@@ -285,6 +307,11 @@ public final class HotbarHud {
         int y0 = res.getScaledHeight() - 22;
         int accent = InventoryStyle.accent();
 
+        // The state vanilla's hotbar starts from, set here rather than assumed: this runs inside
+        // the HOTBAR event, after whatever other mods' handlers (and a shader mod's HUD pass) left.
+        GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+        GlStateManager.disableLighting();
+        GlStateManager.enableAlpha();
         GlStateManager.color(1, 1, 1, 1);
         InventoryStyle.panel(x0, y0, x0 + 182, y0 + 22, 0xA0101418, InventoryStyle.PANEL_EDGE);
         for (int i = 0; i < 9; i++) {

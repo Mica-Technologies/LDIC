@@ -19,6 +19,7 @@ ldic.inventory.full.key=Key: %s
 ldic.inventory.full.nokey=Set a key in Controls > LDIC
 key.categories.ldic=LDIC
 key.ldic.hotbar_toggle=Show/hide hotbar
+ldic.hotbar.hidden=Hotbar hidden. Press %s to show it again.
 key.ldic.inventory_full=Full-screen inventory
 ldic.config.title=LDIC settings
 ldic.config.hotbar=Hotbar

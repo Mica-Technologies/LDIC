@@ -258,6 +258,12 @@ final class Actions {
             manager.open(id);
             return;
         }
+        // From the options screen, vanilla's sub-screens open the way vanilla's own buttons open
+        // them, so a mod that replaces one by hooking the options screen (a renderer's own video
+        // settings) still does.
+        if (screen instanceof LdicOptionsScreen && ((LdicOptionsScreen) screen).openAsVanilla(id.toLowerCase(Locale.ROOT))) {
+            return;
+        }
         GuiScreen next;
         switch (id.toLowerCase(Locale.ROOT)) {
             case "singleplayer":

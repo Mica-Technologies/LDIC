@@ -38,6 +38,19 @@ public final class HotbarVisibility {
         }
     }
 
+    /** Shows the hotbar at once and forgets a key hide: for joining a world, so it never starts hidden. */
+    public void reset() {
+        hiddenByKey = false;
+        shown = true;
+        movedFor = 0;
+        progress = 1;
+    }
+
+    /** Whether the toggle key is what is keeping the hotbar away (it stays away until pressed again). */
+    public boolean hiddenByKey() {
+        return !autoHide && hiddenByKey;
+    }
+
     public void toggle() {
         if (autoHide) {
             if (target()) {
